@@ -1,0 +1,13 @@
+Variabele;Label_1;Definition
+WCORHUUR_P;Property: % Housing corporation;Percentage of the housing stock registered as property of a housing corporation.
+WPARTHUUR_P;Property: % Private rent;Percentage of addresses not registered as property of the occupant or as property of a housing corporation.
+WKOOP_P;Property: % Owner-occupied;Percentage of addresses registered as property of the occupant.
+WOPP0040_P;Living space: % 0 - 40 m2;Percentage of the housing stock with a living space from 0 to 40 m2 (NEN 2580 norm).
+WOPP4060_P;Living space: % 40- 60 m2;Percentage of the housing stock with a living space from 40 to 60 m2 (NEN 2580 norm).
+WOPP6080_P;Living space: % 60- 80 m2;Percentage of the housing stock with a living space from 60 to 80 m2 (NEN 2580 norm).
+WOPP80100_P;Living space: % 80- 100 m2;Percentage of the housing stock with a living space from 80 to 100 m2 (NEN 2580 norm).
+WOPP100PLUS_P;Living space: % 100 m2+;Percentage of the housing stock with a living space over 10 m2 (NEN 2580 norm).
+WOPPONB_P;Living space: % unknown;Percentage of the housing stock of which the living space is not stated.
+WHUURTSLG_P;Rent: % rent below subsidy limit;Percentage of housing stock with a rent below the limit for rent subsidy ( < 711 euros).
+WHUURMIDDEN_P;Rent: % middle;Percentage of the housing stock with a middle high rent (711 euro - 971 euro).
+WHUURHOOG_P;Rent: % high;Percentage of the housing stock with a high rent (> 971 euro).

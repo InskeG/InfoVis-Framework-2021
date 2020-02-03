@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block body %}
+<script type="text/javascript">
+	d3.selectAll(".nav-item").classed("active", false);
+	d3.select("#nav-link-bokeh").classed("active", true);
+</script>
+
+<H2 class="mt-3">Renting in Amsterdam</H2>
+
+<form action="/bokeh">
+<!-- <select name="feature_name">
+	{% for feature in feature_names %}
+		{% if feature == current_feature_name %}
+			<option selected value="{{ feature }}">{{ feature }}</option> 
+		{% else %} 
+			<option value="{{ feature }}">{{ feature }}</option> 
+		{% endif %}
+	{% endfor %}
+</select> -->
+<p>I am looking for a rental place with the following properties:</p>
+<select name="property_type">
+	{% for property_type in all_property_types %}
+		{% if property_type == selected_property_type %}
+			<option selected value="{{ property_type }}">{{all_property_types_text[loop.index - 1]}}</option> 
+		{% else %} 
+			<option value="{{ property_type }}">{{all_property_types_text[loop.index - 1]}}</option> 
+		{% endif %}
+	{% endfor %}
+</select>
+<select name="rental_price">
+	{% for rental_price in all_rental_prices %}
+		{% if rental_price == selected_rental_price %}
+			<option selected value="{{ rental_price }}">{{all_rental_prices_text[loop.index - 1]}}</option> 
+		{% else %} 
+			<option value="{{ rental_price }}">{{all_rental_prices_text[loop.index - 1]}}</option> 
+		{% endif %}
+	{% endfor %}
+</select>
+<select name="surface_area">
+	{% for surface_area in all_surface_areas %}
+		{% if surface_area == selected_surface_area %}
+			<option selected value="{{ surface_area }}">{{all_surface_areas_text[loop.index - 1]}}</option> 
+		{% else %} 
+			<option value="{{ surface_area }}">{{all_surface_areas_text[loop.index - 1]}}</option> 
+		{% endif %}
+	{% endfor %}
+</select>
+<input type="submit">
+</form>
+
+<p class="mt-3" style="font-weight: bold;">You indicated that none of the properties are of importance, sadly we cannot make any suggestions based on this input</p>
+
+{% endblock %}

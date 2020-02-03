@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}D3 Visualization{% endblock %}
+{% block body %}
+<script type="text/javascript">
+	d3.selectAll(".nav-item").classed("active", false);
+	d3.select("#nav-link-d3").classed("active", true);
+</script>
+
+<link href="../static/css/tooltip.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="../static/js/tooltip.js"></script>
+
+<H2 class="mt-3">Amsterdam Rental Information</H2>
+
+<form action="/d3">
+	<select name="area_name">
+		{% for area_name in area_names %}
+		{% if area_name == selected_area_name %}
+		<option selected value="{{ area_name }}">{{ area_name }}</option> 
+		{% else %} 
+		<option value="{{ area_name }}">{{ area_name }}</option> 
+		{% endif %}
+		{% endfor %}
+	</select>
+	<input type="submit">
+</form>
+<div class="mt-3" id="barchart">
+</div>
+
+<script type="text/javascript">
+	var data = {{ data |safe }}; 
+	var meta_data = {{ meta_data |safe }};
+	var x_variables = {{ x_variables |safe}};
+	var selected_area = {{ selected_area_name |tojson }};
+</script>
+
+<link rel="stylesheet" type="text/css" href="../static/css/barchart.css">
+<script type="text/javascript" src="../static/js/barchart.js"></script>
+
+{% endblock %}

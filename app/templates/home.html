@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block body %}
+<script type="text/javascript">
+	d3.selectAll(".nav-item").classed("active", false);
+	d3.select("#nav-link-home").classed("active", true);
+</script>
+
+<!-- Begin page content -->
+    <h2 class="mt-3">Introduction</h2>
+
+    <p class="lead">
+
+    	Welcome to the base sample environment for the Information Visualization projects.
+    </p>
+
+    <p class="txt">
+    	As part of the course, you are required to complete a group assignment in which you will design, build and evaluate a live Visual Analytics and/or Information Visualization system. Live is a keyword in the description above as your visualization should run in a web environment that allows for users to interact with it. For this purpose this environment serves to show the base scope of what these projects should contain and how they can be structured using a back-end server and front-end visualization framework. </br> </br>
+
+    	There are two approaches to your project assignment:
+    	<ul>
+    		<li> Information Visualization </li>
+    		<li> Visual Analytics </li>
+    	</ul>
+
+    	 <p class="txt">
+    	<b>The Information Visualization approach</b>: using your dataset to power a visualization with emphasis on design, user experience and the quality of information conveyed through your choice of visual representations. You would be expected to design and code-up custom visualization elements that make things/coherences visible that are not apparent from looking at the dataset in its raw form. They should satisfy the communication requirement for both expert (guidance in the right direction) and non-expert (allow for understanding) users. Users should be able to interactively control the components to get to the information they need. They should drive your application and through their interaction understand the phenomena they are seeing as soon as possible. This type of project focuses on Perception, Interaction, Visual Design and Cognition.
+
+    	</br></br>In short, <i>you should harness the power of human perception and offload cognition.</i> - Tamara Munzner 2017 VAST Keynote. </br>
+
+    	</br>
+
+    	As one might expect, having complete control over the shapes, colors, depth, luminance, volume, textures, motion and spatial placement of objects in your visualization is crucial in a project such as this one. For this purpose we reccomend using <a href="https://d3js.org/"> D3</a> in combination with CSS manipulations to acheive yout goals. A curated list of data visualization tools and frameworks to get the most out of your project can be found <a href="http://selection.datavisualization.ch/"> here </a>. In addition a good example of well designed visualizations by your colleagues from past years can be found on the <a href="https://www.vistory-omniart.com/"> OmniArt Homepage </a> [be patient for it to load all the data].  
+
+    </br></br>
+    	</p>
+
+
+    	<p class="txt">
+    	<b>The Visual Analytics approach</b>: this approach can be seen as an integral approach combining visualization, interaction, and data analysis. You should excercise control over your data and your model through interacting with the visualization. The emphasis in this project is on creating insight through control, rather than design and user experience. This means that the model and data adjust through interaction and display a visual abstraction over what that change means. You woud be expected to design and build a live system that incorporates a data driven model, a feedback loop from the user to the model/data and an interactive visualization over the dataset. See the image below of how the analytics process works.
+    	<br></br>
+
+    	<img class="col-lg-6 offset-lg-3" src="static/img/image_2.png">
+
+   		</br></br>
+
+   		In contrast to the former approach, in this case you requre having control over the raw data, the model and the flow of new information from/to the user. Because most machine learning libraries require more computing resources than the average website, they exist in the back-end (running on a server, not a browser). To enable smooth control over the model we reccomend <a href="https://docs.bokeh.org/en/latest/index.html"> Bokeh</a> as a python visualization framework that does server side rendering and still allows for stylistic manipulations over the components. The basic aesthetic principles of reducing clutter, systematic use of color, shape and placement should be maintained, but custom made visualization components or contributions on design are not expected in this approach. 
+
+    	</p>
+
+    </p>
+
+    <h3>Datasets</h3>
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}Bokeh Visualization{% endblock %}
+{% block body %}
+<script type="text/javascript">
+	d3.selectAll(".nav-item").classed("active", false);
+	d3.select("#nav-link-bokeh").classed("active", true);
+</script>
+
+<H2 class="mt-3">Renting in Amsterdam</H2>
+
+<form action="/bokeh">
+
+<p clas=="lead">I am looking for a rental place with the following properties:</p>
+<select name="property_type">
+	{% for property_type in all_property_types %}
+		{% if property_type == selected_property_type %}
+			<option selected value="{{ property_type }}">{{all_property_types_text[loop.index - 1]}}</option> 
+		{% else %} 
+			<option value="{{ property_type }}">{{all_property_types_text[loop.index - 1]}}</option> 
+		{% endif %}
+	{% endfor %}
+</select>
+<select name="rental_price">
+	{% for rental_price in all_rental_prices %}
+		{% if rental_price == selected_rental_price %}
+			<option selected value="{{ rental_price }}">{{all_rental_prices_text[loop.index - 1]}}</option> 
+		{% else %} 
+			<option value="{{ rental_price }}">{{all_rental_prices_text[loop.index - 1]}}</option> 
+		{% endif %}
+	{% endfor %}
+</select>
+<select name="surface_area">
+	{% for surface_area in all_surface_areas %}
+		{% if surface_area == selected_surface_area %}
+			<option selected value="{{ surface_area }}">{{all_surface_areas_text[loop.index - 1]}}</option> 
+		{% else %} 
+			<option value="{{ surface_area }}">{{all_surface_areas_text[loop.index - 1]}}</option> 
+		{% endif %}
+	{% endfor %}
+</select>
+<button class="btn btn-light" type="submit">Submit Query</button>
+</form>
+
+
+<div class="mt-3" id="prediction-container"></div>
+
+
+<div id="myplot"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+<script type="text/javascript" charset="utf-8">
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+    // verify our websocket connection is established
+    socket.on('connect', function() {
+        console.log('Websocket connected!');
+    });
+
+	
+	var property_type = {{ selected_property_type | tojson }};
+	var surface_area = {{ selected_surface_area | tojson }};
+	var rental_price = {{ selected_rental_price | tojson }};
+
+	var area;
+	var area_proba;
+
+	var fetch_url = '/data?property=' + property_type + '&surface=' + surface_area + 
+	'&price=' + rental_price + '&plot=1';
+	fetch(fetch_url)
+		.then(function(response) { return response.json(); })
+		.then((data) => {
+			area = data.prediction;
+			area_proba = data.prediction_proba;
+			var htmlText = 'We recommend you to look for a rental place in <b>' + area + 
+				'</b> with a prediction probability of <b>' + area_proba + '</b>.'
+
+			d3.select("#prediction-container")
+				.append("p")
+				.attr("id", "predictionText")
+				.attr("class", "txt")
+				.html(htmlText);
+
+			//g.textContent = 
+			Bokeh.embed.embed_item(data.plotData);
+	});
+
+	function updatePlot(value, varDef) {
+		console.log('Sending new data...');
+		socket.emit('plot_update', {newValue: value, definition: varDef});
+	}
+
+	function updateModel(value, variable) {
+		socket.emit('model_update', {newValue: value, variable: variable, area: area});
+	}
+
+	socket.on("model_update", function() {
+		d3.select("#predictionText")
+			.remove();
+
+		var fetch_url = '/data?property=' + property_type + '&surface=' + surface_area + 
+		'&price=' + rental_price + '&area=' + area;
+		fetch(fetch_url)
+			.then(function(response) { return response.json(); })
+			.then((data) => {
+				d3.select("#predictionText")
+					.remove();
+
+				d3.select('body')
+				var htmlText = 'We previously recommended you to look for an area in <b>' + area + '</b> with a prediction probability of <b>' + area_proba +
+				'</b>. Due to the change in data variables, the prediction probability for this area has changed to <b>' + data.area_changed_proba + '</b>. ' 
+				area_proba = data.area_changed_proba;
+				
+				var newPredArea = data.prediction;
+				if (area != newPredArea) {
+					htmlText = htmlText + 'As a result we now recommend you to look for a place in <b>' + newPredArea + '</b> with a prediction probability of <b>' + 
+					data.prediction_proba + '</b>.'
+				} else {
+					htmlText = htmlText + 'We still recommend you to look for a place in this area.'
+				};
+
+				d3.select("#prediction-container")
+					.append("p")
+					.attr("id", "predictionText")
+					.attr('class', "txt")
+					.html(htmlText);
+		});
+	})
+	
+  </script>
+
+{% endblock %}
