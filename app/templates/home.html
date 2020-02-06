@@ -17,7 +17,17 @@
     <p class="txt">
     	As part of the course, you are required to complete a group assignment in which you will design, build and evaluate a live Visual Analytics and/or Information Visualization system. Live is a keyword in the description above as your visualization should run in a web environment that allows for users to interact with it. For this purpose this environment serves to show the base scope of what these projects should contain and how they can be structured using a back-end server and front-end visualization framework. </br> </br>
 
-    	There are two approaches to your project assignment:
+		Here are some resources to get you started:
+		<ul>
+    		<li> <a href="https://www.d3-graph-gallery.com/intro_d3js.html" target="_blank">Short introduction into D3 and how it works regarding HTML/CSS/SVG </a> </li>
+			<li> <a href="https://www.codecademy.com/learn/introduction-to-javascript" target="_blank">Introduction to JavaScript</a> </li>
+			<li> <a href="https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world" target="_blank">Excellent tutorial concerning Flask</a> - highly recommended if you choose to use this framework for your visualization!</a> </li>
+			<li> <a href="https://blog.miguelgrinberg.com/post/easy-websockets-with-flask-and-gevent/page/5" target="_blank">Information on WebSockets and Flask-SocketIO</a> - which is the specific websocket that we use in this framework </li>
+			<li> <a href="https://docs.bokeh.org/en/latest/docs/user_guide/interaction/callbacks.html" target="_blank">JavaScript Callback in Bokeh</a> - which in Bokeh are used to communicate between your front-end (the visualization) and back-end over the websocket </li>
+			<li> <a href="https://docs.bokeh.org/en/latest/docs/user_guide/embed.html" target="_blank">Further information regarding different ways of embedding Bokeh into HTML documents</a> - within this framework JSON Items is used to push the visualization information generated in python to the front-end. However, there are different ways of doing this. If you want to explore another way of embedding your Bokeh visualization, it's worth checking out this link. </li>
+		</ul>
+		
+		There are two approaches to your project assignment:
     	<ul>
     		<li> Information Visualization </li>
     		<li> Visual Analytics </li>
@@ -50,5 +60,16 @@
 
     </p>
 
-    <h3>Datasets</h3>
+	<h3>Datasets</h3>
+	<ul>
+		<li><a href="https://vps.inskegroenen.nl/api" target="_blank">PanorAMS</a></li>
+		<li><a href="https://drive.google.com/open?id=19Kc1mEF1xqaYrcDXLzH5MljkZc22DfYe" target="_blank">NOWHERE</a></li>
+		<li><a href="https://videobrowsershowdown.org/call-for-papers/vbs-server/" target="_blank">Video Browser Showdown</a></li>
+		<li><a href="https://snap.stanford.edu/data/web-flickr.html" target="_blank">Flickr</a></li>
+		<li><a href="https://snap.stanford.edu/data/soc-RedditHyperlinks.html" target="_blank">Reddit</a></li>
+		<li><a href="http://isis-data.science.uva.nl/strezoski/omniart/omniart_v3/" target="_blank">OmniART</a></li>
+	</ul>
+	You are not obligated to choose a dataset from this list and are free to pick another dataset. <b>However, do realize that data preprocessessing, cleaning, etcetera is not something you will be graded on during this course.</b> 
+	The focus of this course is on creating an interactive visualization. The datasets provided above are all cleaned up and will not require any preprocessing. <b>For this reason we strongly recommend you to pick a dataset from the above list.</b>
+	<p></p>
 {% endblock %}
