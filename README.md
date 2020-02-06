@@ -4,13 +4,20 @@ This repo contains the first assignment for the course Information Visualization
 
 ## Requirements ##
 
-* Python==3.7
-* Bokeh==1.4.0
-* Flask==1.0.2
-* Pandas==0.24.2
-* Numpy==1.16.2
+See the requirements.txt file
+You can automatically install all the requirements by running: pip install -t requirements.txt
 
 ## How it works ##
 
+You can get the app to run in your local browser by following the steps below.
+
+### Linux & Mac ###
+
 * The app can be started by running: bash start_app.sh
+* The app can then be accessed by navigating to http://127.0.0.1:5000/
+
+### Windows ###
+
+* Type the following command in your terminal: set FLASK_ENV=development
+* Followed by: python run.py
 * The app can then be accessed by navigating to http://127.0.0.1:5000/
