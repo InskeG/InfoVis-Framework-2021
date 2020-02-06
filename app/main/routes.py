@@ -105,3 +105,4 @@ def d3():
 	meta_data = data.stats_ams_meta.to_json(orient='records')
 	return render_template("d3.html", data=plot_data, meta_data=meta_data,
 		x_variables=data.all_var_types, area_names=data.area_names, selected_area_name=area_name)
+
