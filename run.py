@@ -1,5 +1,5 @@
 import os
-from werkzeug.contrib.fixers import ProxyFix
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from app import create_app, socketio
 
