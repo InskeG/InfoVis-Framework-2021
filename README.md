@@ -18,6 +18,6 @@ You can get the app to run in your local browser by following the steps below.
 
 ### Windows ###
 
-* Type the following command in your terminal: set FLASK_ENV=development
+* Type the following in your terminal when using windows CMD: set FLASK_ENV=development **OR** when using windows powershell: $env:FLASK_ENV=development
 * Followed by: python run.py
 * The app can then be accessed by navigating to http://127.0.0.1:5000/
