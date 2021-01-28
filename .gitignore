@@ -1,3 +1,6 @@
 *.pyc 
+.DS_Store
 app/.DS_Store
-
+app/static/.DS_Store
+app/templates/.DS_Store
+app/__pycache__
