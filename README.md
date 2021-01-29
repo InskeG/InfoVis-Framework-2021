@@ -5,7 +5,7 @@ This repo contains the first assignment for the course Information Visualization
 ## Requirements ##
 
 See the requirements.txt file
-You can automatically install all the requirements by running: pip install -t requirements.txt
+You can automatically install all the requirements by running: pip install -r requirements.txt
 
 ## How it works ##
 
