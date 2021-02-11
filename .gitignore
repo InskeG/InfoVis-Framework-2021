@@ -1,6 +1,15 @@
-*.pyc 
+*.pyc
 .DS_Store
 app/.DS_Store
 app/static/.DS_Store
 app/templates/.DS_Store
 app/__pycache__
+
+Thumbs.db
+db.json
+*.log
+node_modules/
+public/
+.deploy*/
+src/_drafts
+package-lock.json
