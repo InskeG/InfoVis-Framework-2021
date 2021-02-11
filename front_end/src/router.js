@@ -18,12 +18,17 @@ export default new Router({
             children: [
                 {
                     path: '/',
-                    redirect: '/starterkit'
+                    redirect: '/index'
                 },
-                {
+								{
+										path: '/index',
+										name: 'Index',
+										index: 1,
+										component: () => import('./views/IndexPage.vue')
+								}, {
                     path: '/starterkit',
                     name: 'Starterkit',
-                    index: 1,
+                    index: 30,
                     component: () => import('./views/StarterPage.vue')
                 },{
                     path: '/alert',
@@ -141,13 +146,12 @@ export default new Router({
                     index: 29,
                     component: () => import('./views/components/vuesax/textarea/textarea.vue')
                 }
-
             ]
 		},
     // Redirect to starterkit page, if no match found
         {
             path: '*',
-            redirect: '/starterkit'
+            redirect: '/index'
         }
 	]
 })
