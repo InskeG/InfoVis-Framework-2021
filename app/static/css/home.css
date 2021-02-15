@@ -2,6 +2,18 @@ body{
     font-family: Verdana;
     height: 100%;
     width: 100%;
+    background-color:black;
+}
+
+.title-picture {
+    width: 100vw;
+    background-color:black;
+}
+
+.spotify-gif {
+    display: block;
+    animation-delay: 20s;
+    margin: 0 auto;
 }
 
 .navbar-default{
@@ -50,4 +62,17 @@ body{
 .navbar-default .navbar-nav > .active a{
   color:white;
   opacity:1;
+}
+
+.content-home{
+    width: 88vw;
+    margin: 0 auto;
+    /*background-color: #404040;*/
+    background-color: black;
+    margin-top:2vh;
+    border-radius:10px;
+}
+
+.content-home p{
+    color:white;
 }
