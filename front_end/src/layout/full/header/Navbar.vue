@@ -3,13 +3,14 @@
 		<vs-navbar
       v-model="indexActive"
       :color="topbarColor"
-      class="topnavbar" text-color="rgba(255,255,255,0.7)" active-text-color="rgba(255,255,255,1)">
+      class="topnavbar" text-color="rgba(255,255,255,0.7)" active-text-color="rgba(255,255,255,1)"
+		>
       <!---
       Template logo
       -->
       <div slot="title" class="themelogo">
-        <img :src="logo" v-if="logo" alt="Dashboard"/>
-        <span class="logo-text" v-if="title">{{ title }}</span>
+				<img :src="logo" v-if="logo" alt="Dashboard"/>
+				<span class="logo-text" v-if="title">{{ title }}</span>
       </div>
       <!---
       Mobile toggle
