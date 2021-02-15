@@ -2,6 +2,7 @@ from data import *
 import wikipedia
 
 
+#for example: http://127.0.0.1:5000/info/Post-impressionism/1943/vincent+van+gogh
 def retrieve_info(genre, year, artist):
     year = float(year)
     ranges = float(1)
