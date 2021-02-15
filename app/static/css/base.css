@@ -1,0 +1,62 @@
+body{
+    font-family: Verdana;
+    height: 100%;
+    width: 100%;
+}
+
+.title-picture {
+    width: 100vw;
+    background-color:black;
+}
+
+.spotify-gif {
+    display: block;
+    margin: 0 auto;
+}
+
+.navbar-default{
+    background-color: #262626;
+    width:100vw;
+    font-color:white;
+    font-weight:bold;
+}
+
+.navbar-default .navbar-nav > li > a {
+    width:auto;
+    color: white;
+    opacity: 0.6;
+}
+
+.navbar-default .navbar-nav > li > a:hover {
+    width:auto;
+    color: white;
+    opacity: 1;
+}
+
+.navbar-default .navbar-nav > li {
+  position: relative;
+  display: inline-block;
+  margin-right:5vw;
+  margin-left:5vw;
+}
+
+.navbar-default .navbar-nav > li:after {
+  content: "";
+  position: absolute;
+  left:0;
+  top: 100%;
+  width: 0;
+  height: 2px;
+  background-color: #1DB954;
+  transition: width .3s ease-in-out;
+}
+
+.navbar-default .navbar-nav > li:hover:after {
+  width: 100%;
+}
+
+
+.navbar-default .navbar-nav > .active a{
+  color:white;
+  opacity:1;
+}
