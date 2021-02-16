@@ -9,57 +9,11 @@
 <link href="../static/css/tooltip.css" rel="stylesheet" type="text/css">
 <script type="text/javascript" src="../static/js/tooltip.js"></script>
 
-<H2 class="mt-3">Amsterdam Rental Information</H2>
+<H2 class="mt-3">Spotify Song Info</H2>
 
-<!-- <form action="/d3"> -->
-<select name="area_name" onchange="updateArea(this)">
-	{% for area_name in area_names %}
-	{% if area_name == selected_area_name %}
-	<option selected value="{{ area_name }}">{{ area_name }}</option> 
-	{% else %} 
-	<option value="{{ area_name }}">{{ area_name }}</option> 
-	{% endif %}
-	{% endfor %}
-</select>
-	<!-- <input type="submit"> -->
-<!-- </form> -->
+{{ song_data['name']['0'] }}
 <div class="mt-3" id="barchart">
 </div>
 <link rel="stylesheet" type="text/css" href="../static/css/barchart.css">
-<script type="text/javascript" src="../static/js/barchart.js"></script>
-<script type="text/javascript">
-	///////////// GLOBAL VARS /////////////		
-	var plot_data;
-	var meta_data = {{ meta_data |safe }};
-	var x_variables = {{ x_variables |safe}};
-	var selected_area = {{ selected_area_name |tojson }};
-
-	var width = 1000;
-	var height = 700;
-	var MOUSEOVER = false;
-
-	var chart_height = 400,
-		chart_width = 700;
-
-	var svgContainer = d3.select("#barchart").append("svg")
-					.attr("height", height)
-					.attr("width", width);
-
-	var x = d3.scaleLinear().rangeRound([0, chart_width]),
-		y = d3.scaleBand().rangeRound([chart_height, 0]).padding(0.1);
-		
-	x.domain([0, 100]);
-	y.domain(x_variables);
-
-	// Code for vertical bar chart
-	// var x = d3.scaleBand().rangeRound([0, chart_width]).padding(0.1),
-	//     y = d3.scaleLinear().rangeRound([chart_height, 0]);
-
-	// Code for vertical bar chart
-	// x.domain(x_variables);
-	// y.domain([0, 100]);
-
-	updatePlot();
-</script>
 
 {% endblock %}
