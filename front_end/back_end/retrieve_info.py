@@ -11,6 +11,7 @@ def retrieve_info(genre, year, artist):
     # year = float(1943)
     # artist = 'vincent van gogh'
 
+    print('hi')
     w = wikipedia.page(genre)
     dictionary['genre'] = w.title
 
@@ -31,6 +32,9 @@ def retrieve_info(genre, year, artist):
     # type(model_data['creation_year'][0])
 
     return dictionary
+
+
+# print(retrieve_info('ho', 1934, 'jio'))
 
 # other art pieces created in same year
 # year_df = model_data.loc[model_data['creation_year'].astype('float') < year+ranges]
