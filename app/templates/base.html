@@ -23,9 +23,53 @@
 <!--sticky-top-->
 
 <body>
+{% block nav %} {% endblock %}
 
+{% block body %} {% endblock %}
 
-{% block body %}
-{% endblock %}
+<div class = "footer">
+	<div class = "footer_element" id = "footer_element_1">
+		<h3 class = "h3_new">About</h3>
+		<p>
+		Our job is to make YOUR wildest visualisations come true and give you insight into the most popular trends
+		currently on spofity. We focus on providing multiple ways to investigate these trends. All these visualisations
+		we performed with HTML, CSS and Javascript to provide the user with the required interactivity necessary to
+		change the visualisations according to the users prefreences. Moreover, it also provides a template for others
+		who are interested in diving deeper into the spotify dataset that was obtained from Kaggle. The sky is the limit
+		and we hope to inspire others in data analysis!
+		</p>
+	</div>
+
+	<div class = "footer_element" id = "footer_element_2">
+		<h3 class = "h3_new">Artists</h3>
+		<ul class = "ul_artists">
+			<li>Sjors Peerdeman</li>
+			<li>Piet Snel</li>
+			<li>Francine Verbeek</li>
+			<li>Tim Vorstenbosch</li>
+			<li>Wolf bij 't Vuur</li>
+		</ul>
+	</div>
+
+	<div class = "footer_element" id = "footer_element_3">
+		<h3 class = "h3_new">Quick Links</h3>
+		<ul class = "ul_links">
+			<li><a class = "footer_link" href = "https://github.com/Wolfb34/InfoVis-Framework-2021">Github</a></li>
+			<li><a class = "footer_link" href = "https://www.vu.nl/nl/index.aspx">Vrije Universiteit</a></li>
+			<li><a class = "footer_link" href = "https://www.uva.nl/">Universiteit van Amsterdam</a></li>
+			<li><a class = "footer_link" href = "https://www.spotify.com/nl/">Spotify</a></li>
+		</ul>
+	</div>
+
+	<hr class = "hr_new">
+
+	<div class = "footer_bottom" id = "footer_bottom">
+		<div class = "footer_copyright">
+			Copyright &copy; 2021 All Rights Reserved by Project Group 15.
+		</div>
+	</div>
+
+</div>
+
 </body>
 </html>

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Metrics{% endblock %}
-{% block body %}
+
+{% block nav %}
 
 	<nav class="navbar navbar-default justify-content-center flex-md-nowrap navbar-expand-md" id = "navbar-top">
 		<div class="navbar-collapse" id="navbarCollapse">
@@ -19,10 +20,18 @@
 	</nav>
 
 <link rel="stylesheet" type="text/css" href="../static/css/base.css">
+{% endblock %}
 
+{% block body %}
 
 
 <!-- Begin page content -->
     <h2 class="mt-3">Metrics plot</h2>
+
+
+
+<!-- End page content-->
+
+
 
 {% endblock %}
