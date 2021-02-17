@@ -33,9 +33,9 @@
 
 			<vs-col type="flex" vs-justify="center" vs-align="center" vs-w="6">
 				<vs-card class="cardx" v-if="data.fetched">
-					<div slot="header"><h3>About {{ data.genre }}</h3></div>
+					<div slot="header"><h3>{{ data.genre }} on Wikipedia</h3></div>
 					<div>
-						{{ data.info }}
+						{{ data.summary }}
 					</div>
 				</vs-card>
 			</vs-col>
@@ -48,17 +48,17 @@
 					<vs-dropdown vs-trigger-click>
 						<vs-button class="btn-alignment" type="filled" icon="expand_more">Pick a style!</vs-button>
 						<vs-dropdown-menu>
-							<vs-dropdown-item @click="get_info('kaas')">
-								Kaas
+							<vs-dropdown-item @click="get_info('Impressionism')">
+								Impressionism
 							</vs-dropdown-item>
-							<vs-dropdown-item @click="get_info('pindakaas')">
-								Pindakaas
+							<vs-dropdown-item @click="get_info('Expressionism (fine arts)')">
+								Expressionism
 							</vs-dropdown-item>
-							<vs-dropdown-item @click="get_info('worst')">
-								Worst
+							<vs-dropdown-item @click="get_info('Cubism')">
+								Cubism
 							</vs-dropdown-item>
-							<vs-dropdown-item @click="get_info('hagelslag')">
-								Hagelslag
+							<vs-dropdown-item @click="get_info('Surrealism')">
+								Surealism
 							</vs-dropdown-item>
 						</vs-dropdown-menu>
 					</vs-dropdown>
@@ -83,11 +83,15 @@ export default {
   },
 	methods: {
 		async get_info(genre) {
-			const result = await fetch("http://192.168.0.108:8000/info/" + genre);
-			const data = await result.json();
-			this.data = data;
-			this.data.genre = genre;
-			this.data.fetched = true;
+			fetch("http://localhost:5000/info/" + genre + "/1993/ik")
+				.then(response => response.json())
+				.then(data => {
+					console.log(data);
+					this.data = data;
+					// this.data.genre = genre;
+					this.data.fetched = true;
+				}
+			);
 		}
 	}
 }
