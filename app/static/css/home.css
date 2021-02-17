@@ -97,7 +97,7 @@ body{
 
 .content_1{
     width: 90vw;
-    height: 450px;
+    height: 475px;
     margin:auto;
     display: block;
     position: relative;
@@ -228,14 +228,14 @@ body{
 
 @-webkit-keyframes slide {
     0% { opacity:0; transform: translateX(7vw); }
-   20% { opacity:1; transform: translateX(7vw); }
-   80% { opacity:1; transform: translateX(-7vw); }
+   20% { opacity:1; transform: translateX(3vw); }
+   80% { opacity:1; transform: translateX(-3vw); }
   100% { opacity:0; transform: translateX(-7vw); }
 }
 @keyframes slide {
     0% { opacity:0; transform: translateX(7vw); }
-   20% { opacity:1; transform: translateX(7vw); }
-   80% { opacity:1; transform: translateX(-7vw); }
+   20% { opacity:1; transform: translateX(3vw); }
+   80% { opacity:1; transform: translateX(-3vw); }
   100% { opacity:0; transform: translateX(-7vw); }
 }
 
@@ -245,7 +245,7 @@ body{
 .footer{
     position:absolute;
     width: 100vw;
-    height: 350px;
+    height: auto;
     margin:0 auto;
     background-color: #262626;
 }

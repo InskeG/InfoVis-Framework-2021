@@ -79,7 +79,7 @@ body{
 .footer{
     position: absolute;
     width: 100vw;
-    height: 350px;
+    height: auto;
     margin:0 auto;
     background-color: #262626;
 }
