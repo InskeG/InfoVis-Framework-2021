@@ -14,8 +14,8 @@ export default {
   data:()=>({
   }),
   methods: {
-    
+
   }
-  
+
 }
 </script>
