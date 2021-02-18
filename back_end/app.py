@@ -7,14 +7,15 @@ app = Flask(__name__)
 CORS(app)
 
 
-@app.route('/info/<genre>/<year>/<artist>', methods=['GET'])
-def index(genre, year, artist):
-    json_info = jsonify(retrieve_info(genre, year, artist))
+@app.route('/info/<genre>/<year>', methods=['GET'])
+def index(genre, year):
+    json_info = jsonify(retrieve_info(genre, year))
     '''
     json_info = jsonify({
         'genre': genre,
-        'year': year,
-        'artist': artist,
+        'year': year
+        'summary': summary,
+        'related_terms': terms,
     })
     '''
     return json_info
