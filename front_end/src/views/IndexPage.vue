@@ -1,8 +1,7 @@
 <template>
 	<vs-root>
-
 		<vs-row type="flex" vs-justify="center" vs-align="center">
-			<vs-card class="cardx" v-if="data.fetched" fixedHeight vs-w="12">
+			<vs-card class="cardx" v-if="fetched" fixedHeight vs-w="12">
 				<div slot="media">
 					<img src="@/assets/images/big/img1.jpg">
 				</div>
@@ -11,7 +10,7 @@
 
 		<vs-row vs-justify="center">
 			<vs-col type="flex" vs-justify="center" vs-align="center" vs-w="6">
-				<vs-card class="cardx" v-if="data.fetched">
+				<vs-card class="cardx" v-if="fetched">
 					<div slot="header"><h3>Interessante data</h3></div>
 					<div>
 						alskjhd lksjh sfajkh asjfh lkasfh
@@ -21,7 +20,7 @@
 						alskjhd lksjh sfajkh asjfh lkasfh
 					</div>
 				</vs-card>
-				<vs-card class="cardx" v-if="data.fetched">
+				<vs-card class="cardx" v-if="fetched">
 					<div slot="header"><h3>Meer statistieken</h3></div>
 					<div>
 						alskjhd lksjh sfajkh asjfh lkasfh
@@ -32,7 +31,7 @@
 			</vs-col>
 
 			<vs-col type="flex" vs-justify="center" vs-align="center" vs-w="6">
-				<vs-card class="cardx" v-if="data.fetched">
+				<vs-card class="cardx" v-if="fetched">
 					<div slot="header"><h3>{{ data.genre }} on Wikipedia</h3></div>
 					<div>
 						{{ data.summary }}
@@ -43,7 +42,9 @@
 
 		<vs-row type="flex" vs-justify="center" vs-align="center" vs-w="12">
 			<vs-card class="cardx">
-				<div slot="header"><h3>Pick a style!</h3></div>
+				<div slot="header"><h3>
+                    Pick a <span v-if="fetched">new</span> style!
+                </h3></div>
 				<div class="d-flex align-items-center dropdownbtn-alignment">
 					<vs-dropdown vs-trigger-click>
 						<vs-button class="btn-alignment" type="filled" icon="expand_more">Pick a style!</vs-button>
@@ -74,22 +75,21 @@ export default {
 	name: 'Index',
 	data() {
 		return {
-			data: {
-				fetched: false,
-			}
+            fetched: false,
 		}
 	},
   components: {
   },
 	methods: {
 		async get_info(genre) {
-			fetch("http://localhost:5000/info/" + genre + "/1993/ik")
+            this.$vs.loading();
+
+			fetch("http://localhost:5000/info/" + genre + "/1993")
 				.then(response => response.json())
 				.then(data => {
-					console.log(data);
 					this.data = data;
-					// this.data.genre = genre;
-					this.data.fetched = true;
+					this.fetched = true;
+                    this.$vs.loading.close()
 				}
 			);
 		}
