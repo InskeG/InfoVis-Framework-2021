@@ -8,11 +8,14 @@
 	<title>Home page</title>
 
 
+	<link href="../static/css/barchart.css" rel="stylesheet">
 
 	<!-- Bootstrap core CSS -->
 	<link href="https://getbootstrap.com/docs/4.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
+
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet" >
+
 
 	<!-- D3 package -->
 	<script src="https://d3js.org/d3.v5.min.js"></script>
@@ -86,7 +89,7 @@
 </div>
 
 <div class = "content_2">
-	<div class = "content_2_plot">
+	<div class = "content_2_plot" id="barchart">
 
 
 	</div>
@@ -139,4 +142,27 @@
 {% block body %}
 {% endblock %}
 </body>
+<script type="text/javascript" src="../static/js/homechart.js"></script>
+<script type="text/javascript">
+	var song_data = {{ song_data | safe }};
+	var x_variables = {{ artists | safe }};
+
+	var width = 1500;
+	var height = 700;
+	var chart_height = 400,
+		chart_width = 1300;
+
+	var svgContainer = d3.select("#barchart").append("svg")
+					.attr("height", height)
+					.attr("width", width);
+
+	var x = d3.scaleBand().rangeRound([0, chart_width]),
+	    y = d3.scaleLinear().rangeRound([chart_height, 0]);
+
+	x.domain(x_variables);
+	y.domain([0, 100]);
+
+
+	createPlot();
+</script>
 </html>

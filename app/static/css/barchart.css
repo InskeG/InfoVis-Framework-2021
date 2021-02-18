@@ -1,10 +1,14 @@
 
 .bar {
-	fill: steelblue;
+	fill: green;
 	cursor: crosshair;
 }
 
 .bar:hover {
 	fill: DarkOrange;
 	cursor: crosshair;
+}
+
+svg text {
+	fill: white;
 }

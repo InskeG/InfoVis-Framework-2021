@@ -1,15 +1,17 @@
 import pandas as pd
+import numpy as np
+import ast
 
 definitions = pd.read_csv("app/data/spotify_definitions.csv", sep = ";", header =0)
-data = pd.read_csv("app/data/data.csv", sep=",")
+data = pd.read_csv("app/data/data_by_artist.csv", sep=",")
+
+filter_home_page = ["popularity", "artists"]
+home_data = data.filter(items=filter_home_page)
+home_data = home_data.sort_values("popularity", 0, False).head(10)
+
+print(dict(zip(home_data["artists"], home_data["popularity"])))
 
 filter_columns = ["valence", "instrumentalness", "acousticness", "danceability",
-                  "energy", "liveness", "loudness", "mode", "name", "artists"]
+                  "energy", "liveness", "loudness", "mode", "artists"]
 song_data = data.filter(items=filter_columns)
-mask = song_data.artists.apply(lambda x: "Michael Jackson" in x)
-mj_songs = song_data[mask]
-mj_songs = mj_songs.head(10)
-song_names = mj_songs.filter(items=["name"])
-# print(song_names)
-# song_head = song_data.head(20)
-# print(song_head)
+song_head = song_data.head(20)

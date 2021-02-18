@@ -12,11 +12,15 @@ from . import main
 
 @main.route('/', methods=['GET'])
 def index():
-    return render_template("home.html")
+    home_data = data.home_data
+    song_data = dict(zip(home_data["artists"], home_data["popularity"]))
+    artists = json.loads(home_data["artists"].to_json(orient="values"))
+
+    return render_template("home.html", song_data=song_data, artists=artists)
 
 @main.route('/d3', methods = ['GET'])
 def d3():
-    mj_data = data.mj_songs
+    mj_data = data.song_data
     mj_json = json.loads(mj_data.to_json(orient="index"))
     names = json.loads(data.song_names.to_json(orient="values"))
 
@@ -25,7 +29,7 @@ def d3():
 
 @main.route('/d3_plot_data', methods = ['GET'])
 def d3_plot_data():
-    mj_data = data.mj_songs
+    mj_data = data.song_data
     mj_valence = mj_data.filter(items=["valence", "name"])
     mj_json = json.loads(mj_valence.to_json(orient="records"))
     print(mj_json)
