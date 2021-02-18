@@ -7,13 +7,39 @@
 </script>
 
 <link href="../static/css/tooltip.css" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="../static/js/tooltip.js"></script>
 
 <H2 class="mt-3">Spotify Song Info</H2>
 
-{{ song_data['name']['0'] }}
+<!-- <ul>
+	{#{% for index in song_data %}
+	<li>{{ song_data[index] }}</li>
+	{% endfor %}#}
+</ul> -->
+
 <div class="mt-3" id="barchart">
 </div>
-<link rel="stylesheet" type="text/css" href="../static/css/barchart.css">
+
+<script type="text/javascript" src="../static/js/spotifychart.js"></script>
+<script type="text/javascript" charset="utf-8">
+	var x_variables = {{ names | safe }};
+	var song_data;
+
+	var width = 1500;
+	var height = 700;
+	var chart_height = 400,
+		chart_width = 1300;
+
+	var svgContainer = d3.select("#barchart").append("svg")
+					.attr("height", height)
+					.attr("width", width);
+
+	var y = d3.scaleLinear().rangeRound([chart_height, 0]),
+		x = d3.scaleBand().rangeRound([0, chart_width]);
+
+	y.domain([0, 1]);
+	x.domain(x_variables);
+
+	updatePlot();
+</script>
 
 {% endblock %}

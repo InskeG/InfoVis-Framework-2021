@@ -16,17 +16,17 @@ def index():
 
 @main.route('/d3', methods = ['GET'])
 def d3():
-    plot_data = data.song_datas
-    plot_head = plot_data.head(1)
-    plot_head = json.loads(plot_head.to_json())
-    print(plot_head["name"])
+    mj_data = data.mj_songs
+    mj_json = json.loads(mj_data.to_json(orient="index"))
+    names = json.loads(data.song_names.to_json(orient="values"))
 
-    return render_template("d3.html", song_data=plot_head)
+    return render_template("d3.html", song_data=mj_json, names=names)
 
 
 @main.route('/d3_plot_data', methods = ['GET'])
 def d3_plot_data():
-    plot_data = data.song_datas
-    plot_head = plot_data.head(20)
-    plot_head = plot_head.to_json()
-    return plot_head
+    mj_data = data.mj_songs
+    mj_valence = mj_data.filter(items=["valence", "name"])
+    mj_json = json.loads(mj_valence.to_json(orient="records"))
+    print(mj_json)
+    return jsonify(mj_json)
