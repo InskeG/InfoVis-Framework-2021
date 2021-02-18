@@ -1,16 +1,16 @@
 <template>
-	<header class="gridx">
-		<vs-navbar
+  <header class="gridx">
+    <vs-navbar
       v-model="indexActive"
-      :color="topbarColor"
+      v-bind:color="main_color"
       class="topnavbar" text-color="rgba(255,255,255,0.7)" active-text-color="rgba(255,255,255,1)"
-		>
+    >
       <!---
       Template logo
       -->
       <div slot="title" class="themelogo">
-				<img :src="logo" v-if="logo" alt="Dashboard"/>
-				<span class="logo-text" v-if="title">{{ title }}</span>
+        <img :src="logo" v-if="logo" alt="Dashboard"/>
+        <span class="logo-text" v-if="title">{{ title }}</span>
       </div>
       <!---
       Mobile toggle
@@ -18,7 +18,6 @@
       <div slot="title">
         <div class="hiddenDesktop cursor-pointer" @click.stop="activeSidebar"><vs-icon icon="menu"></vs-icon></div>
       </div>
-
 
       <vs-spacer></vs-spacer>
 
@@ -45,37 +44,34 @@
       </vs-dropdown>
     </vs-navbar>
 
-	</header>
+  </header>
 
 </template>
 
 <script>
 export default {
-	name : 'Navbar',
+  name : 'Navbar',
   props: {
-      topbarColor: {
+    main_color: {
+      type: String,
+    },
+    title: {
           type: String,
-          default: "#2962ff",
-      },
-      title: {
-            type: String,
-      },
-      logo: {
-          type: String
-      },
+    },
+    logo: {
+        type: String
+    },
   },
   data:()=>({
     indexActive: 0,
     showToggle: false
-
   }),
 
   methods: {
-      //This is for sidebar trigger in mobile
-      activeSidebar() {
-          this.$store.commit('IS_SIDEBAR_ACTIVE', true);
-      }
-
+    //This is for sidebar trigger in mobile
+    activeSidebar() {
+        this.$store.commit('IS_SIDEBAR_ACTIVE', true);
+    }
   }
 }
 </script>
