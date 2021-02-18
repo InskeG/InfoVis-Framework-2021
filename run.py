@@ -23,4 +23,4 @@ app = create_app(config_name)
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
 if __name__ == '__main__':
-    socketio.run(app)
+    socketio.run(app, debug=True)

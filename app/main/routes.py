@@ -30,3 +30,11 @@ def d3_plot_data():
     mj_json = json.loads(mj_valence.to_json(orient="records"))
     print(mj_json)
     return jsonify(mj_json)
+
+@main.route('/metrics', methods=['GET'])
+def metrics():
+	return render_template("metrics.html")
+
+@main.route('/popularity', methods=['GET'])
+def popularity():
+	return render_template("popularity.html")
