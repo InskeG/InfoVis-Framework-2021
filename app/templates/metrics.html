@@ -26,12 +26,33 @@
 
 
 <!-- Begin page content -->
-    <h2 class="mt-3">Metrics plot</h2>
 
+<div class = "content_metrics", style="padding-left:100px">
+	<h2 class="mt-3">Metrics plot</h2>
+	<div class = "content_metrics_plot" id="heatmap">
+
+
+	</div>
+</div>
 
 
 <!-- End page content-->
+<script type="text/javascript" src="../static/js/heatmap.js"></script>
+<script type="text/javascript">
+	var data = {{ heatmap_data | safe }};
 
+	var margin = {top: 40, right: 25, bottom: 30, left: 120},
+	  width = 750 - margin.left - margin.right
+	  height = 700 - margin.top - margin.bottom
+
+	var svg = d3.select("#heatmap").append("svg")
+					  .attr("height", height + margin.top + margin.bottom)
+					  .attr("width", width + margin.left + margin.right)
+					.append("g")
+					  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+	createPlot();
+</script>
 
 
 {% endblock %}

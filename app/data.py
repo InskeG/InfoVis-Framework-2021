@@ -9,9 +9,13 @@ filter_home_page = ["popularity", "artists"]
 home_data = data.filter(items=filter_home_page)
 home_data = home_data.sort_values("popularity", 0, False).head(10)
 
-print(dict(zip(home_data["artists"], home_data["popularity"])))
-
-filter_columns = ["valence", "instrumentalness", "acousticness", "danceability",
-                  "energy", "liveness", "loudness", "mode", "artists"]
-song_data = data.filter(items=filter_columns)
-song_head = song_data.head(20)
+filter_columns = ["artists", "acousticness", "danceability", "energy",
+                  "instrumentalness", "liveness", "loudness", "speechiness", "tempo",
+				  "valence", "popularity", "count"]
+heatmap_data = data[data["count"]>9].sort_values("popularity", ascending=False).filter(
+	items=filter_columns).drop(["count", "popularity"], 1)
+heatmap_data["loudness_01"] = (heatmap_data["loudness"] - min(heatmap_data["loudness"]))/(
+		max(heatmap_data["loudness"])-min(heatmap_data["loudness"]))
+heatmap_data["tempo_01"] = (heatmap_data["tempo"] - min(heatmap_data["tempo"]))/(
+		max(heatmap_data["tempo"])-min(heatmap_data["tempo"]))
+heatmap_head = heatmap_data.head(10)
