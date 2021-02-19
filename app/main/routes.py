@@ -38,12 +38,15 @@ def d3_plot_data():
 @main.route('/metrics', methods=['GET'])
 def metrics():
     heatmap_data = data.heatmap_head
-    #heatmap_data["loudness"] = heatmap_data["loudness_01"]
-    #heatmap_data["tempo"] = heatmap_data["tempo_01"]
-    heatmap_data = heatmap_data.drop(["loudness", "tempo"], 1)
+    heatmap_data["loudness"] = heatmap_data["loudness_01"]
+    heatmap_data["tempo"] = heatmap_data["tempo_01"]
+    heatmap_data = heatmap_data.drop(["loudness_01", "tempo_01"], 1)
     heatmap_data = pd.melt(heatmap_data, id_vars=["artists"], var_name=["characteristic"])
 
-    return render_template("metrics.html", heatmap_data=heatmap_data.to_dict(orient='records'))
+    heatmap_colors = data.heatmap_colors
+
+    return render_template("metrics.html", heatmap_data=heatmap_data.to_dict(orient='records'),
+                           heatmap_colors = heatmap_colors.to_dict(orient='records'))
 
 @main.route('/popularity', methods=['GET'])
 def popularity():

@@ -19,3 +19,6 @@ heatmap_data["loudness_01"] = (heatmap_data["loudness"] - min(heatmap_data["loud
 heatmap_data["tempo_01"] = (heatmap_data["tempo"] - min(heatmap_data["tempo"]))/(
 		max(heatmap_data["tempo"])-min(heatmap_data["tempo"]))
 heatmap_head = heatmap_data.head(10)
+#heatmap_head = heatmap_data.sample(frac=1).head(10)
+
+heatmap_colors = pd.read_csv("app/data/heatmap_colors.csv")

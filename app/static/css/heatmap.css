@@ -1,0 +1,29 @@
+.heatmap_x_axis {
+    color: #fff;
+    font-size: 10px;
+}
+
+.heatmap_y_axis {
+    color: #fff;
+    font-size: 12px;
+}
+
+.heatmap_rect {
+    stroke-width: 4px;
+    stroke: none;
+    opacity:0.8;
+}
+
+.heatmap_rect:hover {
+    stroke-width:2px;
+    stroke: #fff;
+}
+
+.tooltip {
+    background-color: #fff;
+    border: solid;
+    border-width: 2px;
+    border-radius: 5px;
+    padding: 5px;
+}
+
