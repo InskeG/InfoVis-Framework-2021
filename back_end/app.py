@@ -49,7 +49,7 @@ def index(genre, year):
 
     # Load a placeholder image.
     # TODO: Obtain a generated image here.
-    path = os.path.join(os.path.dirname(__file__), "img1.jpg")
+    path = os.path.join(os.path.dirname(__file__), "img2.jpg")
     image = Image.open(path)
 
     # Encode the image for the response.
