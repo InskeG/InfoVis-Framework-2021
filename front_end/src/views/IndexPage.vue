@@ -91,6 +91,12 @@ export default {
     main_color: {
       type: String,
     },
+    dominant_colors: {
+      type: Array,
+    },
+    logo: {
+        type: String
+    },
   },
   data() {
     return {
@@ -120,3 +126,4 @@ export default {
 }
 
 </script>
+
