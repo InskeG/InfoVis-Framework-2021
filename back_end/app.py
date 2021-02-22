@@ -13,6 +13,7 @@ from PIL import Image
 
 from retrieve_info import retrieve_info
 
+nr_color = 3
 NUM_CLUSTERS = 5
 RESIZE = 150
 
@@ -33,13 +34,20 @@ def detect_colors(image):
     counts, bins = scipy.histogram(vecs, len(codes))
 
     # Find the most prominent color.
-    index_max = scipy.argmax(counts)
-    peak = codes[index_max]
+    maxi = counts.argsort()[-nr_color:][::-1]
+    # index_max = scipy.argmax(counts)
+    # peak = codes[index_max]
+    peaks = [codes[i] for i in maxi]
 
     # Convert the color to hex representation.
-    color = binascii.hexlify(bytearray(int(c) for c in peak)).decode('ascii')
+    # color = binascii.hexlify(bytearray(int(c) for c in peak)).decode('ascii')
+    colors = []
+    for peak in peaks:
+        colors.append(f"#{binascii.hexlify(bytearray(int(c) for c in peak)).decode('ascii')}")
+        # colors.append(binascii.hexlify(bytearray(int(c) for c in peak)).decode('ascii'))
 
-    return f"#{color}"
+    # return f"#{color}"
+    return colors
 
 
 @app.route('/info/<genre>/<year>', methods=['GET'])
@@ -59,8 +67,9 @@ def index(genre, year):
     info['image'] = f"data:image/png;base64, {encoded_img}"
 
     # Get the primary color of the image.
-    color = detect_colors(image)
-    info['color'] = color
+    colors = detect_colors(image)
+    info['dominant_colors'] = colors
+    info['color'] = colors[0]
 
 
     json_info = jsonify(info)
