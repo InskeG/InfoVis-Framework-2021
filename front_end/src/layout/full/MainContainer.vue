@@ -3,7 +3,7 @@
     <!---Navigation-->
     <Navbar
       v-bind:main_color="main_color"
-      :logo="require('@/assets/images/logo/logo-light-icon.png')"
+      :logo="require('@/assets/images/logo/paint_brush.png')"
       :title="logotitle"
     />
     <!---Sidebar-->
@@ -30,7 +30,7 @@ export default {
   },
   data:() => ({
     main_color: "#2962ff",
-    logotitle: "Onze Supertoffe Website",
+    logotitle: "ARTificial Intelligence",
     sidebarLinks: sidebarLinks,
   }),
   methods: {
