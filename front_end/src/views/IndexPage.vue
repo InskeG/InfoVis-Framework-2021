@@ -38,6 +38,24 @@
           </div>
         </vs-card>
       </vs-col>
+
+        <vs-card class="cardx" v-if="fetched">
+          <div slot="header"><h3>Dominant colors</h3></div>
+          <div>
+
+          
+          
+
+
+
+            {{ data.dominant_colors }}
+
+           
+          </div>
+          
+        </vs-card>
+      
+
     </vs-row>
 
     <vs-row type="flex" vs-justify="center" vs-align="center" vs-w="12">
@@ -82,6 +100,12 @@ export default {
     main_color: {
       type: String,
     },
+    dominant_colors: {
+      type: Array,
+    },
+    logo: {
+        type: String
+    },
   },
   data() {
     return {
@@ -111,3 +135,4 @@ export default {
 }
 
 </script>
+
