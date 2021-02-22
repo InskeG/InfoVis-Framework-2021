@@ -100,7 +100,7 @@ export default {
           this.data = data;
           this.fetched = true;
           this.$vs.loading.close()
-          this.$parent.set_main_color('#aa8833');
+          this.$parent.set_main_color(data.color);
         }
       );
     }

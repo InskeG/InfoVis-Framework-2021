@@ -13,3 +13,6 @@ public/
 .deploy*/
 src/_drafts
 package-lock.json
+
+*.swp
+*.swo
