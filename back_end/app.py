@@ -4,7 +4,6 @@ import os
 import scipy
 import scipy.misc
 import scipy.cluster
-import struct
 
 from base64 import encodebytes
 from io import BytesIO
@@ -22,21 +21,23 @@ CORS(app)
 
 
 def detect_colors(image):
-    image = image.resize((RESIZE, RESIZE))      # optional, to reduce time
+    image = image.resize((RESIZE, RESIZE))
+
     array = np.asarray(image)
     shape = array.shape
     array = array.reshape(scipy.product(shape[:2]), shape[2]).astype(float)
 
     codes, dist = scipy.cluster.vq.kmeans(array, NUM_CLUSTERS)
-    print('cluster centres:\n', codes)
 
-    vecs, dist = scipy.cluster.vq.vq(array, codes)         # assign codes
-    counts, bins = scipy.histogram(vecs, len(codes))    # count occurrences
+    vecs, dist = scipy.cluster.vq.vq(array, codes)
+    counts, bins = scipy.histogram(vecs, len(codes))
 
-    index_max = scipy.argmax(counts)                    # find most frequent
+    # Find the most prominent color.
+    index_max = scipy.argmax(counts)
     peak = codes[index_max]
+
+    # Convert the color to hex representation.
     color = binascii.hexlify(bytearray(int(c) for c in peak)).decode('ascii')
-    print('most frequent is %s (#%s)' % (peak, color))
 
     return f"#{color}"
 
@@ -46,24 +47,22 @@ def index(genre, year):
     # info = retrieve_info(genre, year)
     info = {}
 
+    # Load a placeholder image.
+    # TODO: Obtain a generated image here.
     path = os.path.join(os.path.dirname(__file__), "img1.jpg")
     image = Image.open(path)
-    color = detect_colors(image)
 
+    # Encode the image for the response.
     img_stream = BytesIO()
     image.save(img_stream, format="png")
     encoded_img = encodebytes(img_stream.getvalue()).decode('ascii')
     info['image'] = f"data:image/png;base64, {encoded_img}"
+
+    # Get the primary color of the image.
+    color = detect_colors(image)
     info['color'] = color
 
+
     json_info = jsonify(info)
-    '''
-    json_info = jsonify({
-        'genre': genre,
-        'year': year
-        'summary': summary,
-        'related_terms': terms,
-    })
-    '''
 
     return json_info
