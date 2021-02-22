@@ -29,7 +29,7 @@ export default {
     SideBar
   },
   data:() => ({
-    main_color: "#2962ff",
+    main_color: "#003380",
     logotitle: "ARTificial Intelligence",
     sidebarLinks: sidebarLinks,
   }),

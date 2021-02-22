@@ -28,6 +28,13 @@
             Een ware inspiratie voor iedere liefhebber van geleedpotigen.
           </div>
         </vs-card>
+
+         <vs-card class="cardx" v-if="fetched">
+          <div slot="header"><h3>Dominant Colors</h3></div>
+          <div>
+            {{ data.dominant_colors }}
+          </div>
+        </vs-card>
       </vs-col>
 
       <vs-col type="flex" vs-justify="center" vs-align="center" vs-w="6">
@@ -38,6 +45,8 @@
           </div>
         </vs-card>
       </vs-col>
+
+
     </vs-row>
 
     <vs-row type="flex" vs-justify="center" vs-align="center" vs-w="12">
@@ -102,7 +111,7 @@ export default {
           console.log(data);
           this.fetched = true;
           this.$vs.loading.close()
-          this.$parent.set_main_color(data.color);
+          this.$parent.set_main_color(data.dominant_colors[0]);
           this.image = data.image;
         }
       );
