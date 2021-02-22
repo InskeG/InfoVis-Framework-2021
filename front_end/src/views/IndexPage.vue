@@ -3,7 +3,7 @@
     <vs-row type="flex" vs-justify="center" vs-align="center">
       <vs-card class="cardx" v-if="fetched" fixedHeight vs-w="12">
         <div slot="media">
-          <img src="@/assets/images/big/img1.jpg">
+          <img v-bind:src="data.image">
         </div>
       </vs-card>
     </vs-row>
@@ -86,6 +86,7 @@ export default {
   data() {
     return {
       fetched: false,
+      image: "@/assets/images/big/img1.jpg",
     }
   },
   components: {
@@ -98,9 +99,11 @@ export default {
         .then(response => response.json())
         .then(data => {
           this.data = data;
+          console.log(data);
           this.fetched = true;
           this.$vs.loading.close()
           this.$parent.set_main_color(data.color);
+          this.image = data.image;
         }
       );
     }

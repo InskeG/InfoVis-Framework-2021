@@ -6,11 +6,13 @@ import scipy.misc
 import scipy.cluster
 import struct
 
+from base64 import encodebytes
+from io import BytesIO
 from flask import Flask, jsonify
 from flask_cors import CORS
 from PIL import Image
 
-from retrieve_info import retrieve_info
+# from retrieve_info import retrieve_info
 
 NUM_CLUSTERS = 5
 RESIZE = 150
@@ -20,7 +22,6 @@ CORS(app)
 
 
 def detect_colors(image):
-
     image = image.resize((RESIZE, RESIZE))      # optional, to reduce time
     array = np.asarray(image)
     shape = array.shape
@@ -42,13 +43,18 @@ def detect_colors(image):
 
 @app.route('/info/<genre>/<year>', methods=['GET'])
 def index(genre, year):
-    info = retrieve_info(genre, year)
+    # info = retrieve_info(genre, year)
+    info = {}
 
     path = os.path.join(os.path.dirname(__file__), "img1.jpg")
     image = Image.open(path)
     color = detect_colors(image)
+
+    img_stream = BytesIO()
+    image.save(img_stream, format="png")
+    encoded_img = encodebytes(img_stream.getvalue()).decode('ascii')
+    info['image'] = f"data:image/png;base64, {encoded_img}"
     info['color'] = color
-    print(info)
 
     json_info = jsonify(info)
     '''
