@@ -11,7 +11,7 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 from PIL import Image
 
-# from retrieve_info import retrieve_info
+from retrieve_info import retrieve_info
 
 NUM_CLUSTERS = 5
 RESIZE = 150
@@ -44,8 +44,8 @@ def detect_colors(image):
 
 @app.route('/info/<genre>/<year>', methods=['GET'])
 def index(genre, year):
-    # info = retrieve_info(genre, year)
-    info = {}
+    info = retrieve_info(genre, year)
+    # info = {}
 
     # Load a placeholder image.
     # TODO: Obtain a generated image here.
