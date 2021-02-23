@@ -14,7 +14,7 @@ from PIL import Image
 from retrieve_info import retrieve_info
 
 nr_color = 3
-NUM_CLUSTERS = 5
+NUM_CLUSTERS = 4
 RESIZE = 150
 
 app = Flask(__name__)
@@ -74,7 +74,7 @@ def index(genre, year):
 
     # Load a placeholder image.
     # TODO: Obtain a generated image here.
-    path = os.path.join(os.path.dirname(__file__), "img1.jpg")
+    path = os.path.join(os.path.dirname(__file__), "img2.jpg")
     image = Image.open(path)
 
     # Encode the image for the response.
