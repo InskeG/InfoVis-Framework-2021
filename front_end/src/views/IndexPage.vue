@@ -1,3 +1,5 @@
+
+
 <template>
   <vs-root>
     <vs-row type="flex" vs-justify="center" vs-align="center">
@@ -32,7 +34,15 @@
          <vs-card class="cardx" v-if="fetched">
           <div slot="header"><h3>Dominant Colors</h3></div>
           <div>
-            {{ data.dominant_colors }}
+            <div id="app">
+            <pie-chart :data="chartData" :options="chartOptions"></pie-chart>
+          </div>
+
+            <div id="my_dataviz"></div>
+
+          
+
+
           </div>
         </vs-card>
       </vs-col>
@@ -83,16 +93,19 @@
   </vs-root>
 </template>
 
+
+
 <script>
+
+
+import PieChart from "./PieChart.js";
+
 
 export default {
   name: 'Index',
   props: {
     main_color: {
       type: String,
-    },
-    dominant_colors: {
-      type: Array,
     },
     logo: {
         type: String
@@ -101,12 +114,29 @@ export default {
   data() {
     return {
       fetched: false,
-      image: "@/assets/images/big/img1.jpg",
+      image: "@/assets/images/big/img2.jpg",
+      chartOptions: {
+        hoverBorderWidth: 20
+      },
+      chartData: {
+        hoverBackgroundColor: "blue",
+        hoverBorderWidth: 10,
+        labels: [ "#e5856d", "#5e2812", "#e56b18", "#f6bab7", "#973f28" ],
+        datasets: [
+          {
+            label: "Data One",
+            backgroundColor: [ "#e5856d", "#5e2812", "#e56b18", "#f6bab7", "#973f28" ],
+            data: [ 0.27, 0.13764444444444446, 0.15853333333333333, 0.2235111111111111, 0.21031111111111112 ]
+          }
+        ]
+      }
     }
   },
   components: {
+    PieChart
   },
   methods: {
+    
     async get_info(genre) {
       this.$vs.loading();
 
@@ -114,16 +144,28 @@ export default {
         .then(response => response.json())
         .then(data => {
           this.data = data;
-          console.log(data);
           this.fetched = true;
-          this.$vs.loading.close()
-          this.$parent.set_main_color(data.dominant_colors[0]);
+          this.$vs.loading.close();
+          this.$parent.set_main_color(data.dom_color);
           this.image = data.image;
+          this.chartData.labels = data.colors;
+          this.chartData.datasets = [
+              {
+              label: "Data One",
+              backgroundColor: data.colors,
+              data: data.percentages
+            }
+          ]
+
         }
       );
     }
+    
   }
 }
 
 </script>
+
+
+
 
