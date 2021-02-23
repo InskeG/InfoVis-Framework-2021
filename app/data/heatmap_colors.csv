@@ -1,0 +1,10 @@
+characteristic,color_min,color_max
+acousticness,#F9E3F8,#781A74
+danceability,#E9E2FA,#3D1A96
+energy,#E2F0FA,#175787
+instrumentalness,#E2FAF6,#136F60
+liveness,#E2FAE3,#16801B
+loudness,#F2F9E3,#6E911F
+speechiness,#FAF5E2,#9A7F1A
+tempo,#FCEADC,#BC5E10
+valence,#F9E3E3,#B72727

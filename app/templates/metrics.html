@@ -28,10 +28,44 @@
 <!-- Begin page content -->
     <h2 class="mt-3">Metrics plot</h2>
 
+	<div class = "content_2">
+		<div class = "content_2_plot" id="barchart">
 
+
+		</div>
+	</div>
 
 <!-- End page content-->
+<script type="text/javascript" src="../static/js/metricschart.js"></script>
+<script type="text/javascript">
+	var song_data = {{ song_data | safe }};
+	var y_variables = {{ artists | safe }};
+	var x_variables = {{ keys | safe}};
 
+	var width = 1300;
+	var height = 1300;
+	var chart_height = 1100,
+		chart_width = 900,
+		mini_chart_height = chart_height / y_variables.length,
+		mini_chart_width = chart_width / x_variables.length;
+	console.log(mini_chart_height);
+
+	var svgContainer = d3.select("#barchart").append("svg")
+					.attr("height", height)
+					.attr("width", width);
+
+	var x_1 = d3.scaleBand().rangeRound([0, chart_width]),
+	    x_2 = d3.scaleBand().rangeRound([0, mini_chart_width]),
+		y_1 = d3.scaleBand().rangeRound([chart_height, 0]),
+	    y_2 = d3.scaleLinear().rangeRound([mini_chart_height, 0]);
+
+	x_1.domain(x_variables);
+	x_2.domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+	y_1.domain(y_variables);
+	y_2.domain([-100, 100]);
+
+	createPlot();
+</script>
 
 
 {% endblock %}
