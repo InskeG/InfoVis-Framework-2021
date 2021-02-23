@@ -1,12 +1,10 @@
 .main-container-fluid {
 	padding: 90px 15px 40px 15px;
-
 }
 
 @include media-breakpoint-up(lg) {
 	.main-container-fluid {
-		margin-left: 520px;
-		margin-right: 520px;
-		// background-color: coral;
+		margin-left: 15%;
+		margin-right: 15%;
 	}
 }

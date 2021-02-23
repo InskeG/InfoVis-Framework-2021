@@ -9,7 +9,7 @@
     <!---Sidebar-->
     <SideBar parent=".main-wrapper" :sidebarLinks="sidebarLinks"/>
     <!---Page Container-->
-    <div class="main-container-fluid">
+    <div v-bind:main_color="main_color" class="main-container-fluid">
 
     <router-view v-bind:main_color="main_color"></router-view>
 
@@ -29,7 +29,7 @@ export default {
     SideBar
   },
   data:() => ({
-    main_color: "#003380",
+    main_color: "#061765",
     logotitle: "ARTificial Intelligence",
     sidebarLinks: sidebarLinks,
   }),
