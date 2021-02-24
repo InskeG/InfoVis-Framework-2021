@@ -17,8 +17,10 @@ filter_columns = ["valence", "acousticness", "danceability",
 # metrics_artists = pd.Series(["Michael Jackson", "Lady Gaga", "Ladytron"])
 song_data = data.explode("artists")
 # song_data = song_data.query("artists in @metrics_artists")
-metrics_artists = song_data.groupby("artists").filter(lambda x: len(x) == 10).sample(4  )["artists"]
+metrics_artists = song_data.groupby("artists").filter(lambda x: len(x) == 10).sample(4)["artists"]
 # metrics_artists = pd.Series(song_data["artists"].unique())
 metrics_data = song_data.query("artists in @metrics_artists").groupby("artists")
 metrics_data = {x[0] : x[1].filter(items=filter_columns).to_dict("records") for x in metrics_data}
 # print(metrics_data)
+
+heatmap_colors = pd.read_csv("app/data/heatmap_colors.csv")

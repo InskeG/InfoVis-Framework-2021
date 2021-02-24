@@ -1,4 +1,17 @@
-function addAxes(translation, id, chart_group, artist) {
+function myColor(c, v) {
+    var color_names = d3.map(colors, function(d){return d.characteristic;}).keys();
+
+    color_min = colors[c].color_min;
+    color_max = colors[c].color_max;
+
+    var returned_color = d3.scaleLinear()
+        .range([color_min, color_max])
+        .domain([0,1]);
+
+    return returned_color(v);
+}
+
+function addAxes(translation, id, chart_group, artist, colors) {
 
     var mini_artist_group = chart_group.append("g")
         .attr("id", "mini_artist_group" + id)
@@ -30,8 +43,6 @@ function addAxes(translation, id, chart_group, artist) {
             .call(d3.axisLeft(y_2).ticks([]));
 
         var attr = x_variables[key_attr];
-        console.log(attr);
-        console.log(x_2("1"));
 
         mini_chart_group.append("g")
         .attr("transform", "translate(" + 0 + "," + mini_chart_height / 2 + ")")
@@ -41,11 +52,11 @@ function addAxes(translation, id, chart_group, artist) {
         .data(map.entries())
         .enter()
         .append("rect")
-        .attr("class", "bar")
         .attr("x", function (d) { return x_2(d.key)})
         .attr("y", function (d) { return y_2(d.value[attr] * 100)  })
         .attr("width", x_2.bandwidth() - 5)
-        .attr("height", function(d) { return (mini_chart_height / 2 - y_2(d.value[attr] * 100)) * 2; });
+        .attr("height", function(d) { return (mini_chart_height / 2 - y_2(d.value[attr] * 100)) * 2; })
+        .style("fill", function(d) { return myColor(attr, d.value[attr])} );
 
         j += 1;
     }

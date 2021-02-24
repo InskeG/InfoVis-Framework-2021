@@ -41,12 +41,15 @@ def metrics():
     metrics_data = data.metrics_data
     keys = data.filter_columns
     artists = data.metrics_artists
+    colors = data.heatmap_colors
     # negatived = [{k:(v * -1) for (k, v) in x.items()} for x in records]
     # records = [[x, y] for x,y in zip(records, negatived)]
     # print(records)
-    artists = json.loads(artists.to_json(orient="values"))
+    artists = json.loads(artists.to_json(orient="records"))
+    colors = dict(zip(colors["characteristic"], colors.filter(items=["color_min", "color_max"]).to_dict(orient="records")))
+    print(colors)
 
-    return render_template("metrics.html", song_data=metrics_data, artists=artists, keys=keys)
+    return render_template("metrics.html", song_data=metrics_data, artists=artists, keys=keys, colors=colors)
 
 @main.route('/popularity', methods=['GET'])
 def popularity():
