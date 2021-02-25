@@ -4,6 +4,7 @@ import os
 import scipy
 import scipy.misc
 import scipy.cluster
+import time
 
 from base64 import encodebytes
 from io import BytesIO
@@ -19,7 +20,7 @@ NUM_CLUSTERS = 4
 RESIZE = 150
 
 app = Flask(__name__)
-# CORS(app)
+CORS(app)
 socketio = SocketIO(app, cors_allowed_origins='*')
 
 
@@ -78,20 +79,40 @@ def index(genre, year):
     info['percentages'] = percentages
     info['dom_color'] = dom_color
 
-
     json_info = jsonify(info)
 
     return json_info
 
 
 @socketio.event
-def request_genre(genre, year):
-    print(f"Retrieving {genre} {year}")
+def collect_info(data):
+    # Load a placeholder image.
+    # TODO: Obtain a generated image here.
+    path = os.path.join(os.path.dirname(__file__), "img2.jpg")
+    image = Image.open(path)
+
+    # Encode the image for the response.
+    img_stream = BytesIO()
+    image.save(img_stream, format="png")
+    encoded_img = encodebytes(img_stream.getvalue()).decode('ascii')
+
+    socketio.emit("set_image", {
+        "generated": f"data:image/png;base64, {encoded_img}",
+    })
+
+    # Get the primary color of the image.
+    colors, percentages, dom_color = detect_colors(image)
+    socketio.emit("set_color_pie", {
+        "colors": colors,
+        "percentages": percentages,
+    })
+
+    socketio.emit("change_color", dom_color)
 
 
 @socketio.on('connect')
 def test_connect():
-    print("hallo")
+    print("Connected")
 
 
 if __name__ == "__main__":

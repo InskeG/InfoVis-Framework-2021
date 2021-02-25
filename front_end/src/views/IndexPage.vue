@@ -1,18 +1,18 @@
 
 
 <template>
-  <vs-root>
+  <div>
     <vs-row type="flex" vs-justify="center" vs-align="center">
-      <vs-card class="cardx" v-if="fetched" fixedHeight vs-w="12">
+      <vs-card class="cardx" v-if="fetched.img_generated" fixedHeight vs-w="12">
         <div slot="media">
-          <img v-bind:src="data.image">
+          <img v-bind:src="image">
         </div>
       </vs-card>
     </vs-row>
 
     <vs-row vs-justify="center">
       <vs-col type="flex" vs-justify="center" vs-align="center" vs-w="6">
-        <vs-card class="cardx" v-if="fetched">
+        <vs-card class="cardx" v-if="fetched.statistics">
           <div slot="header"><h3>Interessante data</h3></div>
           <div>
             alskjhd lksjh sfajkh asjfh lkasfh
@@ -22,7 +22,7 @@
             alskjhd lksjh sfajkh asjfh lkasfh
           </div>
         </vs-card>
-        <vs-card class="cardx" v-if="fetched">
+        <vs-card class="cardx" v-if="fetched.more_statistics">
           <div slot="header"><h3>Meer statistieken</h3></div>
           <div>
             alskjhd lksjh sfajkh asjfh lkasfh
@@ -31,7 +31,7 @@
           </div>
         </vs-card>
 
-         <vs-card class="cardx" v-if="fetched">
+         <vs-card class="cardx" v-if="fetched.col_generated">
           <div slot="header"><h3>Dominant Colors</h3></div>
           <div>
             <div id="app">
@@ -40,7 +40,7 @@
 
             <div id="my_dataviz"></div>
 
-          
+
 
 
           </div>
@@ -48,7 +48,7 @@
       </vs-col>
 
       <vs-col type="flex" vs-justify="center" vs-align="center" vs-w="6">
-        <vs-card class="cardx" v-if="fetched">
+        <vs-card class="cardx" v-if="fetched.summary">
           <div slot="header"><h3>{{ data.genre }} on Wikipedia</h3></div>
           <div>
             {{ data.summary }}
@@ -90,16 +90,13 @@
         </div>
       </vs-card>
     </vs-row>
-  </vs-root>
+  </div>
 </template>
 
 
 
 <script>
-
-
 import PieChart from "./PieChart.js";
-
 
 export default {
   name: 'Index',
@@ -111,9 +108,15 @@ export default {
         type: String
     },
   },
-  data() {
+  data: () => {
     return {
-      fetched: false,
+      fetched: {
+        img_generated: false,
+        col_generated: false,
+        summary: false,
+        statistics: false,
+        more_statistics: false,
+      },
       image: "@/assets/images/big/img2.jpg",
       chartOptions: {
         hoverBorderWidth: 20
@@ -136,10 +139,15 @@ export default {
     PieChart
   },
   methods: {
-    
     async get_info(genre) {
-      this.$vs.loading();
+      // this.$vs.loading();
 
+      this.$parent.socket.emit("collect_info", {
+        genre: genre,
+        year: 1993,
+      });
+
+      /*
       fetch("http://localhost:5000/info/" + genre + "/1993")
         .then(response => response.json())
         .then(data => {
@@ -149,23 +157,26 @@ export default {
           this.$parent.set_main_color(data.dom_color);
           this.image = data.image;
           this.chartData.labels = data.colors;
-          this.chartData.datasets = [
-              {
-              label: "Data One",
-              backgroundColor: data.colors,
-              data: data.percentages
-            }
-          ]
-
+          this.chartData.datasets = [{
+            label: "Data One",
+            backgroundColor: data.colors,
+            data: data.percentages,
+          }];
         }
       );
+      */
     }
-    
-  }
+  },
+  mounted: function() {
+    this.$parent.socket.on("set_image", (data) => {
+      this.image = data.generated;
+      this.fetched.img_generated = true;
+    });
+
+    this.$parent.socket.on("set_color_pie", (data) => {
+      window.console.log(data);
+      this.fetched.col_generated = true;
+    });
+  },
 }
-
 </script>
-
-
-
-
