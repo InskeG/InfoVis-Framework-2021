@@ -9,16 +9,18 @@ from base64 import encodebytes
 from io import BytesIO
 from flask import Flask, jsonify
 from flask_cors import CORS
+from flask_socketio import SocketIO
 from PIL import Image
 
-from retrieve_info import retrieve_info
+# from retrieve_info import retrieve_info
 
 nr_color = 3
 NUM_CLUSTERS = 4
 RESIZE = 150
 
 app = Flask(__name__)
-CORS(app)
+# CORS(app)
+socketio = SocketIO(app, cors_allowed_origins='*')
 
 
 def detect_colors(image):
@@ -34,43 +36,30 @@ def detect_colors(image):
     counts, bins = scipy.histogram(vecs, len(codes))
 
     total = np.sum(np.array(counts))
-    percentages = (counts/total)
-    # print(percentage)
-    # Find the most prominent color.
-    # maxi = counts.argsort()[-nr_color:][::-1]
-    # print(maxi)
-    # index_max = scipy.argmax(counts)
-    # peak = codes[index_max]
-    # peaks = [codes[i] for i in maxi]
+    percentages = (counts / total)
 
     color_list = []
     for code in codes:
-        color_list.append(f"#{binascii.hexlify(bytearray(int(c) for c in code)).decode('ascii')}")
+        hex_color = binascii.hexlify(bytearray(
+            int(c) for c in code
+        )).decode('ascii')
+        color_list.append(f"#{hex_color}")
 
-    # tups = list(zip(color_list, percentages))
-
-    dom_color = codes[scipy.argmax(counts)]
-    dom_color = f"#{binascii.hexlify(bytearray(int(c) for c in dom_color)).decode('ascii')}"
+    dom_code = codes[scipy.argmax(counts)]
+    dom_hex = binascii.hexlify(bytearray(
+        int(c) for c in dom_code
+    )).decode('ascii')
+    dom_color = f"#{dom_hex}"
 
     colors = color_list
 
     return list(colors), list(percentages), dom_color
 
 
-    # Convert the color to hex representation.
-    # color = binascii.hexlify(bytearray(int(c) for c in peak)).decode('ascii')
-    # colors = []
-    # for peak in peaks:
-    #     colors.append(f"#{binascii.hexlify(bytearray(int(c) for c in peak)).decode('ascii')}")
-        # colors.append(binascii.hexlify(bytearray(int(c) for c in peak)).decode('ascii'))
-
-    # return f"#{color}"
-
-
 @app.route('/info/<genre>/<year>', methods=['GET'])
 def index(genre, year):
-    info = retrieve_info(genre, year)
-    # info = {}
+    # info = retrieve_info(genre, year)
+    info = {}
 
     # Load a placeholder image.
     # TODO: Obtain a generated image here.
@@ -93,3 +82,17 @@ def index(genre, year):
     json_info = jsonify(info)
 
     return json_info
+
+
+@socketio.event
+def request_genre(genre, year):
+    print(f"Retrieving {genre} {year}")
+
+
+@socketio.on('connect')
+def test_connect():
+    print("hallo")
+
+
+if __name__ == "__main__":
+    socketio.run(app)

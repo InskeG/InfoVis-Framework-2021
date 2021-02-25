@@ -35,7 +35,7 @@ export default {
   }),
   methods: {
     set_main_color(color) {
-      console.log("Change color" + color);
+      // console.log("Change color" + color);
       this.main_color = color;
     }
   },
