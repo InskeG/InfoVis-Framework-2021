@@ -3,7 +3,7 @@
     <!---Navigation-->
     <Navbar
       v-bind:main_color="main_color"
-      :logo="require('@/assets/images/logo/paint_brush.png')"
+      :logo="require('@/assets/images/logo/logo-palette.png')"
       :title="logotitle"
     />
     <!---Sidebar-->
