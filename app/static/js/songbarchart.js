@@ -30,15 +30,25 @@ function addAxes(translation, id, chart_group, artist, colors) {
     var data = song_data[artist]
     var map = d3.map(data);
     var j = 0;
+    var line = d3.line();
     // Loop over all the attributes of songs
     for (var key_attr in x_variables) {
+        if ((id === 0) && (j !== 0)) {
+            var line_x = mini_chart_width * j + 30;
+            var points = [[line_x, 0], [line_x, chart_height]];
+            console.log(points);
+            chart_group.append("path")
+                       .attr("class", "vertline")
+                       .attr("d", line(points))
+                       .attr("stroke", "lightgrey");
+       }
         var mini_chart_group = mini_artist_group.append("g")
             .attr("id", "mini_chart_group" + id + j)
             .attr("transform", "translate(" + (mini_chart_width * j) + "," + 0 + ")");
 
         // Vertical bar inbetween the charts
-        mini_chart_group.append("g")
-            .call(d3.axisLeft(y_2).ticks([]));
+        // mini_chart_group.append("g")
+        //     .call(d3.axisLeft(y_2).ticks([]));
 
         var attr = x_variables[key_attr];
 
