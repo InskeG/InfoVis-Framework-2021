@@ -13,7 +13,7 @@ from . import main
 @main.route('/', methods=['GET'])
 def index():
     home_data = data.home_data
-    artists = data.artists
+    artists = data.top_artists
     song_data = dict(zip(artists, home_data))
     artists = json.loads(artists.to_json(orient="values"))
 
@@ -40,14 +40,13 @@ def index():
 def metrics():
     metrics_data = data.metrics_data
     keys = data.filter_columns
-    artists = data.metrics_artists
+    artists = data.top_artists
     colors = data.heatmap_colors
     # negatived = [{k:(v * -1) for (k, v) in x.items()} for x in records]
     # records = [[x, y] for x,y in zip(records, negatived)]
     # print(records)
     artists = json.loads(artists.to_json(orient="records"))
     colors = dict(zip(colors["characteristic"], colors.filter(items=["color_min", "color_max"]).to_dict(orient="records")))
-    print(colors)
 
     return render_template("metrics.html", song_data=metrics_data, artists=artists, keys=keys, colors=colors)
 

@@ -36,10 +36,15 @@
 	</div>
 
 <!-- End page content-->
-<script type="text/javascript" src="../static/js/metricschart.js"></script>
+<script type="text/javascript" src="../static/js/songbarchart.js"></script>
 <script type="text/javascript">
 	var song_data = {{ song_data | safe }};
 	var y_variables = {{ artists | safe }};
+	var y_to_i = {};
+	var i = 0;
+	for (var key in y_variables) {
+		y_to_i[y_variables[key]] = i++;
+	}
 	var x_variables = {{ keys | safe }};
 	var colors = {{ colors | safe }};
 
@@ -49,7 +54,6 @@
 		chart_width = 900,
 		mini_chart_height = chart_height / y_variables.length,
 		mini_chart_width = chart_width / x_variables.length;
-	console.log(mini_chart_height);
 
 	var svgContainer = d3.select("#barchart").append("svg")
 					.attr("height", height)
@@ -57,7 +61,7 @@
 
 	var x_1 = d3.scaleBand().rangeRound([0, chart_width]),
 	    x_2 = d3.scaleBand().rangeRound([0, mini_chart_width]),
-		y_1 = d3.scaleBand().rangeRound([chart_height, 0]),
+		y_1 = d3.scaleBand().rangeRound([0, chart_height]),
 	    y_2 = d3.scaleLinear().rangeRound([mini_chart_height, 0]);
 
 	x_1.domain(x_variables);
