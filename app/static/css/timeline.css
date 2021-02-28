@@ -1,0 +1,119 @@
+.timelines-chart {
+    text-align: center;
+    /* Cancel selection interaction */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.timelines-chart .axises line,
+.timelines-chart .axises path {
+    stroke: #808080;
+}
+
+.timelines-chart .axises .x-axis {
+    font: 12px sans-serif;
+}
+
+.timelines-chart .axises .x-grid line {
+    stroke: #D3D3D3;
+}
+
+.timelines-chart .axises .y-axis line,
+.timelines-chart .axises .y-axis path,
+.timelines-chart .axises .grp-axis line,
+.timelines-chart .axises .grp-axis path {
+    stroke: none;
+}
+
+.timelines-chart .axises .y-axis text,
+.timelines-chart .axises .grp-axis text {
+    fill: #2F4F4F;
+}
+
+.timelines-chart line.x-axis-date-marker {
+    stroke-width: 1;
+    stroke: #293cb7;
+    fill: none;
+}
+
+.timelines-chart .series-group {
+    fill-opacity: 0.6;
+    stroke: #808080;
+    stroke-opacity: 0.2;
+}
+
+.timelines-chart .series-segment {
+    stroke: none;
+}
+
+.timelines-chart .series-group, .timelines-chart .series-segment {
+    cursor: crosshair;
+}
+
+.timelines-chart .legend {
+    font-family: Sans-Serif, serif;
+}
+
+.timelines-chart .legend .legendText {
+    fill: #666;
+}
+
+.timelines-chart .reset-zoom-btn {
+    font-family: sans-serif;
+    fill: blue;
+    opacity: .6;
+    cursor: pointer;
+}
+
+.brusher .grid-background {
+    fill: lightgrey;
+}
+
+.brusher .axis path {
+    display: none;
+}
+
+.brusher .tick text {
+    text-anchor: middle;
+}
+
+.brusher .grid line, .brusher .grid path {
+    stroke: #fff;
+}
+
+.chart-zoom-selection, .brusher .brush .selection {
+    stroke: blue;
+    stroke-opacity: 0.6;
+    fill: blue;
+    fill-opacity: 0.3;
+    shape-rendering: crispEdges;
+}
+
+.chart-tooltip {
+    color: #eee;
+    background: rgba(0, 0, 140, 0.85);
+    padding: 5px;
+    border-radius: 3px;
+    font: 11px sans-serif;
+    z-index: 4000;
+}
+
+.chart-tooltip.group-tooltip {
+    font-size: 14px;
+}
+
+.chart-tooltip.line-tooltip {
+    font-size: 13px;
+}
+
+.chart-tooltip.group-tooltip, .chart-tooltip.line-tooltip {
+    font-weight: bold;
+}
+
+.chart-tooltip.segment-tooltip {
+    text-align: center;
+}
