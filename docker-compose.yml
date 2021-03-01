@@ -6,7 +6,7 @@ services:
         - FLASK_ENV=development
         - ENV_DOCKER_REGISTRY_HOST=localhost
         - ENV_DOCKER_REGISTRY_PORT=5000
-      build: ./InfoVis-Framework-2021
+      build: .
       # restart: always
       # network_mode: host
       ports: 
