@@ -5,15 +5,15 @@
 </template>
 
 <script>
-
-
 export default {
-  name: 'app',
+  name: 'App',
   components: {
   },
-  data:()=>({
-  }),
+  data: () => {
+    return {};
+  },
   methods: {
-  }
+
+  },
 }
 </script>

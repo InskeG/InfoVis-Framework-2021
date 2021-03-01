@@ -12,14 +12,14 @@
         <div>
           <SalesSummary/>
         </div>
-        
+
       </vs-card>
     </vs-col>
     <vs-col type="flex" vs-justify="center" vs-align="center" vs-sm="6" vs-lg="4" vs-xs="12">
       <vs-card class="cardx">
         <div slot="header">
           <h4>
-            Sales Income 
+            Sales Income
           </h4>
         </div>
         <div>
@@ -38,7 +38,7 @@
     </vs-col>
   </vs-row>
   <Blogs/>
-</div>  
+</div>
 </template>
 
 <script>
@@ -56,6 +56,6 @@ export default {
     TopProducts,
     States,
     Blogs
-  }
+  },
 }
 </script>
