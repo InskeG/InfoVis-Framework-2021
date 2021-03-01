@@ -56,9 +56,11 @@
 		font-weight: $font-weight-bold;
 	}
 
-	img{
+	img {
 		width: 42px;
 		height: 42px;
+		margin-right: 10px;
+		filter: invert(1);
 	}
 }
 
