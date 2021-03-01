@@ -107,13 +107,10 @@
 <script>
 import PieChart from "./PieChart.js";
 
-<<<<<<< HEAD
 
 import zingchartVue from 'zingchart-vue';
 
 
-=======
->>>>>>> 6f3d72da6d689fa8daaeab3f0430c1ade6ca1521
 export default {
   name: 'Index',
   props: {
@@ -166,14 +163,11 @@ export default {
     zingchart: zingchartVue
   },
   methods: {
-<<<<<<< HEAD
 
     handleNodeHighlight(e) {
       this.lastVisited = `Node: ${e.nodeindex} Value: ${e.value}`;
     },
     
-=======
->>>>>>> 6f3d72da6d689fa8daaeab3f0430c1ade6ca1521
     async get_info(genre) {
       // this.$vs.loading();
 
