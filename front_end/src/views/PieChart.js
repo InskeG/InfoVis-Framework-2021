@@ -1,4 +1,4 @@
-import { Doughnut, mixins } from "vue-chartjs";
+import { Doughnut } from "vue-chartjs";
 export default {
   extends: Doughnut,
   props: ["data", "options"],
