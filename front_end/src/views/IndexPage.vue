@@ -54,6 +54,15 @@
             {{ data.summary }}
           </div>
         </vs-card>
+
+        <vs-card class="cardx" v-if="fetched">
+          <div slot="header"><h3>Dominant colors artists use in art pieces over the years</h3></div>
+            
+            <zingchart ref="myChart" :data="line_chart_data" @node_mouseover="handleNodeHighlight"></zingchart> 
+            Last visted: {{lastVisited}}
+             
+
+        </vs-card>
       </vs-col>
 
 
@@ -101,6 +110,9 @@
 import PieChart from "./PieChart.js";
 
 
+import zingchartVue from 'zingchart-vue';
+
+
 export default {
   name: 'Index',
   props: {
@@ -118,6 +130,16 @@ export default {
       chartOptions: {
         hoverBorderWidth: 20
       },
+      line_chart_data: {
+        type: 'line',
+        series: [
+          {
+            values: [2,4,5,7,4,3,6,5]
+          }
+        ]
+
+      },
+      lastVisited: '',
       chartData: {
         hoverBackgroundColor: "blue",
         hoverBorderWidth: 10,
@@ -133,9 +155,14 @@ export default {
     }
   },
   components: {
-    PieChart
+    PieChart,
+    zingchart: zingchartVue
   },
   methods: {
+
+    handleNodeHighlight(e) {
+      this.lastVisited = `Node: ${e.nodeindex} Value: ${e.value}`;
+    },
     
     async get_info(genre) {
       this.$vs.loading();
