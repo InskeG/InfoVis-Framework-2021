@@ -57,10 +57,10 @@
 
         <vs-card class="cardx" v-if="fetched">
           <div slot="header"><h3>Dominant colors artists use in art pieces over the years</h3></div>
-            
-            <zingchart ref="myChart" :data="line_chart_data" @node_mouseover="handleNodeHighlight"></zingchart> 
+
+            <zingchart ref="myChart" :data="line_chart_data" @node_mouseover="handleNodeHighlight"></zingchart>
             Last visted: {{lastVisited}}
-             
+
 
         </vs-card>
       </vs-col>
@@ -106,8 +106,8 @@
 
 <script>
 import PieChart from "./PieChart.js";
-
-
+/*eslint no-unused-vars: 0*/
+import zingchart from 'zingchart';
 import zingchartVue from 'zingchart-vue';
 
 
@@ -167,7 +167,7 @@ export default {
     handleNodeHighlight(e) {
       this.lastVisited = `Node: ${e.nodeindex} Value: ${e.value}`;
     },
-    
+
     async get_info(genre) {
       // this.$vs.loading();
 
@@ -203,7 +203,7 @@ export default {
     });
 
     this.$parent.socket.on("set_color_pie", (data) => {
-      window.console.log(data);
+      console.log(data);
       this.fetched.col_generated = true;
     });
   },

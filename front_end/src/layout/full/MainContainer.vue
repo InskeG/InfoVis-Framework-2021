@@ -47,6 +47,7 @@ export default {
     this.socket = io("http://localhost:5000");
 
     this.socket.on("connect", () => {
+      console.log("Connected!");
     });
 
     this.socket.on("change_color", (color) => {
