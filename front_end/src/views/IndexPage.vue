@@ -63,7 +63,7 @@ from data import *;
 
 
       <vs-card class="cardx" v-if="fetched.artist_options">
-          <div slot="header"><h3>Dominant colors artists use in art pieces over the years</h3></div>
+          <div slot="header"><h3>Dominant colors in art pieces over the years for specific artists</h3></div>
 
 
         <form id="line_chart">
