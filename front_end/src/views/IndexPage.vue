@@ -1,4 +1,5 @@
 
+from data import *;
 
 <template>
   <div>
@@ -33,6 +34,7 @@
 
          <vs-card class="cardx" v-if="fetched.col_generated">
           <div slot="header"><h3>Dominant Colors</h3></div>
+          
           <div>
             <div id="app">
             <pie-chart :data="chartData" :options="chartOptions"></pie-chart>
@@ -55,15 +57,27 @@
           </div>
         </vs-card>
 
-        <vs-card class="cardx" v-if="fetched">
+
+
+      </vs-col>
+
+
+      <vs-card class="cardx" v-if="fetched.artist_options">
           <div slot="header"><h3>Dominant colors artists use in art pieces over the years</h3></div>
 
+
+        <form id="line_chart">
+            <select v-model="selected">
+            <option v-for="option in artist_options" v-bind:key="option"> {{ option }}</option>
+
+            </select>
+
+            </form>
+            
             <zingchart ref="myChart" :data="line_chart_data" @node_mouseover="handleNodeHighlight"></zingchart>
             Last visted: {{lastVisited}}
 
-
         </vs-card>
-      </vs-col>
 
 
     </vs-row>
@@ -105,10 +119,12 @@
 
 
 <script>
+
 import PieChart from "./PieChart.js";
 /*eslint no-unused-vars: 0*/
 import zingchart from 'zingchart';
 import zingchartVue from 'zingchart-vue';
+
 
 
 export default {
@@ -123,24 +139,31 @@ export default {
   },
   data: () => {
     return {
+      artist_options: [],
+      selected: 'airstream',
       fetched: {
         img_generated: false,
         col_generated: false,
         summary: false,
         statistics: false,
         more_statistics: false,
+        artist_options: false,
+        line_chart: false
       },
-      image: "@/assets/images/big/img2.jpg",
+      image: "@/assets/images/big/img1.jpg",
       chartOptions: {
         hoverBorderWidth: 20
       },
       line_chart_data: {
         type: 'line',
         series: [
-          {
-            values: [2,4,5,7,4,3,6,5]
-          }
-        ]
+        ],
+        legend: {
+          layout: "1x5", //row x column
+          x: "25%",
+          y: "2%",
+
+        }
 
       },
       lastVisited: '',
@@ -203,9 +226,31 @@ export default {
     });
 
     this.$parent.socket.on("set_color_pie", (data) => {
-      console.log(data);
+      this.chartData.labels = data.colors;
+      this.chartData.datasets = [{
+        label: "Data One",
+        backgroundColor: data.colors,
+        data: data.percentages,
+      }];
       this.fetched.col_generated = true;
     });
+
+    
+    this.$parent.socket.on("set_selected_artist", (data) => {
+      this.artist_options = data.artist_options;
+      this.fetched.artist_options = true;
+    });
+
+    this.$parent.socket.on("line_chart", (data) => {
+      this.line_chart_data.series = data.series;
+      this.fetched.line_chart = true;
+    })
+
+    
+
+   
+
+
   },
 }
 </script>
