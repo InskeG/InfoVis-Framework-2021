@@ -63,7 +63,7 @@ def detect_colors(image):
 
 def get_model_data():
     stats_art = pd.read_csv('./data/omniart_v3_datadump.csv')
-    model_data = stats_art.copy()[:30]
+    model_data = stats_art.copy()[:40]
     # model_data = model_data.drop(model_data[model_data['artist_full_name'] == 'unknown'] and model_data[model_data['creation_year'] == 'unknown'].index)
     model_data = model_data.drop(model_data[model_data['artist_full_name'] == 'unknown'].index)
     model_data = model_data.drop(model_data[model_data['creation_year'] == 'unknown'].index)
@@ -104,9 +104,13 @@ def get_line_chart(model_data):
 
     serie = []
     for artist in line_graph.keys():
+        print(line_graph[artist][0][1])
         serie.append( {
             'values': line_graph[artist],
-            'text': artist
+            'text': artist,
+            'legend-item': {
+                'font-color': line_graph[artist][0][1],
+            }
         }
         )
     return serie
