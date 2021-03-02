@@ -75,7 +75,6 @@ from data import *;
             </form>
             
             <zingchart ref="myChart" :data="line_chart_data" @node_mouseover="handleNodeHighlight"></zingchart>
-            Last visted: {{lastVisited}}
 
         </vs-card>
 
@@ -156,17 +155,28 @@ export default {
       },
       line_chart_data: {
         type: 'line',
+        plot: {
+          tooltip: {
+            text: "artist: %t \n year: %kt"
+          }
+
+        },
         series: [
         ],
+
+           plotarea: {
+          'margin-bottom': "40%",
+          'margin-top': "5%"
+        },
+     
         legend: {
-          layout: "1x5", //row x column
-          x: "25%",
-          y: "2%",
+          layout: "1x6", //row x column
+          x: "2%",
+          y: "68%",
 
         }
 
       },
-      lastVisited: '',
       chartData: {
         hoverBackgroundColor: "blue",
         hoverBorderWidth: 10,
