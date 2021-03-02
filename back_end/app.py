@@ -13,11 +13,7 @@ from flask_cors import CORS
 from flask_socketio import SocketIO
 from PIL import Image
 import pandas as pd
-# from data import *
 
-# from retrieve_info import retrieve_info
-
-# model_data = get_model_data()
 
 nr_color = 3
 NUM_CLUSTERS = 4
@@ -64,7 +60,6 @@ def detect_colors(image):
 def get_model_data():
     stats_art = pd.read_csv('./data/omniart_v3_datadump.csv')
     model_data = stats_art.copy()[:40]
-    # model_data = model_data.drop(model_data[model_data['artist_full_name'] == 'unknown'] and model_data[model_data['creation_year'] == 'unknown'].index)
     model_data = model_data.drop(model_data[model_data['artist_full_name'] == 'unknown'].index)
     model_data = model_data.drop(model_data[model_data['creation_year'] == 'unknown'].index)
     return model_data
@@ -74,21 +69,13 @@ def stripp(x):
 
 def get_artists(model_data):
     all_artist_text = sorted(model_data['artist_full_name'].astype(str).unique().tolist())
-    # art_list = [x.strip(' ') for x in all_artist_text]
     art_list = list(map(stripp, all_artist_text))
-    # art_list = []
-    # for x in all_artist_text:
-    #     art_list.append({'text': x.strip(' ')})
+  
 
     return art_list
 
 
 def get_line_chart(model_data):
-    # stats_art = pd.read_csv('./data/omniart_v3_datadump.csv')
-    # model_data = stats_art.copy()
-    # # model_data = model_data.drop(model_data[model_data['artist_full_name'] == 'unknown'] and model_data[model_data['creation_year'] == 'unknown'].index)
-    # model_data = model_data.drop(model_data[model_data['artist_full_name'] == 'unknown'].index)
-    # model_data = model_data.drop(model_data[model_data['creation_year'] == 'unknown'].index)
     line_graph = {}
 
     a = model_data['creation_year'].tolist()
@@ -104,75 +91,13 @@ def get_line_chart(model_data):
 
     serie = []
     for artist in line_graph.keys():
-        print(line_graph[artist][0][1])
         serie.append( {
             'values': line_graph[artist],
-            'text': artist,
-            'legend-item': {
-                'font-color': line_graph[artist][0][1],
-            }
+            'text': artist
         }
         )
     return serie
 
-
-# @app.route('/info/<genre>/<year>', methods=['GET'])
-# def index(genre, year):
-#     # info = retrieve_info(genre, year)
-#     info = {}
-
-#     # Load a placeholder image.
-#     # TODO: Obtain a generated image here.
-#     path = os.path.join(os.path.dirname(__file__), "img4.jpg")
-#     image = Image.open(path)
-
-#     # Encode the image for the response.
-#     img_stream = BytesIO()
-#     image.save(img_stream, format="png")
-#     encoded_img = encodebytes(img_stream.getvalue()).decode('ascii')
-#     info['image'] = f"data:image/png;base64, {encoded_img}"
-
-#     # Get the primary color of the image.
-#     colors, percentages, dom_color = detect_colors(image)
-#     info['colors'] = colors
-#     info['percentages'] = percentages
-#     info['dom_color'] = dom_color
-
-#     json_info = jsonify(info)
-
-#     return json_info
-
-
-
-# @app.route('/line_chart', methods=['GET'])
-# def artist_options(artist):
-#     # info = retrieve_info(genre, year)
-#     line = {}
-
-#     model_data = get_model_data()
-
-#     line_graph, serie = get_artists(model_data)
-#     # Get the primary color of the image.
-#     line['dicti'] = line_graph
-#     line['serie'] = serie
-    
-#     json_info = jsonify(line)
-
-#     return json_info
-
-# @app.route('/line_chart/<artist>', methods=['GET'])
-# def line_chart(artist):
-#     # info = retrieve_info(genre, year)
-#     line = {}
-
-#     line_graph, serie = get_line_graph(model_data)
-#     # Get the primary color of the image.
-#     line['dicti'] = line_graph
-#     line['serie'] = serie
-    
-#     json_info = jsonify(line)
-
-#     return json_info
 
 
 @socketio.event
