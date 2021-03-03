@@ -15,6 +15,7 @@ from PIL import Image
 import pandas as pd
 
 
+
 nr_color = 3
 NUM_CLUSTERS = 4
 RESIZE = 150
@@ -59,7 +60,7 @@ def detect_colors(image):
 
 def get_model_data():
     stats_art = pd.read_csv('./data/omniart_v3_datadump.csv')
-    model_data = stats_art.copy()[:40]
+    model_data = stats_art.copy()[:100]
     model_data = model_data.drop(model_data[model_data['artist_full_name'] == 'unknown'].index)
     model_data = model_data.drop(model_data[model_data['creation_year'] == 'unknown'].index)
     return model_data
@@ -69,10 +70,9 @@ def stripp(x):
 
 def get_artists(model_data):
     all_artist_text = sorted(model_data['artist_full_name'].astype(str).unique().tolist())
-    art_list = list(map(stripp, all_artist_text))
+    # art_list = list(map(stripp, all_artist_text))
   
-
-    return art_list
+    return all_artist_text
 
 
 def get_line_chart(model_data):
@@ -98,6 +98,47 @@ def get_line_chart(model_data):
         )
     return serie
 
+
+
+def get_line_chart_artist(model_data, artist):
+    line_graph = {}
+
+    # model_data = model_data[model_data['artist_full_name'] == artist]
+    model_data = model_data.loc[model_data['artist_full_name'] == artist]
+
+
+    a = model_data['creation_year'].tolist()
+    b = model_data['dominant_color'].tolist()
+    c = model_data['artist_full_name'].tolist()
+    
+    labels = c
+    
+    for i, artist in enumerate(c):
+        if artist not in line_graph.keys():
+            line_graph[artist] = []
+        line_graph[artist].append([a[i], b[i]])
+
+    serie = []
+    for artist in line_graph.keys():
+        serie.append( {
+            'values': line_graph[artist],
+            'text': artist
+        }
+        )
+
+    print(serie)
+    return serie
+
+
+@socketio.event
+def collect_line_chart(data):
+    print('yayyy')
+    model_data = get_model_data()
+    print(type(data))
+    series = get_line_chart_artist(model_data, data['artist'])
+    socketio.emit("collect_line_chart", {
+        "series": series,
+    })
 
 
 @socketio.event
