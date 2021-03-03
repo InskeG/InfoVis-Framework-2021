@@ -13,6 +13,8 @@ from flask_cors import CORS
 from flask_socketio import SocketIO
 from PIL import Image
 import pandas as pd
+import wikipedia
+
 
 
 
@@ -58,10 +60,43 @@ def detect_colors(image):
     return list(colors), list(percentages), dom_color
 
 
+
+
+
+def retrieve_info(genre, year, model_data):
+    year = float(year)
+    ranges = float(1)
+    dictionary = {}
+
+    w = wikipedia.page(genre)
+    dictionary['genre'] = w.title
+
+    dictionary['summary'] = wikipedia.summary(genre, sentences=3)
+
+
+    # print('artworks in same time period:')
+    # other art pieces created in same year
+    year_df = model_data.loc[model_data['creation_year'].astype('float') < year+ranges]
+    year_df = year_df.loc[year_df['creation_year'].astype('float') > year-ranges]
+
+    # print(year_df)
+    year_list = pd.Series.tolist(year_df['artwork_name'])
+    if len(year_list) < 5:
+        dictionary['same_year/genre'] = pd.Series.tolist(year_df['artwork_name'])
+    else: 
+        dictionary['same_year/genre'] = pd.Series.tolist(year_df['artwork_name'])[:5]
+
+    dictionary['related_terms'] = wikipedia.search(genre)
+
+    # other = model_data.loc[model_data['artist_full_name'] == artist]
+
+    return dictionary
+
+
 def get_model_data():
     stats_art = pd.read_csv('./data/omniart_v3_datadump.csv')
     model_data = stats_art.copy()[:100]
-    model_data = model_data.drop(model_data[model_data['artist_full_name'] == 'unknown'].index)
+    model_data = model_data.drop(model_data[model_data['school'] == 'unknown'].index)
     model_data = model_data.drop(model_data[model_data['creation_year'] == 'unknown'].index)
     return model_data
 
@@ -69,7 +104,7 @@ def stripp(x):
     return x.strip(' ')
 
 def get_artists(model_data):
-    all_artist_text = sorted(model_data['artist_full_name'].astype(str).unique().tolist())
+    all_artist_text = sorted(model_data['school'].astype(str).unique().tolist())
     # art_list = list(map(stripp, all_artist_text))
   
     return all_artist_text
@@ -80,7 +115,7 @@ def get_line_chart(model_data):
 
     a = model_data['creation_year'].tolist()
     b = model_data['dominant_color'].tolist()
-    c = model_data['artist_full_name'].tolist()
+    c = model_data['school'].tolist()
     
     labels = c
 
@@ -103,13 +138,13 @@ def get_line_chart(model_data):
 def get_line_chart_artist(model_data, artist):
     line_graph = {}
 
-    # model_data = model_data[model_data['artist_full_name'] == artist]
-    model_data = model_data.loc[model_data['artist_full_name'] == artist]
+    # model_data = model_data[model_data['school'] == artist]
+    model_data = model_data.loc[model_data['school'] == artist]
 
 
     a = model_data['creation_year'].tolist()
     b = model_data['dominant_color'].tolist()
-    c = model_data['artist_full_name'].tolist()
+    c = model_data['school'].tolist()
     
     labels = c
     
@@ -144,6 +179,10 @@ def collect_line_chart(data):
 @socketio.event
 def collect_info(data):
 
+
+    gen = data['genre']
+    y = data['year']
+
     # Load a placeholder image.
     # TODO: Obtain a generated image here.
     path = os.path.join(os.path.dirname(__file__), "img1.jpg")
@@ -169,6 +208,14 @@ def collect_info(data):
     })
 
     model_data = get_model_data()
+
+    dictionary = retrieve_info(gen, y, model_data)    
+
+    print(dictionary.keys())
+    socketio.emit("get_summary", {
+        "summary": dictionary['summary'],
+        "related_terms": dictionary['related_terms']
+    })
 
 
     selected_artist = get_artists(model_data)
