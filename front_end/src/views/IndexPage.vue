@@ -16,11 +16,7 @@ from data import *;
         <vs-card class="cardx" v-if="fetched.related_terms">
           <div slot="header"><h3>Related terms</h3></div>
           <div>
-            alskjhd lksjh sfajkh asjfh lkasfh
-            alskjhd lksjh sfajkh asjfh lkasfh
-            alskjhd lksjh sfajkh asjfh lkasfh
-            alskjhd lksjh sfajkh asjfh lkasfh
-            alskjhd lksjh sfajkh asjfh lkasfh
+            {{ related_terms }}
           </div>
         </vs-card>
         <vs-card class="cardx" v-if="fetched.more_statistics">
