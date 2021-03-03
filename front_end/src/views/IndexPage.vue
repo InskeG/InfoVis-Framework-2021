@@ -13,8 +13,8 @@ from data import *;
 
     <vs-row vs-justify="center">
       <vs-col type="flex" vs-justify="center" vs-align="center" vs-w="6">
-        <vs-card class="cardx" v-if="fetched.statistics">
-          <div slot="header"><h3>Interessante data</h3></div>
+        <vs-card class="cardx" v-if="fetched.related_terms">
+          <div slot="header"><h3>Related terms</h3></div>
           <div>
             alskjhd lksjh sfajkh asjfh lkasfh
             alskjhd lksjh sfajkh asjfh lkasfh
@@ -51,9 +51,9 @@ from data import *;
 
       <vs-col type="flex" vs-justify="center" vs-align="center" vs-w="6">
         <vs-card class="cardx" v-if="fetched.summary">
-          <div slot="header"><h3>{{ data.genre }} on Wikipedia</h3></div>
+          <div slot="header"><h3>{{ genre }} on Wikipedia</h3></div>
           <div>
-            {{ data.summary }}
+            {{ summary }}
           </div>
         </vs-card>
 
@@ -88,7 +88,7 @@ from data import *;
 
 
         <form id="line_chart">
-            <select v-model="selected" @change="get_line_graph(); forceRerender()">
+            <select v-model="selected" @change="get_line_graph()">
             <option v-for="option in artist_options" v-bind:key="option"> {{ option }}</option>
 
             </select>
@@ -165,11 +165,15 @@ export default {
   data: () => {
     return {
       artist_options: [],
+      genre: 'Hallo',
       selected: 'airstream',
+      summary: '',
+      related_terms: '',
       fetched: {
         img_generated: false,
         col_generated: false,
         summary: false,
+        related_terms: false,
         statistics: false,
         more_statistics: false,
         artist_options: false,
@@ -265,6 +269,7 @@ export default {
 
     async get_info(genre) {
       // this.$vs.loading();
+      this.genre = genre
       this.$parent.socket.emit("collect_info", {
         'genre': genre,
         'year': 1993,
@@ -304,6 +309,14 @@ export default {
         data: data.percentages,
       }];
       this.fetched.col_generated = true;
+    });
+
+
+    this.$parent.socket.on("get_summary", (data) => {
+      this.summary = data.summary;
+      this.fetched.summary = true;
+      this.related_terms = data.related_terms;
+      this.fetched.related_terms = true;
     });
 
     
