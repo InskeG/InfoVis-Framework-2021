@@ -13,7 +13,7 @@ from flask_cors import CORS
 from flask_socketio import SocketIO
 from PIL import Image
 
-# from retrieve_info import retrieve_info
+from retrieve_info import retrieve_info, get_style_histograms
 
 nr_color = 3
 NUM_CLUSTERS = 4
@@ -108,6 +108,8 @@ def collect_info(data):
     })
 
     socketio.emit("change_color", dom_color)
+
+    socketio.emit("get_style_hists", get_style_histograms())
 
 
 @socketio.on('connect')

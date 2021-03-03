@@ -60,8 +60,10 @@
 
             <zingchart ref="myChart" :data="line_chart_data" @node_mouseover="handleNodeHighlight"></zingchart>
             Last visted: {{lastVisited}}
+        </vs-card>
 
-
+        <vs-card class="cardx">
+          <zingchart ref="style_hist" :data="style_hist_data"/>
         </vs-card>
       </vs-col>
 
@@ -121,6 +123,20 @@ export default {
         type: String
     },
   },
+  computed: {
+    style_hist_data() {
+      return {
+        type: 'area',
+        plot: {
+          aspect: "spline",
+          marker: {
+            'visible': false,
+          },
+        },
+        series: this.style_hist_values,
+      };
+    }
+  },
   data: () => {
     return {
       fetched: {
@@ -155,7 +171,12 @@ export default {
             data: [ 0.27, 0.13764444444444446, 0.15853333333333333, 0.2235111111111111, 0.21031111111111112 ]
           }
         ]
-      }
+      },
+      style_hist_values: [
+        {values: [1, 2, 3, 4, 3, 4, 3, 2, 1]},
+        {values: [5, 4, 3, 2, 1, 2, 3, 4, 5]},
+        {values: [2, 3, 4, 3, 2, 3, 4, 2, 1]},
+      ],
     }
   },
   components: {
@@ -163,7 +184,6 @@ export default {
     zingchart: zingchartVue
   },
   methods: {
-
     handleNodeHighlight(e) {
       this.lastVisited = `Node: ${e.nodeindex} Value: ${e.value}`;
     },
@@ -206,6 +226,42 @@ export default {
       console.log(data);
       this.fetched.col_generated = true;
     });
+
+    zingchart.bind("style_hist", "setseriesdata", (data) => {
+      console.log("Updating data");
+    });
+
+    this.$parent.socket.on("get_style_hists", (data) => {
+      console.log("Updating style hists");
+
+      var series_data = {
+        type: "area",
+        plot: {
+          aspect: "spline",
+          marker: {
+            'visible': false,
+          },
+        },
+        series: []
+      };
+
+      for (var art_type in data) {
+        // series_data['series'].push({values: data[art_type]});
+        console.log(data[art_type]);
+        // zingchart.exec("style_hist", "setseriesvalues", {
+        this.style_hist_values[0].values = data[art_type];
+
+        break;
+      }
+
+      // console.log(series_data);
+      // this.$refs.style_hist.setseriesdata(series_data);
+      // this.$refs.style_hist.update();
+
+      console.log(this.$refs.style_hist);
+      this.$refs.style_hist.update();
+    });
+
   },
 }
 </script>

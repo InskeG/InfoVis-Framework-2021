@@ -1,6 +1,11 @@
-from data import *
-import pandas as pd  
+import itertools
+import numpy as np
+import pandas as pd
 import wikipedia
+
+from colour import Color
+
+from data import *
 
 
 #for example: http://127.0.0.1:5000/info/impressionism/1943/
@@ -25,7 +30,7 @@ def retrieve_info(genre, year):
     year_list = pd.Series.tolist(year_df['artwork_name'])
     if len(year_list) < 5:
         dictionary['same_year/genre'] = pd.Series.tolist(year_df['artwork_name'])
-    else: 
+    else:
         dictionary['same_year/genre'] = pd.Series.tolist(year_df['artwork_name'])[:5]
 
     dictionary['related_terms'] = wikipedia.search(genre)
@@ -35,3 +40,25 @@ def retrieve_info(genre, year):
     return dictionary
 
 
+def get_style_histograms():
+    data = model_data.dropna()
+    art_types = data.artwork_type.unique()
+
+    result = {}
+
+    for art_type in art_types:
+        colors = model_data[model_data.artwork_type == art_type].color_pallete
+        colors = colors.dropna()
+
+        # The data are a series of strings. These strings represent a list of
+        # hex codes. We use `eval` to convert these strings to lists.
+        colors = itertools.chain.from_iterable(
+            eval(f"[{','.join(colors.values)}]")
+        )
+        hues = [Color(col).hue for col in colors]
+        hist = np.histogram(hues, density=True)
+
+        # result[art_type] = list(zip(*hist))
+        result[art_type] = list(hist[0])
+
+    return result
