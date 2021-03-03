@@ -48,24 +48,8 @@ from data import *;
           </div>
         </vs-card>
       </vs-col>
-
-
-      <!-- <vs-card class="cardx" v-if="fetched.artist_options">
-          <div slot="header"><h3>Dominant colors in art pieces over the years for specific artists</h3></div>
-
-
-        <form id="line_chart">
-            <select v-model="selected" @change="get_line_graph()">
-            <option v-for="option in artist_options" v-bind:key="option"> {{ option }}</option>
-
-            </select>
-
-            </form>
-
-            <zingchart ref="myChart" :data="line_chart_data" @node_mouseover="handleNodeHighlight"></zingchart>
-
-        </vs-card> -->
     </vs-row>
+
     <vs-card class="cardx" v-if="fetched.artist_options" >
       <div slot="header"><h3>Dominant colors in art pieces over the years for specific artists</h3></div>
 
@@ -75,10 +59,10 @@ from data import *;
         </select>
       </form>
 
-      <vs-card class="cardx" v-if="fetched.line_chart2">
+      <vs-card class="cardx" v-if="fetched.line_chart">
         <zingchart
           ref="line_chart"
-          :data="line_chart_data2"
+          :data="line_chart_data"
           :key="chart_key"
           @node_mouseover="handleNodeHighlight"
         />
@@ -154,33 +138,12 @@ export default {
         more_statistics: false,
         artist_options: false,
         line_chart: false,
-        line_chart2: false
       },
       image: "@/assets/images/big/img1.jpg",
       chartOptions: {
         hoverBorderWidth: 20
       },
       line_chart_data: {
-        type: 'line',
-        plot: {
-          tooltip: {
-            text: "artist: %t \n year: %kt"
-          }
-        },
-        series: [
-        ],
-        plotarea: {
-          'margin-bottom': "40%",
-          'margin-top': "5%"
-        },
-
-        legend: {
-          layout: "1x6", //row x column
-          x: "2%",
-          y: "68%",
-        }
-      },
-      line_chart_data2: {
         type: 'line',
         plot: {
           tooltip: {
@@ -255,7 +218,6 @@ export default {
     }
   },
   mounted: function() {
-    console.log("Mounted!");
     this.$parent.socket.on("set_image", (data) => {
       this.image = data.generated;
       this.fetched.img_generated = true;
@@ -283,18 +245,11 @@ export default {
       this.fetched.artist_options = true;
     });
 
-    this.$parent.socket.on("line_chart", (data) => {
-      console.log("line chart");
+    this.$parent.socket.on("collect_line_chart", (data) => {
       this.line_chart_data.series = data.series;
       this.fetched.line_chart = true;
-    })
-
-    this.$parent.socket.on("collect_line_chart", (data) => {
-      console.log("line chart 2");
-      this.line_chart_data2.series = data.series;
-      this.fetched.line_chart2 = true;
       this.chart_key += 1;
-    })
+    });
   },
 }
 </script>
