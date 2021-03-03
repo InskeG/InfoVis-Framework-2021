@@ -62,12 +62,12 @@ from data import *;
       </vs-col>
 
 
-      <vs-card class="cardx" v-if="fetched.artist_options">
+      <!-- <vs-card class="cardx" v-if="fetched.artist_options">
           <div slot="header"><h3>Dominant colors in art pieces over the years for specific artists</h3></div>
 
 
         <form id="line_chart">
-            <select v-model="selected">
+            <select v-model="selected" @change="get_line_graph()">
             <option v-for="option in artist_options" v-bind:key="option"> {{ option }}</option>
 
             </select>
@@ -76,10 +76,36 @@ from data import *;
             
             <zingchart ref="myChart" :data="line_chart_data" @node_mouseover="handleNodeHighlight"></zingchart>
 
-        </vs-card>
+        </vs-card> -->
 
 
     </vs-row>
+
+
+        <vs-card class="cardx" v-if="fetched.artist_options" >
+
+          <div slot="header"><h3>Dominant colors in art pieces over the years for specific artists</h3></div>
+
+
+        <form id="line_chart">
+            <select v-model="selected" @change="get_line_graph(); forceRerender()">
+            <option v-for="option in artist_options" v-bind:key="option"> {{ option }}</option>
+
+            </select>
+
+            </form>
+
+
+      <vs-card class="cardx" v-if="fetched.line_chart2">
+  
+      <zingchart ref="myChart" :data="line_chart_data2" @node_mouseover="handleNodeHighlight"></zingchart>
+
+      </vs-card>
+
+            </vs-card>
+
+
+
 
     <vs-row type="flex" vs-justify="center" vs-align="center" vs-w="12">
       <vs-card class="cardx">
@@ -147,7 +173,8 @@ export default {
         statistics: false,
         more_statistics: false,
         artist_options: false,
-        line_chart: false
+        line_chart: false,
+        line_chart2: false
       },
       image: "@/assets/images/big/img1.jpg",
       chartOptions: {
@@ -177,6 +204,32 @@ export default {
         }
 
       },
+
+      line_chart_data2: {
+        type: 'line',
+        plot: {
+          tooltip: {
+            text: "artist: %t \n year: %kt"
+          }
+
+        },
+        series: [
+        ],
+
+           plotarea: {
+          'margin-bottom': "40%",
+          'margin-top': "5%"
+        },
+     
+        legend: {
+          layout: "1x6", //row x column
+          x: "2%",
+          y: "68%",
+
+        }
+
+      },
+
       chartData: {
         hoverBackgroundColor: "blue",
         hoverBorderWidth: 10,
@@ -201,12 +254,20 @@ export default {
       this.lastVisited = `Node: ${e.nodeindex} Value: ${e.value}`;
     },
 
+    
+
+    async get_line_graph() {
+      var artist = this.selected;
+      this.$parent.socket.emit("collect_line_chart", {
+        'artist': artist,
+      });
+    },
+
     async get_info(genre) {
       // this.$vs.loading();
-
       this.$parent.socket.emit("collect_info", {
-        genre: genre,
-        year: 1993,
+        'genre': genre,
+        'year': 1993,
       });
 
       /*
@@ -256,7 +317,10 @@ export default {
       this.fetched.line_chart = true;
     })
 
-    
+    this.$parent.socket.on("collect_line_chart", (data) => {
+      this.line_chart_data2.series = data.series;
+      this.fetched.line_chart2 = true;
+    })
 
    
 
