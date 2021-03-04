@@ -15,7 +15,21 @@ from PIL import Image
 import pandas as pd
 import wikipedia
 
+# StyleGan imports
+import sys
+sys.path.append("./GAN/")
 
+from .GAN import dnnlib
+from .GAN import generate, legacy
+import torch
+
+
+DEVICE = torch.device('cuda')
+with dnnlib.util.open_url("./GAN/models/artists.pkl") as f:
+    G_artists = legacy.load_network_pkl(f)['G_ema'].to(DEVICE)
+
+# with dnnlib.util.open_url("./GAN/models/centuries.pkl") as f:
+#     G_centuries = legacy.load_network_pkl(f)['G_ema'].to(DEVICE)
 
 
 nr_color = 3
@@ -232,9 +246,24 @@ def collect_info(data):
     })
 
 
+@socketio.event
+def generate_images(data):
+    classification_type = data["type"]
+    amount = data["amount"]
+    class_idx = data["class_idx"]
 
+    seeds = np.random.randint(0, 10000, amount)
 
+    images = []
+    if classification_type == "artists":
+        images = generate.generate_images(G_artists, seeds, class_idx)
+    # elif: classification_type == "centuries":
+    #     images = generate.generate_images(G_centuries, seeds, class_idx)
 
+    socketio.emit("images_generated", {
+        "images": images,
+        "seeds": seeds.tolist()
+    })
 
 
 @socketio.on('connect')
