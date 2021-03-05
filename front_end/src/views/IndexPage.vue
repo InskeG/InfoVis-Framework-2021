@@ -177,7 +177,7 @@ export default {
     });
 
     window.addEventListener("resize", () => {
-        this.timeline.width(document.getElementById('timeline').clientWidth + 60);
+        this.timeline.width(document.getElementById('timeline').clientWidth);
     })
 
     window.addEventListener("load", () => {
@@ -196,10 +196,10 @@ export default {
 
         this.timeline
           .data(timeline_data)
-          .width(timeline_data.clientWidth)
+          .width(container.offsetWidth)
           .maxHeight(5000)
           .leftMargin(0)
-          .rightMargin(60)
+          .rightMargin(0)
           .zQualitative(true)
           .timeFormat('%Y')
           .showGroupTooltip(false)
