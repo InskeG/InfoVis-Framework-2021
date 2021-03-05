@@ -108,8 +108,7 @@ def collect_info(data):
 
 @socketio.event
 def get_timeline_data():
-    bla = data.get_timeline_data()
-    return bla
+    return data.get_timeline_data()
 
 @socketio.on('connect')
 def test_connect():
