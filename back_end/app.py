@@ -22,6 +22,7 @@ nr_color = 3
 NUM_CLUSTERS = 4
 RESIZE = 150
 
+
 app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins='*')
@@ -100,6 +101,10 @@ def get_model_data():
     model_data = model_data.drop(model_data[model_data['creation_year'] == 'unknown'].index)
     return model_data
 
+
+model_data = get_model_data()
+
+
 def stripp(x):
     return x.strip(' ')
 
@@ -168,7 +173,7 @@ def get_line_chart_artist(model_data, artist):
 @socketio.event
 def collect_line_chart(data):
     print('yayyy')
-    model_data = get_model_data()
+    # model_data = get_model_data()
     print(type(data))
     series = get_line_chart_artist(model_data, data['artist'])
     socketio.emit("collect_line_chart", {
@@ -207,7 +212,7 @@ def collect_info(data):
         "percentages": percentages,
     })
 
-    model_data = get_model_data()
+    # model_data = get_model_data()
 
     dictionary = retrieve_info(gen, y, model_data)    
 
