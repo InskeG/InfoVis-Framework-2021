@@ -12,12 +12,6 @@
         <img :src="logo" v-if="logo" alt="Dashboard"/>
         <span class="logo-text" v-if="title">{{ title }}</span>
       </div>
-      <!---
-      Mobile toggle
-      -->
-      <div slot="title">
-        <div class="hiddenDesktop cursor-pointer" @click.stop="activeSidebar"><vs-icon icon="menu"></vs-icon></div>
-      </div>
 
       <vs-spacer></vs-spacer>
 
@@ -66,12 +60,6 @@ export default {
     indexActive: 0,
     showToggle: false
   }),
-
-  methods: {
-    //This is for sidebar trigger in mobile
-    activeSidebar() {
-        this.$store.commit('IS_SIDEBAR_ACTIVE', true);
-    }
-  }
+  methods: {}
 }
 </script>

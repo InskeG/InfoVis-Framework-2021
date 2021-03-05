@@ -1,19 +1,15 @@
+import scipy
 import binascii
 import numpy as np
 import os
-import scipy
-import scipy.misc
-import scipy.cluster
-import time
-
 from base64 import encodebytes
-from io import BytesIO
 from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_socketio import SocketIO
+from io import BytesIO
 from PIL import Image
 
-# from retrieve_info import retrieve_info
+import data
 
 nr_color = 3
 NUM_CLUSTERS = 4
@@ -109,6 +105,11 @@ def collect_info(data):
 
     socketio.emit("change_color", dom_color)
 
+
+@socketio.event
+def get_timeline_data():
+    bla = data.get_timeline_data()
+    return bla
 
 @socketio.on('connect')
 def test_connect():

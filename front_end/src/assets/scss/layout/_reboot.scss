@@ -161,25 +161,4 @@ hr {
   padding-left: 0;
 }
 
-// Scrollbar
-.vs-sidebar--items {
-  &::-webkit-scrollbar-track {
-    background-color: transparent;
-  }
-
-  &::-webkit-scrollbar {
-    width: 6px;
-    background-color: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: rgba(var(--vs-primary), .2);
-    border-radius: 20px;
-
-    &:hover {
-      background-color: rgba(var(--vs-primary), .5);
-    }
-  }
-}
-
 // S Comment

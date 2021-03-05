@@ -1,5 +1,3 @@
-
-
 <template>
   <div>
     <vs-row type="flex" vs-justify="center" vs-align="center">
@@ -31,18 +29,13 @@
           </div>
         </vs-card>
 
-         <vs-card class="cardx" v-if="fetched.col_generated">
+        <vs-card class="cardx" v-if="fetched.col_generated">
           <div slot="header"><h3>Dominant Colors</h3></div>
           <div>
             <div id="app">
             <pie-chart :data="chartData" :options="chartOptions"></pie-chart>
           </div>
-
             <div id="my_dataviz"></div>
-
-
-
-
           </div>
         </vs-card>
       </vs-col>
@@ -55,15 +48,16 @@
           </div>
         </vs-card>
       </vs-col>
-
-
     </vs-row>
 
     <vs-row type="flex" vs-justify="center" vs-align="center" vs-w="12">
       <vs-card class="cardx">
-        <div slot="header"><h3>
-          Pick a <span v-if="fetched">new</span> style!
-        </h3></div>
+        <div slot="header">
+            <h3>Pick a <span v-if="fetched">new</span> style!</h3>
+        </div>
+        <div class="mt-3" id="timeline">
+            Painting happy little trees...
+        </div>
         <div class="d-flex align-items-center dropdownbtn-alignment">
           <vs-dropdown vs-trigger-click>
             <vs-button
@@ -93,10 +87,10 @@
   </div>
 </template>
 
-
-
 <script>
+import * as d3 from "d3";
 import PieChart from "./PieChart.js";
+import TimelinesChart from "../timeline";
 
 export default {
   name: 'Index',
@@ -106,7 +100,7 @@ export default {
     },
     logo: {
         type: String
-    },
+    }
   },
   data: () => {
     return {
@@ -132,7 +126,8 @@ export default {
             data: [ 0.27, 0.13764444444444446, 0.15853333333333333, 0.2235111111111111, 0.21031111111111112 ]
           }
         ]
-      }
+      },
+      timeline: TimelinesChart()
     }
   },
   components: {
@@ -176,6 +171,86 @@ export default {
     this.$parent.socket.on("set_color_pie", (data) => {
       window.console.log(data);
       this.fetched.col_generated = true;
+    });
+
+    window.addEventListener("resize", () => {
+        this.timeline.width(document.getElementById('timeline').clientWidth + 60);
+    })
+
+    window.addEventListener("load", () => {
+      let container = document.getElementById('timeline');
+      container.innerHTML = "";
+
+      this.$parent.socket.emit('get_timeline_data', (timeline_data) => {
+        timeline_data.forEach(
+          group => group.data.forEach(
+            label => label.data.forEach((painting) => {
+              painting.timeRange[0] = new Date(painting.timeRange[0]['year'], painting.timeRange[0]['month'], 1);
+              painting.timeRange[1] = new Date(painting.timeRange[1]['year'], painting.timeRange[1]['month'], 1);
+            })));
+
+        let filter = null;
+
+        this.timeline
+          .data(timeline_data)
+          .width(timeline_data.clientWidth)
+          .maxHeight(5000)
+          .leftMargin(0)
+          .rightMargin(60)
+          .zQualitative(true)
+          .timeFormat('%Y')
+          .showGroupTooltip(false)
+          .showLineTooltip(false)
+          .onZoom((a, b) => console.log(a, b))
+          .onLegendClick((s) => {
+            if (filter === s.innerHTML) {
+              // Deselect all filters
+              filter = null;
+              d3.selectAll('.series-segment')
+                .attr('class', (d) => { return `series-segment ${d.val}`})
+                .style('fill-opacity', .8);
+
+              d3.selectAll('.color-slot')
+                .style('fill-opacity', 1);
+
+              setZoomToFilter();
+            }
+            else {
+              filter = s.innerHTML;
+              let zoomStart = null,
+                  zoomEnd = null;
+
+              // Select specific filter
+              d3.selectAll(`.series-segment.${s.innerHTML}`)
+                .attr('class', (d) => { return `series-segment ${d.val}`})
+                .style('fill-opacity', .8)
+                .each((d, i) => {
+                  if (i === 0) zoomStart = d.timeRange[0]
+                  if (!zoomEnd || d.timeRange[1] > zoomEnd) zoomEnd = d.timeRange[1]
+                });
+
+              d3.selectAll(`.color-slot.${s.innerHTML}`)
+                .style('fill-opacity', 1);
+
+              // Deselect all not selected
+              d3.selectAll(`.series-segment:not(.${s.innerHTML})`)
+                .attr('class', (d) => { return `series-segment ${d.val} disabled`})
+                .style('fill-opacity', .1);
+
+              d3.selectAll(`.color-slot:not(.${s.innerHTML})`)
+                .style('fill-opacity', .2);
+
+              setZoomToFilter(zoomStart, zoomEnd);
+            }
+          })
+          .onSegmentClick((s) => {
+            console.log(s);
+          })(container);
+
+        function setZoomToFilter(start=null, end=null) {
+          this.timeline.zoomX(start && end ? [start, end] : [null, null]);
+        }
+      });
     });
   },
 }

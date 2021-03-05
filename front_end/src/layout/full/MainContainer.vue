@@ -6,9 +6,6 @@
       :logo="require('@/assets/images/logo/paint_brush.png')"
       :title="logotitle"
     />
-    <!---Sidebar-->
-    <SideBar parent=".main-wrapper" :sidebarLinks="sidebarLinks"/>
-    <!---Page Container-->
     <div v-bind:main_color="main_color" class="main-container-fluid">
 
     <router-view v-bind:main_color="main_color"></router-view>
@@ -21,20 +18,17 @@
 import io from 'socket.io-client';
 
 import Navbar from '@/layout/full/header/Navbar.vue';
-import SideBar from '@/layout/full/sidebar/SideBar.vue';
-import sidebarLinks from '@/layout/full/sidebar/sidebarlinks.js';
 
 export default {
   name: "MainContainer",
   components: {
-    Navbar,
-    SideBar
+    Navbar
   },
   data:() => ({
     main_color: "#061765",
     logotitle: "ARTificial Intelligence",
-    sidebarLinks: sidebarLinks,
     socket: null,
+    timeline_data: null
   }),
   methods: {
     set_main_color(color) {
@@ -47,6 +41,7 @@ export default {
     this.socket = io("http://localhost:5000");
 
     this.socket.on("connect", () => {
+        // this.timeline_data = this.socket.emit('get_timeline_data');
     });
 
     this.socket.on("change_color", (color) => {
