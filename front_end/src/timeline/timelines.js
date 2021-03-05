@@ -501,8 +501,7 @@ export default Kapsule({
                     const dateFormat = (state.useUtc ? d3UtcFormat : d3TimeFormat)(`${state.timeFormat}${state.useUtc ? ' (UTC)' : ''}`);
                     return '<strong>' + d.labelVal + ' </strong>' + state.zDataLabel
                         + (normVal ? ' (<strong>' + Math.round((d.val - state.zColorScale.domain()[0]) / normVal * 100 * 100) / 100 + '%</strong>)' : '') + '<br>'
-                        + '<strong>From: </strong>' + dateFormat(d.timeRange[0]) + '<br>'
-                        + '<strong>To: </strong>' + dateFormat(d.timeRange[1]);
+                        + '<strong>' + dateFormat(d.timeRange[0]) + '</strong>';
                 });
 
             state.svg.call(state.segmentTooltip);
