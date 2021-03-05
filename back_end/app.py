@@ -20,16 +20,19 @@ import sys
 sys.path.append("./GAN/")
 
 from .GAN import dnnlib
-from .GAN import generate, legacy
+from .GAN import generate
+import pickle
 import torch
 
 
-DEVICE = torch.device('cuda')
-with dnnlib.util.open_url("./GAN/models/artists.pkl") as f:
-    G_artists = legacy.load_network_pkl(f)['G_ema'].to(DEVICE)
+if torch.cuda.is_available():
+    DEVICE = torch.device('cuda')
 
-# with dnnlib.util.open_url("./GAN/models/centuries.pkl") as f:
-#     G_centuries = legacy.load_network_pkl(f)['G_ema'].to(DEVICE)
+    with dnnlib.util.open_url("./GAN/models/artists.pkl") as f:
+        G_artists = pickle.Unpickler(f).load()['G_ema'].to(DEVICE)
+
+    with dnnlib.util.open_url("./GAN/models/centuries.pkl") as f:
+        G_centuries = pickle.Unpickler(f).load()['G_ema'].to(DEVICE)
 
 
 nr_color = 3
@@ -248,6 +251,14 @@ def collect_info(data):
 
 @socketio.event
 def generate_images(data):
+    if not torch.cuda.is_available():
+        socketio.emit("images_generated", {
+            "images": [],
+            "seeds": [],
+            "message": "No Graphical Processing Unit available!"
+        })
+        return
+
     classification_type = data["type"]
     amount = data["amount"]
     class_idx = data["class_idx"]
@@ -257,12 +268,13 @@ def generate_images(data):
     images = []
     if classification_type == "artists":
         images = generate.generate_images(G_artists, seeds, class_idx)
-    # elif: classification_type == "centuries":
-    #     images = generate.generate_images(G_centuries, seeds, class_idx)
+    elif classification_type == "centuries":
+        images = generate.generate_images(G_centuries, seeds, class_idx)
 
     socketio.emit("images_generated", {
         "images": images,
-        "seeds": seeds.tolist()
+        "seeds": seeds.tolist(),
+        "message": ""
     })
 
 
