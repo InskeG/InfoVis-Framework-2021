@@ -1,5 +1,3 @@
-import './timelines.css';
-
 import Kapsule from 'kapsule';
 
 import {
@@ -315,7 +313,7 @@ export default Kapsule({
         height: null,
         overviewHeight: 20, // Height of overview section in bottom
         minLabelFont: 2,
-        groupBkgGradient: ['#FAFAFA', '#E0E0E0'],
+        groupBkgGradient: ['#fff', '#fff'],
 
         yScale: null,
         grpScale: null,

@@ -9,9 +9,9 @@ from collections import Counter
 DATA_PATH = 'data/paintings_data.pk'
 TIMELINE_PATH = 'data/timeline_data.pk'
 FEATURED_ARTISTS = ['michelangelo', 'bosch', 'vinci', 'greco', 'caravaggio', 'rubens', 'vermeer',
-                    'rembrandt', 'dyck', 'hals', 'beale', 'steen', 'turner', 'ingres', 'blake', 'delacroix',
-                    'gogh', 'degas', 'monet', 'magritte', 'kandinsky', 'picasso', 'renoir', 'warhol', 'banksy',
-                    'füger', 'watteau', 'bencovich', 'hogarth', 'lemoyne', 'rococo', 'panini']
+                    'rembrandt', 'dyck', 'hals', 'steen', 'turner', 'ingres', 'blake', 'delacroix',
+                    'gogh', 'degas', 'monet', 'magritte', 'kandinsky', 'picasso', 'renoir', 'warhol',
+                    'banksy', 'füger', 'watteau', 'bencovich', 'hogarth', 'lemoyne', 'rococo', 'panini']
 
 paintings = pd.DataFrame()
 
