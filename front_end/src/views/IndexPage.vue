@@ -1,4 +1,5 @@
 
+from data import *;
 
 <template>
   <div>
@@ -12,14 +13,10 @@
 
     <vs-row vs-justify="center">
       <vs-col type="flex" vs-justify="center" vs-align="center" vs-w="6">
-        <vs-card class="cardx" v-if="fetched.statistics">
-          <div slot="header"><h3>Interessante data</h3></div>
+        <vs-card class="cardx" v-if="fetched.related_terms">
+          <div slot="header"><h3>Related terms</h3></div>
           <div>
-            alskjhd lksjh sfajkh asjfh lkasfh
-            alskjhd lksjh sfajkh asjfh lkasfh
-            alskjhd lksjh sfajkh asjfh lkasfh
-            alskjhd lksjh sfajkh asjfh lkasfh
-            alskjhd lksjh sfajkh asjfh lkasfh
+            {{ related_terms }}
           </div>
         </vs-card>
         <vs-card class="cardx" v-if="fetched.more_statistics">
@@ -31,30 +28,25 @@
           </div>
         </vs-card>
 
-         <vs-card class="cardx" v-if="fetched.col_generated">
+        <vs-card class="cardx" v-if="fetched.col_generated">
           <div slot="header"><h3>Dominant Colors</h3></div>
+
           <div>
             <div id="app">
-            <pie-chart :data="chartData" :options="chartOptions"></pie-chart>
-          </div>
-
+              <pie-chart :data="chartData" :options="chartOptions"/>
+            </div>
             <div id="my_dataviz"></div>
-
-
-
-
           </div>
         </vs-card>
       </vs-col>
 
       <vs-col type="flex" vs-justify="center" vs-align="center" vs-w="6">
         <vs-card class="cardx" v-if="fetched.summary">
-          <div slot="header"><h3>{{ data.genre }} on Wikipedia</h3></div>
+          <div slot="header"><h3>{{ genre }} on Wikipedia</h3></div>
           <div>
-            {{ data.summary }}
+            {{ summary }}
           </div>
         </vs-card>
-
         <vs-card class="cardx" v-if="fetched">
           <div slot="header"><h3>Dominant colors artists use in art pieces over the years</h3></div>
 
@@ -66,9 +58,26 @@
           <zingchart ref="style_hist" :data="style_hist_data"/>
         </vs-card>
       </vs-col>
-
-
     </vs-row>
+
+    <vs-card class="cardx" v-if="fetched.artist_options" >
+      <div slot="header"><h3>Dominant colors in art pieces over the years for specific artists</h3></div>
+
+      <form id="line_chart">
+        <select v-model="selected" @change="get_line_graph()">
+          <option v-for="option in artist_options" v-bind:key="option"> {{ option }}</option>
+        </select>
+      </form>
+
+      <vs-card class="cardx" v-if="fetched.line_chart">
+        <zingchart
+          ref="line_chart"
+          :data="line_chart_data"
+          :key="chart_key"
+          @node_mouseover="handleNodeHighlight"
+        />
+      </vs-card>
+    </vs-card>
 
     <vs-row type="flex" vs-justify="center" vs-align="center" vs-w="12">
       <vs-card class="cardx">
@@ -139,27 +148,40 @@ export default {
   },
   data: () => {
     return {
+      artist_options: [],
+      genre: 'Hallo',
+      selected: 'airstream',
+      summary: '',
+      related_terms: '',
       fetched: {
         img_generated: false,
         col_generated: false,
         summary: false,
+        related_terms: false,
         statistics: false,
         more_statistics: false,
+        artist_options: false,
+        line_chart: false,
       },
-      image: "@/assets/images/big/img2.jpg",
+      image: "@/assets/images/big/img1.jpg",
       chartOptions: {
         hoverBorderWidth: 20
       },
       line_chart_data: {
         type: 'line',
-        series: [
-          {
-            values: [2,4,5,7,4,3,6,5]
+        plot: {
+          tooltip: {
+            text: "artist: %t \n year: %kt"
           }
-        ]
-
+        },
+        series: [
+        ],
+        legend: {
+          layout: "1x6", //row x column
+          x: "2%",
+          y: "68%",
+        }
       },
-      lastVisited: '',
       chartData: {
         hoverBackgroundColor: "blue",
         hoverBorderWidth: 10,
@@ -168,7 +190,7 @@ export default {
           {
             label: "Data One",
             backgroundColor: [ "#e5856d", "#5e2812", "#e56b18", "#f6bab7", "#973f28" ],
-            data: [ 0.27, 0.13764444444444446, 0.15853333333333333, 0.2235111111111111, 0.21031111111111112 ]
+            data: [0.27, 0.14, 0.16, 0.22, 0.21 ]
           }
         ]
       },
@@ -177,6 +199,7 @@ export default {
         {values: [5, 4, 3, 2, 1, 2, 3, 4, 5]},
         {values: [2, 3, 4, 3, 2, 3, 4, 2, 1]},
       ],
+      chart_key: 0,
     }
   },
   components: {
@@ -188,12 +211,19 @@ export default {
       this.lastVisited = `Node: ${e.nodeindex} Value: ${e.value}`;
     },
 
+    async get_line_graph() {
+      var artist = this.selected;
+      this.$parent.socket.emit("collect_line_chart", {
+        'artist': artist,
+      });
+    },
+
     async get_info(genre) {
       // this.$vs.loading();
-
+      this.genre = genre
       this.$parent.socket.emit("collect_info", {
-        genre: genre,
-        year: 1993,
+        'genre': genre,
+        'year': 1993,
       });
 
       /*
@@ -223,7 +253,12 @@ export default {
     });
 
     this.$parent.socket.on("set_color_pie", (data) => {
-      console.log(data);
+      this.chartData.labels = data.colors;
+      this.chartData.datasets = [{
+        label: "Data One",
+        backgroundColor: data.colors,
+        data: data.percentages,
+      }];
       this.fetched.col_generated = true;
     });
 
@@ -262,6 +297,23 @@ export default {
       this.$refs.style_hist.update();
     });
 
+    this.$parent.socket.on("get_summary", (data) => {
+      this.summary = data.summary;
+      this.fetched.summary = true;
+      this.related_terms = data.related_terms;
+      this.fetched.related_terms = true;
+    });
+
+    this.$parent.socket.on("set_selected_artist", (data) => {
+      this.artist_options = data.artist_options;
+      this.fetched.artist_options = true;
+    });
+
+    this.$parent.socket.on("collect_line_chart", (data) => {
+      this.line_chart_data.series = data.series;
+      this.fetched.line_chart = true;
+      this.chart_key += 1;
+    });
   },
 }
 </script>
