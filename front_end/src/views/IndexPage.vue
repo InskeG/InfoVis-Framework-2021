@@ -1,4 +1,3 @@
-
 from data import *;
 
 <template>
@@ -46,12 +45,6 @@ from data import *;
           <div>
             {{ summary }}
           </div>
-        </vs-card>
-        <vs-card class="cardx" v-if="fetched">
-          <div slot="header"><h3>Dominant colors artists use in art pieces over the years</h3></div>
-
-            <zingchart ref="myChart" :data="line_chart_data" @node_mouseover="handleNodeHighlight"></zingchart>
-            Last visted: {{lastVisited}}
         </vs-card>
 
         <vs-card class="cardx">
@@ -170,6 +163,7 @@ export default {
       line_chart_data: {
         type: 'line',
         plot: {
+          aspect: "spline",
           tooltip: {
             text: "artist: %t \n year: %kt"
           }

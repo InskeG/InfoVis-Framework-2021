@@ -7,6 +7,7 @@ import scipy.cluster
 import time
 
 from base64 import encodebytes
+from colour import Color
 from io import BytesIO
 from flask import Flask, jsonify
 from flask_cors import CORS
@@ -21,7 +22,7 @@ sys.path.append("./GAN/")
 
 from .GAN import dnnlib
 from .GAN import generate
-from retrieve_info import retrieve_info, get_style_histograms
+from .retrieve_info import retrieve_info, get_style_histograms
 import pickle
 import torch
 
@@ -122,6 +123,7 @@ model_data = get_model_data()
 def stripp(x):
     return x.strip(' ')
 
+
 def get_artists(model_data):
     all_artist_text = sorted(model_data['school'].astype(str).unique().tolist())
     # art_list = list(map(stripp, all_artist_text))
@@ -153,42 +155,41 @@ def get_line_chart(model_data):
     return serie
 
 
+def get_line_chart_artist(model_data, label):
+    """
+    Collect data for the school/dominant color linechart.
+    """
+    series = []
 
-def get_line_chart_artist(model_data, artist):
-    line_graph = {}
+    data = model_data[model_data.school == label]
+    data = data[['creation_year', 'dominant_color']]
+    data = data.sort_values(by='creation_year')
+    data['hue'] = [Color(color).hue for color in data.dominant_color]
 
-    # model_data = model_data[model_data['school'] == artist]
-    model_data = model_data.loc[model_data['school'] == artist]
+    values = []
+    styles = []
 
+    # For years with more than one work that year, we take the average
+    # hue of all the dominant colors in that year.
+    for year in data.creation_year.unique():
+        hue = data[data.creation_year == year].hue.mean()
+        color = Color(hue=hue, saturation=1, luminance=0.5)
 
-    a = model_data['creation_year'].tolist()
-    b = model_data['dominant_color'].tolist()
-    c = model_data['school'].tolist()
+        values.append((year, hue))
+        styles.append(color.hex)
 
-    labels = c
+    series.append({
+        'marker': {'visible': False},
+        'styles': styles,
+        'text': label,
+        'values': values,
+    })
 
-    for i, artist in enumerate(c):
-        if artist not in line_graph.keys():
-            line_graph[artist] = []
-        line_graph[artist].append([a[i], b[i]])
-
-    serie = []
-    for artist in line_graph.keys():
-        serie.append( {
-            'values': line_graph[artist],
-            'text': artist
-        }
-        )
-
-    print(serie)
-    return serie
+    return series
 
 
 @socketio.event
 def collect_line_chart(data):
-    print('yayyy')
-    # model_data = get_model_data()
-    print(type(data))
     series = get_line_chart_artist(model_data, data['artist'])
     socketio.emit("collect_line_chart", {
         "series": series,
@@ -197,8 +198,6 @@ def collect_line_chart(data):
 
 @socketio.event
 def collect_info(data):
-
-
     gen = data['genre']
     y = data['year']
 

@@ -5,7 +5,7 @@ import wikipedia
 
 from colour import Color
 
-from data import *
+from .data import *
 
 
 #for example: http://127.0.0.1:5000/info/impressionism/1943/
