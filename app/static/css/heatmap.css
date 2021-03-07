@@ -6,6 +6,7 @@
 .heatmap_y_axis {
     color: #fff;
     font-size: 12px;
+    text-anchor: middle;
 }
 
 .heatmap_rect {
@@ -20,10 +21,102 @@
 }
 
 .tooltip {
-    background-color: #fff;
+    background-color: #262626;
+    color: #ddd;
     border: solid;
-    border-width: 2px;
+    border-color: #ddd;
+    border-width: 1px;
     border-radius: 5px;
     padding: 5px;
+}
+
+#wrapper-full {
+    margin-left: auto;
+    margin-right: auto;
+    width: 1500px;
+    height: 800px;
+}
+
+#wrapper-full div {
+
+}
+
+#wrapper-viz {
+    float: left;
+    width: 87%;
+    height: 100%;
+}
+
+#wrapper-filters {
+    float: right;
+    background-color: #262626;
+    width: 13%;
+    height: 100%;
+}
+
+#viz-title {
+    float: left;
+    width: 100%;
+    padding: 0px 10px;
+    display: flex;
+    align-items: center;
+    height: 6%;
+}
+
+#viz-title h1 {
+    color: #ddd;
+    font-size: 25px;
+}
+
+#viz-subtitle-heatmap {
+    width: 50%;
+}
+
+#viz-subtitle-artist {
+    width: 10%;
+}
+
+#viz-subtitle-barchart {
+    width: 40%;
+}
+
+.viz-subtitle {
+    float:left;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 5%;
+}
+
+.viz-subtitle-center {
+    float:left;
+    height: 5%;
+    text-align: center;
+    padding: 2px 0px;
+}
+
+.viz-subtitle h2 {
+    font-size: 13px;
+    margin-top: auto;
+    margin-bottom: auto;
+    color: #888;
+}
+
+.viz-subtitle-center h2 {
+    font-size: 13px;
+    margin: 2px 0px;
+    color: #888;
+}
+
+.legend_axis path {
+    display: none;
+}
+
+.legend_axis text {
+    color: #888;
+}
+
+.legend_axis line {
+    color: #888;
 }
 
