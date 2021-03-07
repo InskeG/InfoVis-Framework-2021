@@ -41,6 +41,11 @@ def metrics():
     song_data = data.song_data
     keys = data.filter_columns
     artists = data.top_artists
+    heatmap_data = data.heatmap_head
+    heatmap_data["loudness"] = heatmap_data["loudness_01"]
+    heatmap_data["tempo"] = heatmap_data["tempo_01"]
+    heatmap_data = heatmap_data.drop(["loudness_01", "tempo_01"], 1)
+    heatmap_data = pd.melt(heatmap_data, id_vars=["artists"], var_name=["characteristic"])
 
     temp_data = song_data.query("artists in @artists").sort_values("popularity", 0, False).groupby("artists").head(10)
 
@@ -70,4 +75,4 @@ def metrics_data():
 
 @main.route('/popularity', methods=['GET'])
 def popularity():
-	return render_template("popularity.html")
+    return render_template("popularity.html")

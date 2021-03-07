@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Metrics{% endblock %}
-
+{% block css %}<link href="../static/css/heatmap.css" rel="stylesheet">{% endblock %}
 {% block nav %}
 
 	<nav class="navbar navbar-default justify-content-center flex-md-nowrap navbar-expand-md" id = "navbar-top">
@@ -34,12 +34,36 @@
 	<div class = "content_2">
 		<div class = "content_2_plot" id="barchart">
 
+<div id = "wrapper-full">
+	<div id = "wrapper-viz">
+		<div id = "viz-title">
+			<h1>Spotify artists and musical characteristics: a visualization</h1>
+		</div>
+		<div id = "viz-subtitle-heatmap" class = "viz-subtitle">
+			<h2>Average value of musical characteristics</h2>
+		</div>
+		<div id = "viz-subtitle-artist" class = "viz-subtitle-center">
+			<h2>Artist</h2>
+			<h2>Current popularity</h2>
+		</div>
+		<div id = "viz-subtitle-barchart" class = "viz-subtitle">
+			<h2>Musical characteristics of most popular songs</h2>
+		</div>
+		<div id="heatmap">
+
+		</div>
+		<div id="legend">
+
+		</div>
+	</div>
+	<div id = "wrapper-filters">
 
 		</div>
 	</div>
 
 <!-- End page content-->
 <script type="text/javascript" src="../static/js/songbarchart.js"></script>
+<script type="text/javascript" src="../static/js/heatmap.js"></script>
 <script type="text/javascript">
 	var song_data = {{ song_data | safe }};
 	var y_variables = {{ artists | safe }};
@@ -71,6 +95,21 @@
 	x_2.domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
 	y_1.domain(y_variables);
 	y_2.domain([-100, 100]);
+	var data = {{ heatmap_data | safe }};
+	var colors = {{ heatmap_colors | safe }};
+
+	var padding = {top: 10, right: 10, bottom: 5, left: 10},
+	  fullwidth = (1500 * 0.87)  - padding.left - padding.right,
+	  fullheight = (800 * 0.85) - padding.top - padding.bottom,
+	  width_heatmap = fullwidth * 0.5,
+	  width_artists = fullwidth * 0.1,
+	  width_barchart = fullwidth * 0.4
+
+	var svg = d3.select("#heatmap").append("svg")
+					  .attr("height", fullheight)
+					  .attr("width", width_heatmap + width_artists + padding.left)
+					.append("g")
+
 
 	createPlot();
 </script>
