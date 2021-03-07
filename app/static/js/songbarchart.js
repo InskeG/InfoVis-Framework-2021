@@ -11,6 +11,64 @@ function myColor(c, v) {
     return returned_color(v);
 }
 
+function addArtist(formObject) {
+    var new_artist;
+    var artist = formObject.artist.value;
+    var fetch_url = "/metrics_data?artist=" + artist;
+    fetch(fetch_url)
+    .then(function(response) { return response.json(); })
+    .then((data) => {
+        if (Object.keys(data).length === 0 && data.constructor === Object) {
+            return false;
+        }
+        new_artist = data;
+        if (manual_artists) {
+            if (y_variables.includes(artist)) {
+                return false;
+            }
+            y_variables.push(artist);
+        } else {
+            i = 0;
+            y_to_i = {};
+            manual_artists = true;
+            song_data = {};
+            y_variables = [artist];
+        }
+        y_to_i[artist] = i++;
+        var num_artists = y_variables.length;
+        mini_chart_height = chart_height / num_artists;
+        if (mini_chart_height > 110) {
+            mini_chart_height = 110;
+            y_1 = d3.scaleBand().rangeRound([0, mini_chart_height * num_artists])
+        }
+        y_1.domain(y_variables);
+        song_data = Object.assign({}, song_data, new_artist)
+        removeOldPlot();
+        createPlot();
+    });
+    return false;
+}
+
+function removeOldPlot() {
+    d3.select("#chart_group")
+      .remove();
+}
+
+function createPlot() {
+    var chart_group = svgContainer.append("g")
+        .attr("id", "chart_group")
+        .attr("transform", "translate(" + 100 + "," + 20 + ")");
+
+    chart_group.append("g")
+        .call(d3.axisLeft(y_1).tickSize(0))
+        .select(".domain").remove();
+
+    for (var artist in song_data) {
+        var i = y_to_i[artist];
+        addAxes(i * (mini_chart_height), i, chart_group, artist);
+    }
+}
+
 function addAxes(translation, id, chart_group, artist, colors) {
 
     var mini_artist_group = chart_group.append("g")
@@ -23,9 +81,9 @@ function addAxes(translation, id, chart_group, artist, colors) {
                         .call(d3.axisTop(x_1));
     }
 
-    // Left -100 - 100 y axis
+    // Left -100 - 100 y axis, only show 0 - 100 ticks
     mini_artist_group.append("g")
-        .call(d3.axisLeft(y_2).ticks(4));
+        .call(d3.axisLeft(y_2).ticks(5).tickFormat(function(x) { return x >= 0 ? x + "%" : ""; }));
 
     var data = song_data[artist]
     var map = d3.map(data);
@@ -35,8 +93,7 @@ function addAxes(translation, id, chart_group, artist, colors) {
     for (var key_attr in x_variables) {
         if ((id === 0) && (j !== 0)) {
             var line_x = mini_chart_width * j + 30;
-            var points = [[line_x, 0], [line_x, chart_height]];
-            console.log(points);
+            var points = [[line_x, 0], [line_x, mini_chart_height * y_variables.length]];
             chart_group.append("path")
                        .attr("class", "vertline")
                        .attr("d", line(points))
@@ -66,25 +123,9 @@ function addAxes(translation, id, chart_group, artist, colors) {
         .attr("y", function (d) { return y_2(d.value[attr] * 100)  })
         .attr("width", x_2.bandwidth() - 5)
         .attr("height", function(d) { return (mini_chart_height / 2 - y_2(d.value[attr] * 100)) * 2; })
-        .style("fill", function(d) { return myColor(attr, d.value[attr])} );
+        .attr("class", "bar");
+        // .style("fill", function(d) { return myColor(attr, d.value[attr])} );
 
         j += 1;
-    }
-
-
-}
-
-function createPlot() {
-    var chart_group = svgContainer.append("g")
-        .attr("id", "chart_group")
-        .attr("transform", "translate(" + 100 + "," + 20 + ")");
-
-    chart_group.append("g")
-        .call(d3.axisLeft(y_1).tickSize(0))
-        .select(".domain").remove();
-
-    for (var artist in song_data) {
-        var i = y_to_i[artist];
-        addAxes(i * (mini_chart_height), i, chart_group, artist);
     }
 }

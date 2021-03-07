@@ -27,7 +27,10 @@
 
 <!-- Begin page content -->
     <h2 class="mt-3">Metrics plot</h2>
-
+	<form class="" onSubmit="return addArtist(this)">
+		<input type="text" name="artist" value="">
+		<input type="submit" name="submit" value="Add an Artist">
+	</form>
 	<div class = "content_2">
 		<div class = "content_2_plot" id="barchart">
 
@@ -40,13 +43,13 @@
 <script type="text/javascript">
 	var song_data = {{ song_data | safe }};
 	var y_variables = {{ artists | safe }};
+	var manual_artists = false;
 	var y_to_i = {};
 	var i = 0;
 	for (var key in y_variables) {
 		y_to_i[y_variables[key]] = i++;
 	}
 	var x_variables = {{ keys | safe }};
-	var colors = {{ colors | safe }};
 
 	var width = 1300;
 	var height = 1300;

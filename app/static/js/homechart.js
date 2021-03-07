@@ -18,7 +18,7 @@ function createPlot() {
                .append("rect")
                .attr("class", "bar")
                .attr("x", function (d) { return x(d.key)})
-               .attr("y", function (d) { return y(d.value) })
+               .attr("y", function (d) { return y(d.value * 100) })
                .attr("width", x.bandwidth() - 5)
                .attr("height", function(d) { return chart_height - y(d.value); })
 

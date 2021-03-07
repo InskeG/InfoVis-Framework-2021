@@ -38,17 +38,35 @@ def index():
 
 @main.route('/metrics', methods=['GET'])
 def metrics():
-    metrics_data = data.metrics_data
+    song_data = data.song_data
     keys = data.filter_columns
     artists = data.top_artists
-    colors = data.heatmap_colors
-    # negatived = [{k:(v * -1) for (k, v) in x.items()} for x in records]
-    # records = [[x, y] for x,y in zip(records, negatived)]
-    # print(records)
-    artists = json.loads(artists.to_json(orient="records"))
-    colors = dict(zip(colors["characteristic"], colors.filter(items=["color_min", "color_max"]).to_dict(orient="records")))
 
-    return render_template("metrics.html", song_data=metrics_data, artists=artists, keys=keys, colors=colors)
+    temp_data = song_data.query("artists in @artists").sort_values("popularity", 0, False).groupby("artists").head(10)
+
+    temp_data = temp_data.groupby("artists")
+    metrics_data = {x[0] : x[1].filter(items=keys).to_dict("records") for x in temp_data}
+    artists = json.loads(artists.to_json(orient="records"))
+
+    return render_template("metrics.html", song_data=metrics_data, artists=artists, keys=keys)
+
+@main.route('/metrics_data', methods=['GET'])
+def metrics_data():
+    song_data = data.song_data
+    artist = request.args.get("artist")
+    keys = data.filter_columns
+    print(data.filtered_artists)
+    print(artist)
+    if artist not in data.filtered_artists:
+        print("Artist not found")
+        return {}
+
+    metrics_data = song_data.query("artists == @artist").sort_values("popularity", 0, False).head(10)
+    metrics_data = {artist: metrics_data.filter(items=keys).to_dict("records")}
+    print(metrics_data)
+
+    return metrics_data
+
 
 @main.route('/popularity', methods=['GET'])
 def popularity():
