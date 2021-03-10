@@ -89,7 +89,6 @@ def retrieve_info(genre, year, model_data):
 
     dictionary['summary'] = wikipedia.summary(genre, sentences=3)
 
-
     # print('artworks in same time period:')
     # other art pieces created in same year
     year_df = model_data.loc[model_data['creation_year'].astype('float') < year+ranges]
@@ -203,7 +202,13 @@ def collect_info(data):
 
     # Load a placeholder image.
     # TODO: Obtain a generated image here.
-    path = os.path.join(os.path.dirname(__file__), "img1.jpg")
+    image_file = {
+        "Impressionism": "img1.jpg",
+        "Expressionism (fine arts)": "img2.jpg",
+        "Cubism": "img3.jpg",
+        "Surrealism": "img4.jpg",
+    }[gen]
+    path = os.path.join(os.path.dirname(__file__), image_file)
     image = Image.open(path)
 
     # Encode the image for the response.

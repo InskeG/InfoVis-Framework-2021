@@ -12,12 +12,6 @@ from data import *;
 
     <vs-row vs-justify="center">
       <vs-col type="flex" vs-justify="center" vs-align="center" vs-w="6">
-        <vs-card class="cardx" v-if="fetched.related_terms">
-          <div slot="header"><h3>Related terms</h3></div>
-          <div>
-            {{ related_terms }}
-          </div>
-        </vs-card>
         <vs-card class="cardx" v-if="fetched.more_statistics">
           <div slot="header"><h3>Meer statistieken</h3></div>
           <div>
@@ -32,10 +26,30 @@ from data import *;
 
           <div>
             <div id="app">
-              <pie-chart :data="chartData" :options="chartOptions"/>
+              <pie-chart
+                :data="pie_data"
+                :key="pie_key"
+              />
             </div>
             <div id="my_dataviz"></div>
           </div>
+        </vs-card>
+
+        <vs-card class="cardx" v-if="fetched.artist_options" >
+          <div slot="header"><h3>Dominant colors in art pieces over the years for specific artists</h3></div>
+
+          <form id="line_chart">
+            <select v-model="selected" @change="get_line_graph()">
+              <option v-for="option in artist_options" v-bind:key="option"> {{ option }}</option>
+            </select>
+          </form>
+
+          <zingchart
+            ref="line_chart"
+            :data="line_chart_data"
+            :key="chart_key"
+            @node_mouseover="handleNodeHighlight"
+          />
         </vs-card>
       </vs-col>
 
@@ -47,30 +61,23 @@ from data import *;
           </div>
         </vs-card>
 
+        <vs-card class="cardx" v-if="fetched.related_terms">
+          <div slot="header"><h3>Related terms</h3></div>
+          <div>
+            {{ related_terms }}
+          </div>
+        </vs-card>
+
         <vs-card class="cardx">
-          <zingchart ref="style_hist" :data="style_hist_data"/>
+          <zingchart
+          ref="style_hist"
+          :data="style_hist_data"
+          :key="hist_key"
+        />
         </vs-card>
       </vs-col>
     </vs-row>
 
-    <vs-card class="cardx" v-if="fetched.artist_options" >
-      <div slot="header"><h3>Dominant colors in art pieces over the years for specific artists</h3></div>
-
-      <form id="line_chart">
-        <select v-model="selected" @change="get_line_graph()">
-          <option v-for="option in artist_options" v-bind:key="option"> {{ option }}</option>
-        </select>
-      </form>
-
-      <vs-card class="cardx" v-if="fetched.line_chart">
-        <zingchart
-          ref="line_chart"
-          :data="line_chart_data"
-          :key="chart_key"
-          @node_mouseover="handleNodeHighlight"
-        />
-      </vs-card>
-    </vs-card>
 
     <vs-row type="flex" vs-justify="center" vs-align="center" vs-w="12">
       <vs-card class="cardx">
@@ -106,14 +113,11 @@ from data import *;
   </div>
 </template>
 
-
-
 <script>
 import PieChart from "./PieChart.js";
 /*eslint no-unused-vars: 0*/
 import zingchart from 'zingchart';
 import zingchartVue from 'zingchart-vue';
-
 
 export default {
   name: 'Index',
@@ -157,15 +161,16 @@ export default {
         line_chart: false,
       },
       image: "@/assets/images/big/img1.jpg",
-      chartOptions: {
-        hoverBorderWidth: 20
-      },
       line_chart_data: {
         type: 'line',
         plot: {
           aspect: "spline",
           tooltip: {
             text: "artist: %t \n year: %kt"
+          },
+          "animation": {
+            "effect": 1,
+            "sequence": 1,
           }
         },
         series: [
@@ -176,7 +181,7 @@ export default {
           y: "68%",
         }
       },
-      chartData: {
+      pie_data: {
         hoverBackgroundColor: "blue",
         hoverBorderWidth: 10,
         labels: [ "#e5856d", "#5e2812", "#e56b18", "#f6bab7", "#973f28" ],
@@ -194,6 +199,8 @@ export default {
         {values: [2, 3, 4, 3, 2, 3, 4, 2, 1]},
       ],
       chart_key: 0,
+      pie_key: 0,
+      hist_key: 0,
     }
   },
   components: {
@@ -229,8 +236,8 @@ export default {
           this.$vs.loading.close();
           this.$parent.set_main_color(data.dom_color);
           this.image = data.image;
-          this.chartData.labels = data.colors;
-          this.chartData.datasets = [{
+          this.pie_data.labels = data.colors;
+          this.pie_data.datasets = [{
             label: "Data One",
             backgroundColor: data.colors,
             data: data.percentages,
@@ -242,22 +249,20 @@ export default {
   },
   mounted: function() {
     this.$parent.socket.on("set_image", (data) => {
+      window.scroll({top: 0, left: 0, behaviour: 'smooth'});
       this.image = data.generated;
       this.fetched.img_generated = true;
     });
 
     this.$parent.socket.on("set_color_pie", (data) => {
-      this.chartData.labels = data.colors;
-      this.chartData.datasets = [{
+      this.pie_data.labels = data.colors;
+      this.pie_data.datasets = [{
         label: "Data One",
         backgroundColor: data.colors,
         data: data.percentages,
       }];
       this.fetched.col_generated = true;
-    });
-
-    zingchart.bind("style_hist", "setseriesdata", (data) => {
-      console.log("Updating data");
+      this.pie_key += 1;
     });
 
     this.$parent.socket.on("get_style_hists", (data) => {
