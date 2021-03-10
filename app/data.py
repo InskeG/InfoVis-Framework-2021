@@ -18,6 +18,15 @@ song_data["loudness"] = (song_data["loudness"] - min_loud)/(
 song_data["tempo"] = (song_data["tempo"] - min_temp)/(
     max_temp-min_temp)
 
+max_loud = max(data_by_artist["loudness"])
+min_loud = min(data_by_artist["loudness"])
+max_temp = max(data_by_artist["tempo"])
+min_temp = min(data_by_artist["tempo"])
+data_by_artist["loudness"] = (data_by_artist["loudness"] - min_loud)/(
+    max_loud-min_loud)
+data_by_artist["tempo"] = (data_by_artist["tempo"] - min_temp)/(
+    max_temp-min_temp)
+
 # Data for home page
 # filtered_artists = song_data.groupby("artists").filter(lambda x: len(x) > 9)["artists"].unique()
 filtered_artists = data_by_artist.query("count>9")["artists"].to_list()
@@ -32,5 +41,8 @@ home_data = top_artist_data.popularity
 filter_columns = ["valence", "acousticness", "danceability",
                   "energy", "liveness", "speechiness", "instrumentalness",
                   "loudness", "tempo"]
+
+heatmap_data = data_by_artist.query("count>9").sort_values("popularity", ascending=False).filter(items=filter_columns + ["artists"])
+heatmap_head = heatmap_data.head(10)
 
 heatmap_colors = pd.read_csv("app/data/heatmap_colors.csv")

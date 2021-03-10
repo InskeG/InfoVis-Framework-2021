@@ -1,10 +1,8 @@
 
 .bar {
-	fill: green;
-	cursor: crosshair;
+	fill: #1ED760;
 }
 
 .bar:hover {
 	fill: DarkOrange;
-	cursor: crosshair;
 }

@@ -3,6 +3,7 @@ body{
     height: 100%;
     width: 100%;
     background-color:black;
+    color: white;
 }
 
 /* width */
@@ -31,7 +32,7 @@ body{
 .navbar-default{
     background-color: #262626;
     width:100vw;
-    font-color:white;
+    color:white;
     font-weight:bold;
 }
 

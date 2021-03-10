@@ -42,35 +42,43 @@ def metrics():
     keys = data.filter_columns
     artists = data.top_artists
     heatmap_data = data.heatmap_head
-    heatmap_data["loudness"] = heatmap_data["loudness_01"]
-    heatmap_data["tempo"] = heatmap_data["tempo_01"]
-    heatmap_data = heatmap_data.drop(["loudness_01", "tempo_01"], 1)
+    colors = data.heatmap_colors
+    # print(heatmap_data)
     heatmap_data = pd.melt(heatmap_data, id_vars=["artists"], var_name=["characteristic"])
+    heatmap_data = heatmap_data.to_dict(orient="records")
+    colors = colors.to_dict(orient="records")
 
-    temp_data = song_data.query("artists in @artists").sort_values("popularity", 0, False).groupby("artists").head(10)
+    barchart_data = song_data.query("artists in @artists").sort_values("popularity", 0, False).groupby("artists").head(10)
 
-    temp_data = temp_data.groupby("artists")
-    metrics_data = {x[0] : x[1].filter(items=keys).to_dict("records") for x in temp_data}
+    barchart_data = barchart_data.groupby("artists")
+    barchart_data = {x[0] : x[1].filter(items=keys).to_dict("records") for x in barchart_data}
     artists = json.loads(artists.to_json(orient="records"))
+    print(barchart_data)
 
-    return render_template("metrics.html", song_data=metrics_data, artists=artists, keys=keys)
+    return render_template("metrics.html", heatmap_data=heatmap_data,
+                           heatmap_colors=colors, song_data=barchart_data,
+                           artists=artists, keys=keys)
 
 @main.route('/metrics_data', methods=['GET'])
 def metrics_data():
     song_data = data.song_data
+    heatmap_data = data.heatmap_data
     artist = request.args.get("artist")
     keys = data.filter_columns
-    print(data.filtered_artists)
     print(artist)
     if artist not in data.filtered_artists:
         print("Artist not found")
         return {}
 
-    metrics_data = song_data.query("artists == @artist").sort_values("popularity", 0, False).head(10)
-    metrics_data = {artist: metrics_data.filter(items=keys).to_dict("records")}
-    print(metrics_data)
+    barchart_data = song_data.query("artists == @artist").sort_values("popularity", 0, False).head(10)
+    barchart_data = {artist: barchart_data.filter(items=keys).to_dict("records")}
 
-    return metrics_data
+    heatmap_data = heatmap_data.query("artists == @artist")
+    heatmap_data = pd.melt(heatmap_data, id_vars=["artists"], var_name=["characteristic"])
+    heatmap_data = heatmap_data.to_dict(orient="records")
+    print(heatmap_data)
+
+    return {"heatmap" : heatmap_data, "barchart": barchart_data}
 
 
 @main.route('/popularity', methods=['GET'])

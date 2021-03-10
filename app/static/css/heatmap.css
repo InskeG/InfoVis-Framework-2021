@@ -1,3 +1,12 @@
+.artist-list {
+
+}
+
+.artist-list-element {
+    list-style-type: none;
+    font-size: 12px;
+}
+
 .heatmap_x_axis {
     color: #fff;
     font-size: 10px;
@@ -31,9 +40,9 @@
 }
 
 #wrapper-full {
-    margin-left: auto;
+    margin-left: 0;
     margin-right: auto;
-    width: 1500px;
+    width: 1800px;
     height: 800px;
 }
 
@@ -69,15 +78,15 @@
 }
 
 #viz-subtitle-heatmap {
-    width: 50%;
+    width: 42.5%;
 }
 
 #viz-subtitle-artist {
-    width: 10%;
+    width: 12.5%;
 }
 
 #viz-subtitle-barchart {
-    width: 40%;
+    width: 45%;
 }
 
 .viz-subtitle {
@@ -119,4 +128,3 @@
 .legend_axis line {
     color: #888;
 }
-
