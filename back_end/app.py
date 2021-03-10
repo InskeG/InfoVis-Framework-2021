@@ -146,11 +146,10 @@ def get_line_chart(model_data):
 
     serie = []
     for artist in line_graph.keys():
-        serie.append( {
+        serie.append({
             'values': line_graph[artist],
             'text': artist
-        }
-        )
+        })
     return serie
 
 
@@ -174,25 +173,38 @@ def get_line_chart_artist(model_data, label):
         hue = data[data.creation_year == year].hue.mean()
         color = Color(hue=hue, saturation=1, luminance=0.5)
 
-        values.append((year, hue))
+        values.append((int(eval(year)), hue))
         styles.append(color.hex)
 
     series.append({
-        'marker': {'visible': False},
-        'styles': styles,
+        # 'styles': styles,
         'text': label,
         'values': values,
     })
 
-    return series
+    data = {
+        'series': series,
+        'plot': {
+            'marker': {
+                'styles': [
+                    {'background-color': color} for color in styles
+                ],
+            },
+        },
+    }
+
+    print(data)
+
+    return data
 
 
 @socketio.event
 def collect_line_chart(data):
-    series = get_line_chart_artist(model_data, data['artist'])
-    socketio.emit("collect_line_chart", {
-        "series": series,
-    })
+    print("Collecting line chart data")
+    socketio.emit(
+        "collect_line_chart",
+        get_line_chart_artist(model_data, data['artist']),
+    )
 
 
 @socketio.event
@@ -240,18 +252,17 @@ def collect_info(data):
         "related_terms": dictionary['related_terms']
     })
 
-
-    selected_artist = get_artists(model_data)
-
     socketio.emit("set_selected_artist", {
-        "artist_options": selected_artist,
+        "artist_options": get_artists(model_data),
     })
 
+    # socketio.emit("line_chart", {
+    #     "series": get_line_chart(model_data),
+    # })
 
-    series = get_line_chart(model_data)
-
-    socketio.emit("line_chart", {
-        "series": series,
+    histograms = get_style_histograms()
+    socketio.emit("get_style_hists", {
+        "series": [{"values": values} for key, values in histograms.items()],
     })
 
 
@@ -282,8 +293,6 @@ def generate_images(data):
         "seeds": seeds.tolist(),
         "message": ""
     })
-
-    socketio.emit("get_style_hists", get_style_histograms())
 
 
 @socketio.on('connect')

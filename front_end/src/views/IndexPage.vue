@@ -38,11 +38,9 @@ from data import *;
         <vs-card class="cardx" v-if="fetched.artist_options" >
           <div slot="header"><h3>Dominant colors in art pieces over the years for specific artists</h3></div>
 
-          <form id="line_chart">
-            <select v-model="selected" @change="get_line_graph()">
-              <option v-for="option in artist_options" v-bind:key="option"> {{ option }}</option>
-            </select>
-          </form>
+          <select v-model="selected" @change="get_line_graph()">
+            <option v-for="option in artist_options" v-bind:key="option"> {{ option }}</option>
+          </select>
 
           <zingchart
             ref="line_chart"
@@ -69,6 +67,7 @@ from data import *;
         </vs-card>
 
         <vs-card class="cardx">
+          <div slot="header"><h3>Usage of dominant colors by genres</h3></div>
           <zingchart
           ref="style_hist"
           :data="style_hist_data"
@@ -129,20 +128,6 @@ export default {
         type: String
     },
   },
-  computed: {
-    style_hist_data() {
-      return {
-        type: 'area',
-        plot: {
-          aspect: "spline",
-          marker: {
-            'visible': false,
-          },
-        },
-        series: this.style_hist_values,
-      };
-    }
-  },
   data: () => {
     return {
       artist_options: [],
@@ -162,23 +147,39 @@ export default {
       },
       image: "@/assets/images/big/img1.jpg",
       line_chart_data: {
-        type: 'line',
+        type: 'scatter',
         plot: {
-          aspect: "spline",
+          // aspect: "spline",
           tooltip: {
             text: "artist: %t \n year: %kt"
           },
-          "animation": {
-            "effect": 1,
-            "sequence": 1,
+          marker: {
+            visible: true,
+            style: ["#fff", "#aaa", "#000"],
+          },
+          animation: {
+            effect: 1,
+            sequence: 3,
+            speed: 10,
           }
         },
+        scaleX: {
+          label: {
+            "text": "Year",
+          },
+        },
+        scaleY: {
+          label: {
+            "text": "Hue",
+          },
+        },
         series: [
+          {values: [[0, 0], [1, 1]]},
         ],
         legend: {
-          layout: "1x6", //row x column
-          x: "2%",
-          y: "68%",
+          // layout: "1x6", //row x column
+          // x: "2%",
+          // y: "68%",
         }
       },
       pie_data: {
@@ -193,11 +194,35 @@ export default {
           }
         ]
       },
-      style_hist_values: [
-        {values: [1, 2, 3, 4, 3, 4, 3, 2, 1]},
-        {values: [5, 4, 3, 2, 1, 2, 3, 4, 5]},
-        {values: [2, 3, 4, 3, 2, 3, 4, 2, 1]},
-      ],
+      style_hist_data: {
+        type: 'area',
+        plot: {
+          aspect: "spline",
+          marker: {
+            visible: false,
+          },
+          animation: {
+            effect: 4,
+            sequence: 1,
+            speed: 10,
+          },
+        },
+        scaleX: {
+          label: {
+            "text": "Hue",
+          },
+        },
+        scaleY: {
+          label: {
+            "text": "Density",
+          },
+        },
+        series: [
+          {values: [1, 2, 3, 4, 3, 4, 3, 2, 1]},
+          {values: [5, 4, 3, 2, 1, 2, 3, 4, 5]},
+          {values: [2, 3, 4, 3, 2, 3, 4, 2, 1]},
+        ],
+      },
       chart_key: 0,
       pie_key: 0,
       hist_key: 0,
@@ -266,34 +291,8 @@ export default {
     });
 
     this.$parent.socket.on("get_style_hists", (data) => {
-      console.log("Updating style hists");
-
-      var series_data = {
-        type: "area",
-        plot: {
-          aspect: "spline",
-          marker: {
-            'visible': false,
-          },
-        },
-        series: []
-      };
-
-      for (var art_type in data) {
-        // series_data['series'].push({values: data[art_type]});
-        console.log(data[art_type]);
-        // zingchart.exec("style_hist", "setseriesvalues", {
-        this.style_hist_values[0].values = data[art_type];
-
-        break;
-      }
-
-      // console.log(series_data);
-      // this.$refs.style_hist.setseriesdata(series_data);
-      // this.$refs.style_hist.update();
-
-      console.log(this.$refs.style_hist);
-      this.$refs.style_hist.update();
+      this.style_hist_data.series = data.series;
+      this.hist_key += 1;
     });
 
     this.$parent.socket.on("get_summary", (data) => {
@@ -310,6 +309,8 @@ export default {
 
     this.$parent.socket.on("collect_line_chart", (data) => {
       this.line_chart_data.series = data.series;
+      this.line_chart_data.plot.marker = data.plot.marker;
+      console.log(this.line_chart_data);
       this.fetched.line_chart = true;
       this.chart_key += 1;
     });

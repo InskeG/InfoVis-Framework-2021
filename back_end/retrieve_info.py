@@ -56,9 +56,20 @@ def get_style_histograms():
             eval(f"[{','.join(colors.values)}]")
         )
         hues = [Color(col).hue for col in colors]
-        hist = np.histogram(hues, density=True)
+        hist, edges = np.histogram(hues, bins=11, range=(0, 1), density=True)
+        print(hist)
+        print(edges)
+
+        x_values = [
+            0.5 * (first + second)
+            for first, second in zip(edges[:-1], edges[1:])
+        ]
+        print(x_values)
+
+        print(len(x_values), len(hist))
 
         # result[art_type] = list(zip(*hist))
-        result[art_type] = list(hist[0])
+        result[art_type] = list(zip(x_values, hist))
+        print(result[art_type])
 
     return result
