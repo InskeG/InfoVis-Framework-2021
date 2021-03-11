@@ -107,8 +107,16 @@ def collect_info(data):
 
 
 @socketio.event
-def get_timeline_data():
-    return data.get_timeline_data()
+def get_timeline_data(artists=None, adding=False):
+    timeline_data, artists = data.get_timeline_data(artists, adding)
+    return {
+        'timelineData': timeline_data,
+        'artists': artists
+    }
+
+@socketio.event
+def get_all_artists():
+    return data.all_artists
 
 @socketio.on('connect')
 def test_connect():

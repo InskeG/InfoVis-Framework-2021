@@ -13,13 +13,18 @@ export interface Segment {
   val: Val;
 }
 
+export interface ArtPeriod {
+  name: string;
+  timeRange: [TS, TS];
+}
+
 export type TS = Date | number;
 
 export type Val = number | string; // qualitative vs quantitative
 
 type GroupLabel = {
   group: string;
-  label:string;
+  label: string;
 }
 
 type Range<DomainType> = [DomainType, DomainType];
@@ -54,6 +59,10 @@ export interface TimelinesChartGenericInstance<ChainableInstance> {
   useUtc(utc: boolean): ChainableInstance;
   timeFormat(): string;
   timeFormat(format: string): ChainableInstance;
+
+  artPeriods(): ArtPeriod[];
+  artPeriods(artPeriods: ArtPeriod[]): ChainableInstance;
+
   xTickFormat(): Formatter<Date> | null;
   xTickFormat(formatter: Formatter<Date> | null): ChainableInstance;
   dateMarker(): TS | null | boolean;
@@ -101,6 +110,7 @@ export interface TimelinesChartGenericInstance<ChainableInstance> {
   enableAnimations(animations: boolean): ChainableInstance;
 
   onLegendClick(cb: (label: string) => void): ChainableInstance;
+  onArtPeriodTickClick(cb: (period: ArtPeriod) => void): ChainableInstance;
   onLabelClick(cb: (label: string, group: string) => void): ChainableInstance;
   onSegmentClick(cb: (segment: {
     group: string,
