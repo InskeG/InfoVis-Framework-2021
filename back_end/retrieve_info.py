@@ -35,7 +35,7 @@ def retrieve_info(genre, year):
 
     dictionary['related_terms'] = wikipedia.search(genre)
 
-    # other = model_data.loc[model_data['artist_full_name'] == artist]
+    # other = paintings.loc[paintings['artist_full_name'] == artist]
 
     return dictionary
 

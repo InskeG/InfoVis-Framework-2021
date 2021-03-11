@@ -28,16 +28,6 @@
 	padding: 10px;
 }
 
-.vs-sidebar-primary .vs-sidebar-item-active {
-	font-weight: normal;
-	border-right: 0px !important;
-
-	a {
-		opacity: .8 !important;
-		color: inherit !important;
-	}
-}
-
 .vs-input-large .vs-icon {
 	top: 13px;
 	border-left: 0px;
@@ -95,10 +85,6 @@
 
 .vs-pagination--ul {
 	margin-bottom: 0;
-}
-
-.vs-sidebar--background {
-	background: none;
 }
 
 .vs-switch--text {

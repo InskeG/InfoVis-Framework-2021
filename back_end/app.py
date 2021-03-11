@@ -1,10 +1,13 @@
 import binascii
+import json
 import numpy as np
 import os
+import pandas as pd
+import pickle
 import scipy
-import scipy.misc
-import scipy.cluster
-import time
+import sys
+import torch
+import wikipedia
 
 from base64 import encodebytes
 from colour import Color
@@ -12,19 +15,14 @@ from io import BytesIO
 from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_socketio import SocketIO
+from io import BytesIO
 from PIL import Image
-import pandas as pd
-import wikipedia
+from scipy import cluster
 
-# StyleGan imports
-import sys
-sys.path.append("./GAN/")
-
+from .data import get_timeline_data as get_tl_data
 from .GAN import dnnlib
 from .GAN import generate
 from .retrieve_info import retrieve_info, get_style_histograms
-import pickle
-import torch
 
 
 if torch.cuda.is_available():
@@ -36,9 +34,8 @@ if torch.cuda.is_available():
     with dnnlib.util.open_url("./GAN/models/centuries.pkl") as f:
         G_centuries = pickle.Unpickler(f).load()['G_ema'].to(DEVICE)
 
-nr_color = 3
 NUM_CLUSTERS = 4
-RESIZE = 150
+RESIZE = 150  # Size of images for clustering.
 
 
 app = Flask(__name__)
@@ -53,9 +50,9 @@ def detect_colors(image):
     shape = array.shape
     array = array.reshape(scipy.product(shape[:2]), shape[2]).astype(float)
 
-    codes, dist = scipy.cluster.vq.kmeans(array, NUM_CLUSTERS)
+    codes, dist = cluster.vq.kmeans(array, NUM_CLUSTERS)
 
-    vecs, dist = scipy.cluster.vq.vq(array, codes)
+    vecs, dist = cluster.vq.vq(array, codes)
     counts, bins = scipy.histogram(vecs, len(codes))
 
     total = np.sum(np.array(counts))
@@ -94,7 +91,6 @@ def retrieve_info(genre, year, model_data):
     year_df = model_data.loc[model_data['creation_year'].astype('float') < year+ranges]
     year_df = year_df.loc[year_df['creation_year'].astype('float') > year-ranges]
 
-    # print(year_df)
     year_list = pd.Series.tolist(year_df['artwork_name'])
     if len(year_list) < 5:
         dictionary['same_year/genre'] = pd.Series.tolist(year_df['artwork_name'])
@@ -110,7 +106,7 @@ def retrieve_info(genre, year, model_data):
 
 def get_model_data():
     stats_art = pd.read_csv('./data/omniart_v3_datadump.csv')
-    model_data = stats_art.copy()[:100]
+    model_data = stats_art.copy()
     model_data = model_data.drop(model_data[model_data['school'] == 'unknown'].index)
     model_data = model_data.drop(model_data[model_data['creation_year'] == 'unknown'].index)
     return model_data
@@ -135,11 +131,9 @@ def get_line_chart(model_data):
 
     a = model_data['creation_year'].tolist()
     b = model_data['dominant_color'].tolist()
-    c = model_data['school'].tolist()
+    labels = model_data['school'].tolist()
 
-    labels = c
-
-    for i, artist in enumerate(c):
+    for i, artist in enumerate(labels):
         if artist not in line_graph.keys():
             line_graph[artist] = []
         line_graph[artist].append([a[i], b[i]])
@@ -193,8 +187,6 @@ def get_line_chart_artist(model_data, label):
         },
     }
 
-    print(data)
-
     return data
 
 
@@ -246,7 +238,6 @@ def collect_info(data):
 
     dictionary = retrieve_info(gen, y, model_data)
 
-    print(dictionary.keys())
     socketio.emit("get_summary", {
         "summary": dictionary['summary'],
         "related_terms": dictionary['related_terms']
@@ -297,6 +288,20 @@ def generate_images(data):
         "message": ""
     })
 
+
+@socketio.event
+def get_timeline_data():
+    tl_data = get_tl_data()
+
+    artists = set()
+
+    for group in tl_data:
+        for group_item in group['data']:
+            for data in group_item['data']:
+                artists.add(data['val'])
+
+    print(sorted(artists))
+    return tl_data
 
 @socketio.on('connect')
 def test_connect():
