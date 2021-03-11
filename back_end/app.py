@@ -19,10 +19,11 @@ from io import BytesIO
 from PIL import Image
 from scipy import cluster
 
+from .data import model_data
 from .data import get_timeline_data as get_tl_data
 from .GAN import dnnlib
 from .GAN import generate
-from .retrieve_info import retrieve_info, get_style_histograms
+from .retrieve_info import retrieve_info, _get_artist_histograms
 
 
 if torch.cuda.is_available():
@@ -104,6 +105,7 @@ def retrieve_info(genre, year, model_data):
     return dictionary
 
 
+'''
 def get_model_data():
     stats_art = pd.read_csv('./data/omniart_v3_datadump.csv')
     model_data = stats_art.copy()
@@ -113,6 +115,7 @@ def get_model_data():
 
 
 model_data = get_model_data()
+'''
 
 
 def stripp(x):
@@ -251,7 +254,7 @@ def collect_info(data):
     #     "series": get_line_chart(model_data),
     # })
 
-    histograms = get_style_histograms()
+    histograms = get_artist_histograms()
     socketio.emit("get_style_hists", {
         "series": [{
             "values": values,
@@ -293,6 +296,7 @@ def generate_images(data):
 def get_timeline_data():
     tl_data = get_tl_data()
 
+    '''
     artists = set()
 
     for group in tl_data:
@@ -300,8 +304,30 @@ def get_timeline_data():
             for data in group_item['data']:
                 artists.add(data['val'])
 
-    print(sorted(artists))
+    histograms = get_artist_histograms(artists)
+    socketio.emit("get_style_hists", {
+        "series": [{
+            "values": values,
+            "text": key,
+        } for key, values in histograms.items()],
+    })
+
+    print(histograms)
+    '''
     return tl_data
+
+@socketio.event
+def get_artist_histograms(data):
+    artists = data['artists']
+    print(artists)
+    histograms = _get_artist_histograms(artists)
+    socketio.emit("get_style_hists", {
+        "series": [{
+            "values": values,
+            "text": key,
+        } for key, values in histograms.items()],
+    })
+
 
 @socketio.on('connect')
 def test_connect():

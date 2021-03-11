@@ -66,7 +66,7 @@ from data import *;
           </div>
         </vs-card>
 
-        <vs-card class="cardx">
+        <vs-card class="cardx" v-if="fetched.histograms">
           <div slot="header"><h3>Usage of dominant colors by genres</h3></div>
           <zingchart
           ref="style_hist"
@@ -149,6 +149,7 @@ export default {
         more_statistics: false,
         artist_options: false,
         line_chart: false,
+        histograms: false,
       },
       image: "@/assets/images/big/img1.jpg",
       line_chart_data: {
@@ -227,6 +228,21 @@ export default {
           {values: [2, 3, 4, 3, 2, 3, 4, 2, 1]},
         ],
         legend: {},
+        labels: [
+          {
+            // text: "Test",
+            x: "0%",
+            width: "100%",
+            gradientColors: `
+              #FF0000 #FF8000 #FFFF00 #80FF00
+              #00FF00 #00FF80 #00FFFF #007FFF
+              #0000FF #7F00FF #FF00FF #FF0080
+              #FF0000
+            `,
+            gradientStops: ".001 .083 .167 .25 .333 .417 .5 .583 .667 .75 .833 .917 1",
+            fillAngle: 0,
+          }
+        ],
       },
       chart_key: 0,
       pie_key: 0,
@@ -301,6 +317,7 @@ export default {
 
     this.$parent.socket.on("get_style_hists", (data) => {
       this.style_hist_data.series = data.series;
+      this.fetched.histograms = true;
       this.hist_key += 1;
     });
 
@@ -333,12 +350,24 @@ export default {
       container.innerHTML = "";
 
       this.$parent.socket.emit('get_timeline_data', (timeline_data) => {
+        var artists = [];
+
         timeline_data.forEach(
           group => group.data.forEach(
             label => label.data.forEach((painting) => {
-              painting.timeRange[0] = new Date(painting.timeRange[0]['year'], painting.timeRange[0]['month'], 1);
-              painting.timeRange[1] = new Date(painting.timeRange[1]['year'], painting.timeRange[1]['month'], 1);
-            })));
+              artists.push(painting.val);
+              painting.timeRange[0] = new Date(
+                painting.timeRange[0]['year'], painting.timeRange[0]['month'], 1
+              );
+              painting.timeRange[1] = new Date(
+                painting.timeRange[1]['year'], painting.timeRange[1]['month'], 1
+              );
+            })
+          )
+        );
+
+        artists = [...new Set(artists)];
+        // this.$parent.socket.emit("get_artist_histograms", {artists: artists});
 
         let filter = null;
 
@@ -352,11 +381,16 @@ export default {
           .timeFormat('%Y')
           .showGroupTooltip(false)
           .showLineTooltip(false)
-          .onZoom((a, b) => console.log(a, b))
+          .onZoom((a, b) => {
+            console.log("Zooming", a, b);
+          })
           .onLegendClick((s) => {
             this.setZoomToFilter();
             window.setTimeout(() => {
                 if (filter === s.innerHTML) {
+                  // Fetching all artists.
+                  this.$parent.socket.emit("get_artist_histograms", {artists: artists});
+
                   // Deselect all filters
                   filter = null;
                   d3.selectAll('.series-segment')
@@ -370,6 +404,8 @@ export default {
                 }
                 else {
                   filter = s.innerHTML;
+                  this.$parent.socket.emit("get_artist_histograms", {artists: [filter]});
+
                   let zoomStart = null,
                       zoomEnd = null;
 
@@ -398,6 +434,7 @@ export default {
             }, 1000);  // Hackerman to the rescue
           })
           .onSegmentClick((s) => {
+            console.log("Segment click");
             console.log(s);
           })(container);
       });

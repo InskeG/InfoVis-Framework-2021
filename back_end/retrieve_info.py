@@ -40,36 +40,37 @@ def retrieve_info(genre, year):
     return dictionary
 
 
-def get_style_histograms():
-    data = model_data.dropna()
-    art_types = data.artwork_type.unique()
+def _get_artist_histograms(artists=None):
+    if not artists:
+        artists = FEATURED_ARTISTS
 
     result = {}
 
-    for art_type in art_types:
-        colors = model_data[model_data.artwork_type == art_type].color_pallete
-        colors = colors.dropna()
+    for artist in artists:
+        # Gather all works by this artist.
+        works = model_data[model_data.artist_last_name == artist]
+        # colors = works.color_pallete.dropna()
+        colors = works.dominant_color.dropna()
 
         # The data are a series of strings. These strings represent a list of
         # hex codes. We use `eval` to convert these strings to lists.
-        colors = itertools.chain.from_iterable(
-            eval(f"[{','.join(colors.values)}]")
-        )
+        # colors = itertools.chain.from_iterable(
+        #     eval(f"[{','.join(colors.values)}]")
+        # )
         hues = [Color(col).hue for col in colors]
+
+        if len(hues) == 0:
+            continue
+
         hist, edges = np.histogram(hues, bins=11, range=(0, 1), density=True)
-        print(hist)
-        print(edges)
+
+        print(hues, hist)
 
         x_values = [
             0.5 * (first + second)
             for first, second in zip(edges[:-1], edges[1:])
         ]
-        print(x_values)
 
-        print(len(x_values), len(hist))
-
-        # result[art_type] = list(zip(*hist))
-        result[art_type] = list(zip(x_values, hist))
-        print(result[art_type])
+        result[artist] = list(zip(x_values, hist))
 
     return result

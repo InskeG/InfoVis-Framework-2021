@@ -46,49 +46,6 @@ l = [round(float(num)) for num in l]
 l.sort()
 creation_year = np.arange(min(l), max(l), 500).tolist()
 
-
-def get_artists():
-    stats_art = pd.read_csv('./data/omniart_v3_datadump.csv')
-    model_data = stats_art.copy()
-    model_data = model_data.drop(model_data[model_data['artist_full_name'] == 'unknown'].index)
-    model_data = model_data.drop(model_data[model_data['creation_year'] == 'unknown'].index)
-    all_artist_text = sorted(model_data['artist_full_name'].astype(str).unique().tolist())[:100]
-    # all_artist_text = [x.strip(' ') for x in all_artist_text]
-    art_list = []
-    for x in all_artist_text:
-        art_list.append({'artist': x.strip(' ')})
-
-    return art_list
-
-
-
-def get_line_graph(artist):
-    stats_art = pd.read_csv('./data/omniart_v3_datadump.csv')
-    model_data = stats_art.copy()
-    model_data = model_data.drop(model_data[model_data['artist_full_name'] == 'unknown'].index)
-    model_data = model_data.drop(model_data[model_data['creation_year'] == 'unknown'].index)
-
-    line_graph = {}
-
-    a = model_data['creation_year'].tolist()
-    b = model_data['dominant_color'].tolist()
-    c = model_data['artist_full_name'].tolist()
-
-
-    for i, artist in enumerate(c):
-        if artist not in line_graph.keys():
-            line_graph[artist] = []
-        line_graph[artist].append([a[i], b[i]])
-
-    serie = []
-    for datas in line_graph.values():
-        serie.append( {
-            'values': datas
-        }
-        )
-    return line_graph, serie
-
-
 DATA_PATH = 'data/paintings_data.pk'
 TIMELINE_PATH = 'data/timeline_data.pk'
 FEATURED_ARTISTS = ['michelangelo', 'bosch', 'vinci', 'greco', 'caravaggio', 'rubens', 'vermeer',
@@ -130,14 +87,23 @@ if not os.path.exists(DATA_PATH):
         np.nan: 'other'
     }
 
-    csv = pd.read_csv('data/omniart_v3_datadump.csv')
-    paintings = csv[(csv['artwork_type'].isin(['painting', 'drawing'])) &
-                    (~csv['artist_full_name'].str.contains(r'unknown|unidentified', na=False)) &
-                    (csv['artwork_name'] != 'unknown')].copy()
+    # csv = pd.read_csv('data/omniart_v3_datadump.csv')
+    paintings = model_data[
+        (model_data['artwork_type'].isin(['painting', 'drawing']))
+        & (~model_data['artist_full_name'].str.contains(
+            r'unknown|unidentified', na=False,
+        ))
+        & (model_data['artwork_name'] != 'unknown')].copy()
     paintings['creation_year'] = pd.to_numeric(paintings['creation_year'])
     paintings.sort_values('creation_year', inplace=True)
-    paintings = paintings[paintings['creation_year'] > 0][['artwork_name', 'artist_full_name', 'artist_last_name',
-                                                           'creation_year', 'school', 'image_url']]
+    paintings = paintings[paintings['creation_year'] > 0][[
+        'artwork_name',
+        'artist_full_name',
+        'artist_last_name',
+        'creation_year',
+        'school',
+        'image_url',
+    ]]
     paintings['school'] = paintings['school'].replace(SCHOOL_MAP).str.lower()
 
     with open(DATA_PATH, 'wb') as file:
@@ -145,6 +111,48 @@ if not os.path.exists(DATA_PATH):
 else:
     with open(DATA_PATH, 'rb') as file:
         paintings = pickle.load(file)
+
+
+def get_artists():
+    # stats_art = pd.read_csv('./data/omniart_v3_datadump.csv')
+    # model_data = stats_art.copy()
+    # model_data = model_data.drop(model_data[model_data['artist_full_name'] == 'unknown'].index)
+    # model_data = model_data.drop(model_data[model_data['creation_year'] == 'unknown'].index)
+    all_artist_text = sorted(model_data['artist_full_name'].astype(str).unique().tolist())[:100]
+    # all_artist_text = [x.strip(' ') for x in all_artist_text]
+    art_list = []
+    for x in all_artist_text:
+        art_list.append({'artist': x.strip(' ')})
+
+    return art_list
+
+
+
+def get_line_graph(artist):
+    # stats_art = pd.read_csv('./data/omniart_v3_datadump.csv')
+    # model_data = stats_art.copy()
+    # model_data = model_data.drop(model_data[model_data['artist_full_name'] == 'unknown'].index)
+    # model_data = model_data.drop(model_data[model_data['creation_year'] == 'unknown'].index)
+
+    line_graph = {}
+
+    a = model_data['creation_year'].tolist()
+    b = model_data['dominant_color'].tolist()
+    c = model_data['artist_full_name'].tolist()
+
+
+    for i, artist in enumerate(c):
+        if artist not in line_graph.keys():
+            line_graph[artist] = []
+        line_graph[artist].append([a[i], b[i]])
+
+    serie = []
+    for datas in line_graph.values():
+        serie.append( {
+            'values': datas
+        }
+        )
+    return line_graph, serie
 
 
 def get_model_data():
