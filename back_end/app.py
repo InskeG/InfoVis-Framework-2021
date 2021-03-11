@@ -18,13 +18,14 @@ from flask_socketio import SocketIO
 from io import BytesIO
 from PIL import Image
 from scipy import cluster
-
 from .data import model_data
 from .data import get_timeline_data as get_tl_data
-from .GAN import dnnlib
-from .GAN import generate
 from .retrieve_info import retrieve_info, _get_artist_histograms
 
+from .GAN import dnnlib
+from .GAN import generate
+
+sys.path.append("./GAN/")
 
 if torch.cuda.is_available():
     DEVICE = torch.device('cuda')
