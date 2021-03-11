@@ -262,7 +262,10 @@ def collect_info(data):
 
     histograms = get_style_histograms()
     socketio.emit("get_style_hists", {
-        "series": [{"values": values} for key, values in histograms.items()],
+        "series": [{
+            "values": values,
+            "text": key,
+        } for key, values in histograms.items()],
     })
 
 

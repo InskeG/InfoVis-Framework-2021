@@ -174,7 +174,6 @@ export default {
           },
         },
         series: [
-          {values: [[0, 0], [1, 1]]},
         ],
         legend: {
           // layout: "1x6", //row x column
@@ -222,6 +221,7 @@ export default {
           {values: [5, 4, 3, 2, 1, 2, 3, 4, 5]},
           {values: [2, 3, 4, 3, 2, 3, 4, 2, 1]},
         ],
+        legend: {},
       },
       chart_key: 0,
       pie_key: 0,
