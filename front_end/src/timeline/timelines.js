@@ -94,11 +94,12 @@ export default Kapsule({
         leftMargin: {default: 90},
         rightMargin: {default: 100},
         topMargin: {default: 26},
-        bottomMargin: {default: 30},
+        bottomMargin: {default: 60},
         useUtc: {default: false},
         xTickFormat: {},
         dateMarker: {},
         timeFormat: {default: '%Y-%m-%d %-I:%M:%S %p', triggerUpdate: false},
+        artPeriods: {default: []},
         zoomX: {  // Which time-range to show (null = min/max)
             default: [null, null],
             onChange(zoomX, state) {
@@ -151,6 +152,7 @@ export default Kapsule({
         // Callbacks
         onZoom: {}, // When user zooms in / resets zoom. Returns ([startX, endX], [startY, endY])
         onLegendClick: {},
+        onArtPeriodTickClick: {},
         onLabelClick: {}, // When user clicks on a group or y label. Returns (group) or (label, group) respectively
         onSegmentClick: {} // When user clicks on a segment. Returns (segment object) respectively
     },
@@ -505,6 +507,18 @@ export default Kapsule({
                 });
 
             state.svg.call(state.segmentTooltip);
+
+            state.artPeriodTooltip = d3Tip()
+                .attr('class', 'chart-tooltip segment-tooltip')
+                .direction('n')
+                .offset([20, 0])
+                .html((event, d) => {
+                    const dateFormat = (state.useUtc ? d3UtcFormat : d3TimeFormat)(`${state.timeFormat}${state.useUtc ? ' (UTC)' : ''}`);
+                    return `Click to select the <b>${d.artPeriod.toUpperCase()}</b> art period <br>
+                            <b>(${dateFormat(d.timeRange[0])}, ${dateFormat(d.timeRange[1])})</b>`;
+                });
+
+            state.svg.call(state.artPeriodTooltip);
         }
 
         function addZoomSelection() {
@@ -669,6 +683,7 @@ export default Kapsule({
         adjustGrpScale();
 
         renderAxises();
+        RenderArtPeriodTicks();
         renderGroups();
 
         renderTimelines();
@@ -922,6 +937,59 @@ export default Kapsule({
             }
         }
 
+        function RenderArtPeriodTicks() {
+            state.svg.selectAll('.art-period-tick').remove();
+
+            let ticks = [];
+
+            state.artPeriods.sort((a, b) => a.timeRange[0] - b.timeRange[0]).forEach((p) => {
+                if (state.zoomX[0] <= p.timeRange[0]  && p.timeRange[0] <= state.zoomX[1]) {
+                    let text_node = state.svg.append('text')
+                        .attr('fill', 'currentColor')
+                        .attr('y', state.topMargin + 4)
+                        .attr('dy', '0.71em')
+                        .text(p.name);
+                    let node_size = text_node.node().getBoundingClientRect().width / 2;
+                    text_node.remove();
+
+                    let x = state.graphW / Math.abs(state.zoomX[0] - state.zoomX[1]) * Math.abs(state.zoomX[0] - p.timeRange[0]);
+                    ticks.push({
+                        'x': x,
+                        'text': ticks[ticks.length - 1] && ticks[ticks.length - 1]['sizeTo'] - 10 > x - node_size ? '...' : p.name,
+                        'sizeTo': x + node_size,
+                        'artPeriod': p.name,
+                        'timeRange': p.timeRange
+                    });
+                }
+            });
+
+            let axis = state.svg.select('g.x-axis');
+            const newTicks = axis.selectAll('.art-period-tick').data(ticks).enter()
+                .append('g')
+                    .attr('class', 'tick art-period-tick')
+                    .attr('opacity', 1)
+                    .attr('transform', (d) => `translate(${d.x}, 0)`)
+                    .on('mouseover.artPeriodTooltip', state.artPeriodTooltip.show)
+                    .on('mouseout.artPeriodTooltip', state.artPeriodTooltip.hide)
+                    .style('cursor', 'pointer')
+                    .on('click', (_, i) => {
+                        if (state.onArtPeriodTickClick) {
+                            state.onArtPeriodTickClick(i);
+                            state.artPeriodTooltip.hide();
+                        }
+                    });
+
+            newTicks.append('line')
+                .attr('stroke', 'currentColor')
+                .attr('y2', state.topMargin + 1);
+
+            newTicks.append('text')
+                .attr('fill', 'currentColor')
+                .attr('y', state.topMargin + 4)
+                .attr('dy', '0.71em')
+                .text((d) => d.text);
+        }
+
         function renderGroups() {
             let groups = state.graph.selectAll('rect.series-group').data(state.structData, d => d.group);
 
@@ -1042,8 +1110,8 @@ export default Kapsule({
                         .attr('height', state.lineHeight)
                         .style('fill-opacity', .8);
                 })
-                .on('click', function (s) {
-                    if (state.onSegmentClick && !s.target.classList.contains('disabled')) state.onSegmentClick(s);
+                .on('click', function (s, el) {
+                    if (state.onSegmentClick && !s.target.classList.contains('disabled')) state.onSegmentClick(el);
                 });
 
             timelines = timelines.merge(newSegments);
