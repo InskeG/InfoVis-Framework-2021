@@ -3,7 +3,7 @@
     <!---Navigation-->
     <Navbar
       v-bind:main_color="main_color"
-      :logo="require('@/assets/images/logo/paint_brush.png')"
+      :logo="require('@/assets/images/logo/logo-palette.png')"
       :title="logotitle"
     />
     <div v-bind:main_color="main_color" class="main-container-fluid">
@@ -41,7 +41,6 @@ export default {
     this.socket = io("http://localhost:5000");
 
     this.socket.on("connect", () => {
-        // this.timeline_data = this.socket.emit('get_timeline_data');
     });
 
     this.socket.on("change_color", (color) => {
