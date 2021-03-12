@@ -13,6 +13,8 @@ import store from './store/store'
 import 'prismjs'
 import 'prismjs/themes/prism.css'
 import VsPrism from './components/prism/VsPrism.vue';
+import vuetify from '@/plugins/vuetify'
+
 Vue.component(VsPrism.name, VsPrism);
 
 // Vue Router
@@ -24,6 +26,7 @@ Vue.use(Vuesax)
 new Vue({
   store,
   router,
+  vuetify,
   render: h => h(App),
 }).$mount('#app')
 import '@/assets/scss/style.scss'

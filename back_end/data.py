@@ -48,12 +48,13 @@ creation_year = np.arange(min(l), max(l), 500).tolist()
 
 DATA_PATH = 'data/paintings_data.pk'
 TIMELINE_PATH = 'data/timeline_data.pk'
-FEATURED_ARTISTS = ['michelangelo', 'bosch', 'vinci', 'greco', 'caravaggio', 'rubens', 'vermeer',
-                    'rembrandt', 'dyck', 'hals', 'steen', 'turner', 'ingres', 'blake', 'delacroix',
-                    'gogh', 'degas', 'monet', 'magritte', 'kandinsky', 'picasso', 'renoir', 'warhol',
-                    'banksy', 'füger', 'watteau', 'bencovich', 'hogarth', 'lemoyne', 'rococo', 'panini']
+FEATURED_ARTISTS = ['bosch', 'vinci', 'greco', 'caravaggio', 'rubens', 'vermeer',
+                    'dyck', 'hals', 'steen', 'turner', 'ingres', 'blake', 'delacroix',
+                    'gogh', 'degas', 'monet', 'watteau', 'lemoyne']
 
 paintings = pd.DataFrame()
+all_artists = []
+all_artist_last_names = []
 
 if not os.path.exists(DATA_PATH):
     SCHOOL_MAP = {
@@ -106,11 +107,18 @@ if not os.path.exists(DATA_PATH):
     ]]
     paintings['school'] = paintings['school'].replace(SCHOOL_MAP).str.lower()
 
+    valid_artists = paintings[
+        paintings['artist_full_name'].str.match(r"^((?!painter|master|\d)(((?![\d])\w){2,}|\s))+$", flags=re.UNICODE,
+                                                na=False)].groupby('artist_full_name').size()
+    all_artists = list(np.unique(valid_artists[valid_artists > 20].index.tolist()))
+
+    all_artist_last_names = list(pd.unique(paintings['artist_last_name']))
+
     with open(DATA_PATH, 'wb') as file:
-        pickle.dump(paintings, file)
+        pickle.dump((paintings, all_artists, all_artist_last_names), file)
 else:
     with open(DATA_PATH, 'rb') as file:
-        paintings = pickle.load(file)
+        paintings, all_artists, all_artist_last_names = pickle.load(file)
 
 
 def get_artists():
@@ -174,7 +182,17 @@ def get_model_data():
     return all_artwork_name
 
 
-def get_timeline_data(artists=FEATURED_ARTISTS):
+def _get_timeline_data(artists=None, adding=False):
+    if artists is None:
+        artists = FEATURED_ARTISTS
+
+    if adding:
+        for i, artist in enumerate(artists):
+            if artist not in all_artist_last_names:
+                artist_last_name = paintings[paintings['artist_full_name'] == artist]
+                if not artist_last_name.empty:
+                    artists[i] = artist_last_name.iloc[0]['artist_last_name']
+
     if not os.path.exists(TIMELINE_PATH) or artists != FEATURED_ARTISTS:
         featured_paintings = paintings[paintings['artist_last_name'].isin(artists)]
         year_dict = Counter(featured_paintings['creation_year'].to_numpy(dtype=int))
@@ -214,13 +232,14 @@ def get_timeline_data(artists=FEATURED_ARTISTS):
                     j = 0
                     break
 
-        with open(TIMELINE_PATH, 'wb') as file:
-            pickle.dump(timeline_data, file)
+        if artists == FEATURED_ARTISTS:
+            with open(TIMELINE_PATH, 'wb') as file:
+                pickle.dump(timeline_data, file)
     else:
         with open(TIMELINE_PATH, 'rb') as file:
             timeline_data = pickle.load(file)
 
-    return timeline_data
+    return timeline_data, artists
 
 
 def update_data(g_type, var, new_value):

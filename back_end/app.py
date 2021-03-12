@@ -18,9 +18,9 @@ from flask_socketio import SocketIO
 from io import BytesIO
 from PIL import Image
 from scipy import cluster
-from .data import model_data
-from .data import get_timeline_data as get_tl_data
+
 from .retrieve_info import retrieve_info, _get_artist_histograms
+from .data import model_data, all_artists, _get_timeline_data
 
 from .GAN import dnnlib
 from .GAN import generate
@@ -215,7 +215,7 @@ def collect_info(data):
         "Expressionism (fine arts)": "img2.jpg",
         "Cubism": "img3.jpg",
         "Surrealism": "img4.jpg",
-    }[gen]
+    }.get(gen, "img1.jpg")
     path = os.path.join(os.path.dirname(__file__), image_file)
     image = Image.open(path)
 
@@ -294,28 +294,16 @@ def generate_images(data):
 
 
 @socketio.event
-def get_timeline_data():
-    tl_data = get_tl_data()
+def get_timeline_data(artists=None, adding=False):
+    timeline_data, artists = _get_timeline_data(artists, adding)
+    return {
+        'timelineData': timeline_data,
+        'artists': artists
+    }
 
-    '''
-    artists = set()
-
-    for group in tl_data:
-        for group_item in group['data']:
-            for data in group_item['data']:
-                artists.add(data['val'])
-
-    histograms = get_artist_histograms(artists)
-    socketio.emit("get_style_hists", {
-        "series": [{
-            "values": values,
-            "text": key,
-        } for key, values in histograms.items()],
-    })
-
-    print(histograms)
-    '''
-    return tl_data
+@socketio.event
+def get_all_artists():
+    return all_artists
 
 @socketio.event
 def get_artist_histograms(data):
@@ -328,7 +316,6 @@ def get_artist_histograms(data):
             "text": key,
         } for key, values in histograms.items()],
     })
-
 
 @socketio.on('connect')
 def test_connect():

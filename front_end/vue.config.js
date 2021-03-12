@@ -1,3 +1,10 @@
+const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
+
 module.exports = {
-  publicPath: '/'
+  publicPath: '/',
+  configureWebpack: {
+    plugins: [
+      new VuetifyLoaderPlugin()
+    ],
+  },
 }
