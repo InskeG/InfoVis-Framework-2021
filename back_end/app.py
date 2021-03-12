@@ -19,11 +19,13 @@ from io import BytesIO
 from PIL import Image
 from scipy import cluster
 
+from .retrieve_info import retrieve_info, _get_artist_histograms
 from .data import model_data, all_artists, _get_timeline_data
+
 from .GAN import dnnlib
 from .GAN import generate
-from .retrieve_info import retrieve_info, _get_artist_histograms
 
+sys.path.append("./GAN/")
 
 if torch.cuda.is_available():
     DEVICE = torch.device('cuda')
