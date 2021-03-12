@@ -42,7 +42,7 @@ filter_columns = ["valence", "acousticness", "danceability",
                   "energy", "liveness", "speechiness", "instrumentalness",
                   "loudness", "tempo"]
 
-heatmap_data = data_by_artist.query("count>9").sort_values("popularity", ascending=False).filter(items=filter_columns + ["artists"])
+heatmap_data = data_by_artist.query("count>9").sort_values("popularity", ascending=False)
 heatmap_head = heatmap_data.head(10)
 
 heatmap_colors = pd.read_csv("app/data/heatmap_colors.csv")

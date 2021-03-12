@@ -1,4 +1,3 @@
-
 function addToList(artist) {
     var list_element = d3.select(".artist-list")
                          .append("li")
@@ -6,13 +5,13 @@ function addToList(artist) {
                          .attr("id", "list" + artist.replace(/\s/g, ''));
 
     list_element.html(artist);
-    var button = list_element.append("button")
+    var button = list_element.append("input")
                 .attr("onClick", "removeArtist('" + artist + "')")
                 .attr("class", "artist-list-button")
                 .attr("type", "button")
-                .attr("name", "delete" + artist.replace(/\s/g, ''));
+                .attr("name", "delete" + artist.replace(/\s/g, ''))
+                .attr("value", "x");
 
-    button.html("x");
 }
 
 function addArtist(formObject) {
@@ -28,8 +27,9 @@ function addArtist(formObject) {
         if (Object.keys(data).length === 0 && data.constructor === Object) {
             return false;
         }
-        new_artist_barchart = data["barchart"];
-        new_artist_heatmap = data["heatmap"];
+        var new_artist_barchart = data["barchart"];
+        var new_artist_heatmap = data["heatmap"];
+        var new_artist_popularity = data["popularity"];
         console.log(new_artist_heatmap);
         if (manual_artists) {
             y_variables.push(artist);
@@ -42,6 +42,7 @@ function addArtist(formObject) {
             y_variables = [artist];
             d3.selectAll(".artist-list-element")
               .remove();
+            popularity = {};
         }
         addToList(artist);
         y_to_i[artist] = i++;
@@ -50,6 +51,7 @@ function addArtist(formObject) {
         //     mini_chart_height = 110;
         // }
         barchart_data = Object.assign({}, barchart_data, new_artist_barchart);
+        popularity = Object.assign({}, popularity, new_artist_popularity);
         heatmap_data = heatmap_data.concat(new_artist_heatmap);
 
         remakePlot();
@@ -122,8 +124,11 @@ function createRowChart(translation, id, chart_group_bar_charts, artist, colors)
     }
 
     // Left -100 - 100 y axis, only show 0 - 100 ticks
+    var yAxisTicks = y_2.ticks(5).filter(tick => tick >= 0);
+
     mini_artist_group.append("g")
-        .call(d3.axisLeft(y_2).ticks(5).tickFormat(function(x) { return x >= 0 ? x + "%" : ""; }));
+        // .call(d3.axisLeft(y_2).ticks(3).tickFormat(function(x) { return x >= 0 ? x + "%" : ""; }));
+           .call(d3.axisLeft(y_2).tickValues(yAxisTicks).tickSizeOuter(0));
 
     var data = barchart_data[artist]
     var map = d3.map(data);

@@ -1,4 +1,5 @@
 function createHeatMapPlot() {
+    var spotifyColor = "#1ED760";
     var charact = d3.map(heatmap_data, function(d){return d.characteristic;}).keys()
     var color_names = d3.map(colors, function(d){return d.characteristic;}).keys()
     console.log(charact)
@@ -14,19 +15,51 @@ function createHeatMapPlot() {
         .attr("class", "heatmap_x_axis")
         .attr("transform", "translate(0,0)")
         .call(d3.axisBottom(x).tickSize(0))
-        .select(".domain").remove()
+        .select(".domain").remove();
 
 
     chart_group_heatmap.append("g")
         .attr("class", "heatmap_y_axis")
         .attr("transform", "translate("+width_transform+",-8)")
         .call(d3.axisLeft(y).tickSize(0))
-        .select(".domain").remove()
+        .select(".domain").remove();
+
+    var pop_map = d3.map(popularity);
+    var x_pop = d3.scaleLinear().range([0, 75]).domain([0, 100]);
+
+    // console.log(pop_map)
+    for (var pop_artist in popularity) {
+        d3.select(".heatmap_y_axis").selectAll(".tick")
+          .filter(function(d) { return d === pop_artist})
+          .append("rect")
+          .attr("x", "-40")
+          .attr("y", "10")
+          .attr("width", x_pop(popularity[pop_artist]))
+          .attr("height", "20")
+          .style("fill", spotifyColor);
+
+        d3.select(".heatmap_y_axis").selectAll(".tick")
+          .filter(function(d) { return d === pop_artist})
+          .append("rect")
+          .attr("x", -40 + x_pop(popularity[pop_artist]))
+          .attr("y", "10")
+          .attr("width", 75 - x_pop(popularity[pop_artist]))
+          .attr("height", "20")
+          .style("fill", "darkGrey");
+    }
+    // d3.select(".heatmap_y_axis").selectAll(".tick")
+    //   .data(pop_map)
+    //   .append("rect")
+    //   .attr("x", "-40")
+    //   .attr("y", "10")
+    //   .attr("width", function(d) { return x_pop(d.value)})
+    //   .attr("height", "20")
+    //   .style("fill", spotifyColor);
 
 
     // Build color scale
     var myColor = d3.scaleLinear()
-        .range(["#121212", "#1ED760"])
+        .range(["#121212", spotifyColor])
         .domain([0,1]);
 
     //create a tooltip
@@ -106,7 +139,7 @@ function createHeatMapPlot() {
         .attr("stop-color", color_end)
 
 
-    var chart_group_legend = svgLegend.append("g")
+    var chart_group_heatmap_legend = svgLegendHeatMap.append("g")
     .attr("transform",
         "translate(10,0)")
     .attr("class", "chart_group");
@@ -117,17 +150,51 @@ function createHeatMapPlot() {
 
     formatter = d3.format(".0%");
 
-    chart_group_legend.append("g")
+    chart_group_heatmap_legend.append("g")
         .attr("class", "legend_axis")
         .attr("transform", "translate(0,14)")
         .call(d3.axisBottom(legendScale)
         .ticks(2)
         .tickFormat(formatter));
 
-    chart_group_legend.append("rect")
+    chart_group_heatmap_legend.append("rect")
         .attr("width", width_heatmap-padding.left-padding.left-5)
         .attr("height", "13")
         .style("fill", "url(#linear-gradient)")
         //.attr("stroke","#555");
+
+    var chart_group_pop_legend = svgLegendPop.append("g")
+    .attr("class", "chart_group");
+
+    var legend_pop = chart_group_pop_legend.append("g")
+    legend_pop.append("rect")
+              .attr("x", "32")
+              .attr("width", "75")
+              .attr("height", "10")
+              .style("fill", "darkGrey")
+
+    legend_pop.append("text")
+              .attr("x", "110")
+              .attr("y", "7.5")
+              .attr("dy", "0.1em")
+              .attr("fill", "CurrentColor")
+              .style("font-size", "70%")
+              .html("0%");
+
+    legend_pop = chart_group_pop_legend.append("g")
+    legend_pop.append("rect")
+              .attr("x", "32")
+              .attr("y", "15")
+              .attr("width", "75")
+              .attr("height", "10")
+              .style("fill", spotifyColor);
+
+    legend_pop.append("text")
+            .attr("x", "110")
+            .attr("y", "22.5")
+            .attr("dy", "0.1em")
+            .attr("fill", "CurrentColor")
+            .style("font-size", "70%")
+            .html("100%");
 
 }

@@ -1,10 +1,18 @@
 .artist-list {
-
+    overflow: hidden;
 }
 
 .artist-list-element {
     list-style-type: none;
     font-size: 12px;
+    margin-right: 5%;
+}
+
+.artist-list-button {
+    background: #262626;
+    border: none;
+    color: darkGrey;
+    float: right;
 }
 
 .heatmap_x_axis {
@@ -127,4 +135,29 @@
 
 .legend_axis line {
     color: #888;
+}
+
+.artistText {
+    width: 75%;
+    margin-top: 15px;
+    margin-left: 30px;
+    margin-bottom: 10px;
+}
+
+.resetButton {
+    margin-left: 5%;
+    margin-right: 5%;
+    width: 40%;
+    height: 10%;
+    background-color: darkGrey;
+    border-color: black;
+}
+
+.showButton {
+    margin-right: 5%;
+    width: 40%;
+    height: 10%;
+    background-color: #1ED760;
+    border-color: black;
+
 }

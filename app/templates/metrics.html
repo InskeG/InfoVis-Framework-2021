@@ -54,8 +54,8 @@
 		</div>
 	</div>
 	<div id = "wrapper-filters">
-		<form class="" onSubmit="return addArtist(this)">
-			<input type="text" name="artist" value="">
+		<form class="artistForm" onSubmit="return addArtist(this)">
+			<input class="artistText" placeholder="Select an artist" type="text" name="artist" value="">
 			<ul class="artist-list">
 				{% for artist in artists: %}
 				<li class="artist-list-element" id="list{{ artist.replace(' ', '') }}">
@@ -63,7 +63,8 @@
 					<button class="artist-list-button" type="button" name="delete{{ artist.replace(' ', '') }}" onClick="removeArtist('{{ artist }}')">x</button>
 				</li>{% endfor %}
 			</ul>
-			<input type="submit" name="submit" value="Show" >
+			<input class="resetButton" type="button" name="button" value="Reset" onClick="window.location.reload(true)">
+			<input class="showButton" type="submit" name="submit" value="Show >" >
 		</form>
 	</div>
 </div>
@@ -75,6 +76,7 @@
 	var heatmap_data = {{ heatmap_data | safe }};
 	var colors = {{ heatmap_colors | safe }};
 	var barchart_data = {{ song_data | safe }};
+	var popularity = {{ popularity | safe }};
 	var y_variables = {{ artists | safe }};
 	var manual_artists = false;
 	var y_to_i = {};
@@ -104,7 +106,7 @@
     y_2.domain([-100, 100]);
 
 	var y = d3.scaleBand()
-		.range([ padding.top+5, fullheight - 20 ])
+		.range([padding.top+5, fullheight - 20])
 		.domain(y_variables)
 		.padding(0.05);
 
@@ -121,10 +123,15 @@
 	.attr("height", fullheight)
 	.attr("width", width_barchart + padding.right);
 
-	var svgLegend = d3.select("#heatmap") // HTML tag
+	var svgLegendHeatMap = d3.select("#heatmap") // HTML tag
     .append("svg")
     .attr("width", width_heatmap+5)
-    .attr("height", 40)
+    .attr("height", 40);
+
+	var svgLegendPop = d3.select("#heatmap")
+	.append("svg")
+	.attr("width", width_artists)
+	.attr("height", 40);
 
 	createHeatMapPlot();
 	createBarChartPlot();
