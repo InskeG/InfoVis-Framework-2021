@@ -187,6 +187,7 @@ def collect_line_chart(data):
 
 @socketio.event
 def collect_info(data):
+    print("Hallo, ik kom hier om dingen volledig in de war te gooien!")
     gen = data['genre']
     y = data['year']
 
@@ -268,8 +269,8 @@ def generate_images(data):
     if classification_type == "artists":
         images = generate.generate_images(G_artists, seeds, class_idx)
     elif classification_type == "centuries":
+        print(f"Generating painting from the {class_idx}th century")
         images = generate.generate_images(G_centuries, seeds, class_idx)
-
 
     images = [f"data:image/png;base64, {image}" for image in images]
 

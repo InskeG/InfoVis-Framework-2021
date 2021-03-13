@@ -359,6 +359,13 @@ export default {
             } else {
               filter = s.innerHTML;
               this.$parent.socket.emit("get_artist_histograms", {artists: [filter]});
+
+              this.$parent.socket.emit("generate_images", {
+                type: "artists",
+                amount: 1,
+                class_idx: 0,
+              });
+
               let zoomStart = null, zoomEnd = null;
 
               // Select specific filter
@@ -386,16 +393,22 @@ export default {
         .onArtPeriodTickClick((period) => {
           console.log("Period selected", period);
           this.setZoomToFilter(period.timeRange[0], period.timeRange[1]);
-          this.get_info(period.text);
+          // this.get_info(period.text);
           // TODO: Generate GAN based on selected art period
+
+          var start_year = period.timeRange[0].getFullYear();
+          var end_year = period.timeRange[1].getFullYear();
+          var avg_year = 0.5 * (start_year + end_year);
+          var century = Math.round(avg_year / 100);
+
           this.$parent.socket.emit("generate_images", {
             type: "centuries",
             amount: 1,
-            class_idx: 0,
+            class_idx: century,
           });
         })
         .onSegmentClick((s) => {
-          console.log(s);
+          console.log("Painting selected", s);
           // TODO: Generate GAN based on selected art piece
           this.$parent.socket.emit("generate_images", {
             type: "artists",
@@ -505,7 +518,7 @@ export default {
     });
 
     this.$parent.socket.on("images_generated", (data) => {
-      console.log(data);
+      console.log("Received generated image", data);
       this.image = data.images[0];
       this.fetched.img_generated = true;
     });
