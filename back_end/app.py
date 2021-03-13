@@ -21,9 +21,7 @@ from scipy import cluster
 
 from .retrieve_info import retrieve_info, _get_artist_histograms
 from .data import model_data, all_artists, _get_timeline_data
-
-from .GAN import dnnlib
-from .GAN import generate
+from .GAN import dnnlib, generate
 
 sys.path.append("./GAN/")
 
@@ -176,6 +174,22 @@ def get_line_chart_artist(model_data, label):
     return data
 
 
+def encode_image(image, format='png'):
+    """
+    Encode an image into base64 so it can be send along with an event.
+
+    Parameters
+    ----------
+    image: PIL.Image
+    format: str, default 'png'
+    """
+    stream = BytesIO()
+    image.save(stream, format=format)
+    encoded = encodebytes(stream.getvalue()).decode('ascii')
+
+    return f"data:image/{format};base64, {encoded}"
+
+
 @socketio.event
 def collect_line_chart(data):
     print("Collecting line chart data")
@@ -265,17 +279,36 @@ def generate_images(data):
 
     seeds = np.random.randint(0, 10000, amount)
 
-    images = []
     if classification_type == "artists":
+        class_idx = generate.ARTIST_LABELS.index(class_idx)
         images = generate.generate_images(G_artists, seeds, class_idx)
     elif classification_type == "centuries":
         print(f"Generating painting from the {class_idx}th century")
         images = generate.generate_images(G_centuries, seeds, class_idx)
+    else:
+        raise ValueError(f"Type {repr(classification_type)} is not known!")
 
-    images = [f"data:image/png;base64, {image}" for image in images]
+    image_data = []
+
+    for image in images:
+        colors, percentages, dom_color = detect_colors(image)
+
+        image_data.append({
+            'image': encode_image(image),
+            'dominant_color': dom_color,
+            'color_palette': colors,
+            'color_distribution': percentages,
+        })
+
+    first_image = image_data[0]
+    socketio.emit("change_color", first_image['dominant_color'])
+    socketio.emit("set_color_pie", {
+        "colors": first_image['color_palette'],
+        "percentages": first_image['color_distribution'],
+    })
 
     socketio.emit("images_generated", {
-        "images": images,
+        "images": image_data,
         "seeds": seeds.tolist(),
         "message": ""
     })

@@ -5,14 +5,20 @@
 # and any modifications thereto.  Any use, reproduction, disclosure or
 # distribution of this software and related documentation without an express
 # license agreement from NVIDIA CORPORATION is strictly prohibited.
-
 """Generate images using pretrained network pickle."""
-
-from base64 import encodebytes
 import io
 import numpy as np
 import PIL.Image
 import torch
+
+from base64 import encodebytes
+
+ARTIST_LABELS = [
+    'michelangelo', 'raphael', 'bosch', 'vinci', 'greco', 'caravaggio',
+    'rubens', 'vermeer', 'rembrandt', 'dyck', 'hals', 'baele',  'steen',
+    'turner', 'ingres', 'blake', 'delacroix', 'gogh', 'degas', 'monet',
+    'magritte', 'kandinsky', 'picasso', 'renoir', 'warhol', 'banksy', 'eyck',
+]
 
 
 def generate_images(generator, seeds, class_idx):
@@ -32,6 +38,11 @@ def generate_images(generator, seeds, class_idx):
         img = (img.permute(0, 2, 3, 1) * 127.5 + 128).clamp(0, 255).to(torch.uint8)
         pil_img = PIL.Image.fromarray(img[0].cpu().numpy(), 'RGB')
 
+        images.append(pil_img)
+
+    return images
+
+    '''
         # Convert to byte array for transmission to front-end
         byte_arr = io.BytesIO()
         pil_img.save(byte_arr, format='PNG')
@@ -39,3 +50,4 @@ def generate_images(generator, seeds, class_idx):
         images.append(encodebytes(byte_arr.getvalue()).decode('ascii'))
 
     return images
+    '''

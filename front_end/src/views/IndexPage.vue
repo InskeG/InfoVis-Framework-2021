@@ -363,7 +363,7 @@ export default {
               this.$parent.socket.emit("generate_images", {
                 type: "artists",
                 amount: 1,
-                class_idx: 0,
+                class_idx: filter,
               });
 
               let zoomStart = null, zoomEnd = null;
@@ -413,7 +413,7 @@ export default {
           this.$parent.socket.emit("generate_images", {
             type: "artists",
             amount: 1,
-            class_idx: 0,
+            class_idx: s.val,
           });
         })(container);
     },
@@ -519,7 +519,7 @@ export default {
 
     this.$parent.socket.on("images_generated", (data) => {
       console.log("Received generated image", data);
-      this.image = data.images[0];
+      this.image = data.images[0].image;
       this.fetched.img_generated = true;
     });
 
