@@ -326,178 +326,200 @@ export default {
       });
     },
     renderTimeline(data) {
-        let container = document.getElementById('timeline');
-        container.innerHTML = "";
-        let filter = null;
+      let container = document.getElementById('timeline');
+      container.innerHTML = "";
+      let filter = null;
 
-        this.timeline
-            .data(this.parseTimeLineData(data))
-            .width(container.offsetWidth)
-            .maxHeight(5000)
-            .leftMargin(0)
-            .rightMargin(0)
-            .zQualitative(true)
-            .timeFormat('%Y')
-            .artPeriods(this.artPeriods)
-            .showGroupTooltip(false)
-            .showLineTooltip(false)
-            .onZoom((a, b) => console.log(a, b))
-            .onLegendClick((s) => {
-                this.setZoomToFilter();
-                window.setTimeout(() => {
-                    if (filter === s.innerHTML) {
-                        // Deselect all filters
-                        filter = null;
-                        d3.selectAll('.series-segment')
-                                .attr('class', (d) => {
-                                    return `series-segment ${d.val}`
-                                })
-                                .style('fill-opacity', .8);
+      this.timeline
+        .data(this.parseTimeLineData(data))
+        .width(container.offsetWidth)
+        .maxHeight(5000)
+        .leftMargin(0)
+        .rightMargin(0)
+        .zQualitative(true)
+        .timeFormat('%Y')
+        .artPeriods(this.artPeriods)
+        .showGroupTooltip(false)
+        .showLineTooltip(false)
+        .onZoom((a, b) => console.log(a, b))
+        .onLegendClick((s) => {
+          this.setZoomToFilter();
+          window.setTimeout(() => {
+            if (filter === s.innerHTML) {
+              // Deselect all filters
+              filter = null;
+              d3.selectAll('.series-segment')
+                .attr('class', (d) => {
+                  return `series-segment ${d.val}`
+                }).style('fill-opacity', .8);
 
-                        d3.selectAll('.color-slot')
-                                .style('fill-opacity', 1);
+              d3.selectAll('.color-slot').style('fill-opacity', 1);
 
-                        this.setZoomToFilter();
-                    } else {
-                        filter = s.innerHTML;
-                        this.$parent.socket.emit("get_artist_histograms", {artists: [filter]});
-                        let zoomStart = null,
-                            zoomEnd = null;
-                            // Select specific filter
-                        d3.selectAll(`.series-segment.${s.innerHTML}`)
-                                .attr('class', (d) => {
-                                    return `series-segment ${d.val}`
-                                })
-                                .style('fill-opacity', .8)
-                                .each((d, i) => {
-                                    if (i === 0) zoomStart = d.timeRange[0]
-                                    if (!zoomEnd || d.timeRange[1] > zoomEnd) zoomEnd = d.timeRange[1]
-                                });
-                         d3.selectAll(`.color-slot.${s.innerHTML}`)
-                                .style('fill-opacity', 1);
-                        // Deselect all not selected
-                        d3.selectAll(`.series-segment:not(.${s.innerHTML})`)
-                                .attr('class', (d) => {
-                                    return `series-segment ${d.val} disabled`
-                                })
-                                .style('fill-opacity', .1);
-                        d3.selectAll(`.color-slot:not(.${s.innerHTML})`)
-                                .style('fill-opacity', .2);
-                        this.setZoomToFilter(zoomStart, zoomEnd);
-                    }
-                }, 1000);  // Hackerman to the rescue
-            })
-            .onArtPeriodTickClick((period) => {
-                console.log(period);
-                this.setZoomToFilter(period.timeRange[0], period.timeRange[1]);
-                this.get_info(period.text);
-                // TODO: Generate GAN based on selected art period
-            })
-            .onSegmentClick((s) => {
-                console.log(s);
-                // TODO: Generate GAN based on selected art piece
-            })(container);
-      },
-      setZoomToFilter(start = null, end = null) {
-          this.timeline.zoomX(start && end ? [start, end] : [null, null]);
-      },
-      addArtists() {
-          if (this.pending_add_artists.length > 0) {
-              this.artists_on_timeline = this.artists_on_timeline.concat(this.pending_add_artists);
-              console.log(this.artists_on_timeline);
-              this.pending_add_artists = [];
+              this.setZoomToFilter();
+            } else {
+              filter = s.innerHTML;
+              this.$parent.socket.emit("get_artist_histograms", {artists: [filter]});
+              let zoomStart = null, zoomEnd = null;
 
-              document.getElementById('add-spinner').style.display = "block";
-
-              this.$parent.socket.emit('get_timeline_data', this.artists_on_timeline, true, (data) => {
-                  document.getElementById('add-spinner').style.display = "none";
-                  this.artists_on_timeline = data['artists'];
-                  this.renderTimeline(data['timelineData']);
-              });
-          }
-      },
-      removeArtists() {
-          if (this.pending_remove_artists.some(e => this.artists_on_timeline.includes(e))) {
-              this.artists_on_timeline = this.artists_on_timeline.filter(e => !this.pending_remove_artists.includes(e))
-              this.pending_remove_artists = [];
-
-              document.getElementById('remove-spinner').style.display = "block";
-
-              this.$parent.socket.emit('get_timeline_data', this.artists_on_timeline, (data) => {
-                  document.getElementById('remove-spinner').style.display = "none";
-                  this.renderTimeline(data['timelineData']);
-              });
-          }
-      },
-      parseTimeLineData(data) {
-        data.forEach(
-          group => group.data.forEach(
-            label => label.data.forEach((painting) => {
-              painting.timeRange[0] = new Date(painting.timeRange[0]['year'], painting.timeRange[0]['month'], 1);
-              painting.timeRange[1] = new Date(painting.timeRange[1]['year'], painting.timeRange[1]['month'], 1);
-            })
-          )
-        );
-        return data;
-      },
-    },
-    async created() {
-        this.$parent.socket.emit("get_all_artists", (all_artists) => this.all_artists = all_artists);
-    },
-    mounted: function () {
-      this.$parent.socket.on("set_image", (data) => {
-        window.scroll({top: 0, left: 0, behaviour: 'smooth'});
-        this.image = data.generated;
-        this.fetched.img_generated = true;
-      });
-
-      this.$parent.socket.on("set_color_pie", (data) => {
-        this.pie_data.labels = data.colors;
-        this.pie_data.datasets = [{
-          label: "Data One",
-          backgroundColor: data.colors,
-          data: data.percentages,
-        }];
-        this.fetched.col_generated = true;
-        this.pie_key += 1;
-      });
-
-      this.$parent.socket.on("get_style_hists", (data) => {
-        this.style_hist_data.series = data.series;
-        this.fetched.histograms = true;
-        this.hist_key += 1;
-      });
-
-      this.$parent.socket.on("get_summary", (data) => {
-        this.summary = data.summary;
-        this.fetched.summary = true;
-        this.related_terms = data.related_terms;
-        this.fetched.related_terms = true;
-      });
-
-      this.$parent.socket.on("set_selected_artist", (data) => {
-        this.artist_options = data.artist_options;
-        this.fetched.artist_options = true;
-      });
-
-      this.$parent.socket.on("collect_line_chart", (data) => {
-        this.line_chart_data.series = data.series;
-        this.line_chart_data.plot.marker = data.plot.marker;
-        console.log(this.line_chart_data);
-        this.fetched.line_chart = true;
-        this.chart_key += 1;
-      });
-
-      window.addEventListener("resize", () => {
-          this.timeline.width(document.getElementById('timeline').clientWidth);
-      })
-
-      window.addEventListener("load", () => {
-          this.$parent.socket.emit('get_timeline_data', (data) => {
-              this.artists_on_timeline = data['artists'];
-              this.renderTimeline(data['timelineData']);
+              // Select specific filter
+              d3.selectAll(`.series-segment.${s.innerHTML}`)
+                .attr('class', (d) => {
+                  return `series-segment ${d.val}`
+                }).style('fill-opacity', .8)
+                .each((d, i) => {
+                  if (i === 0) zoomStart = d.timeRange[0]
+                  if (!zoomEnd || d.timeRange[1] > zoomEnd) zoomEnd = d.timeRange[1]
+                });
+              d3.selectAll(`.color-slot.${s.innerHTML}`)
+                .style('fill-opacity', 1);
+              // Deselect all not selected
+              d3.selectAll(`.series-segment:not(.${s.innerHTML})`)
+                .attr('class', (d) => {
+                  return `series-segment ${d.val} disabled`
+                }).style('fill-opacity', .1);
+              d3.selectAll(`.color-slot:not(.${s.innerHTML})`)
+                .style('fill-opacity', .2);
+              this.setZoomToFilter(zoomStart, zoomEnd);
+            }
+          }, 1000);  // Hackerman to the rescue
+        })
+        .onArtPeriodTickClick((period) => {
+          console.log("Period selected", period);
+          this.setZoomToFilter(period.timeRange[0], period.timeRange[1]);
+          this.get_info(period.text);
+          // TODO: Generate GAN based on selected art period
+          this.$parent.socket.emit("generate_images", {
+            type: "centuries",
+            amount: 1,
+            class_idx: 0,
           });
-      });
-    }
+        })
+        .onSegmentClick((s) => {
+          console.log(s);
+          // TODO: Generate GAN based on selected art piece
+          this.$parent.socket.emit("generate_images", {
+            type: "artists",
+            amount: 1,
+            class_idx: 0,
+          });
+        })(container);
+    },
+    setZoomToFilter(start = null, end = null) {
+      this.timeline.zoomX(start && end ? [start, end] : [null, null]);
+    },
+    addArtists() {
+      if (this.pending_add_artists.length > 0) {
+        this.artists_on_timeline = this.artists_on_timeline.concat(this.pending_add_artists);
+        console.log(this.artists_on_timeline);
+        this.pending_add_artists = [];
+
+        document.getElementById('add-spinner').style.display = "block";
+
+        this.$parent.socket.emit('get_timeline_data', this.artists_on_timeline, true, (data) => {
+          document.getElementById('add-spinner').style.display = "none";
+          this.artists_on_timeline = data['artists'];
+          this.renderTimeline(data['timelineData']);
+        });
+      }
+    },
+    removeArtists() {
+      if (this.pending_remove_artists.some(e => this.artists_on_timeline.includes(e))) {
+        this.artists_on_timeline = this.artists_on_timeline.filter(
+          e => !this.pending_remove_artists.includes(e)
+        );
+        this.pending_remove_artists = [];
+
+        document.getElementById('remove-spinner').style.display = "block";
+
+        this.$parent.socket.emit('get_timeline_data', this.artists_on_timeline, (data) => {
+          document.getElementById('remove-spinner').style.display = "none";
+          this.renderTimeline(data['timelineData']);
+        });
+      }
+    },
+    parseTimeLineData(data) {
+      data.forEach(
+        group => group.data.forEach(
+          label => label.data.forEach((painting) => {
+            painting.timeRange[0] = new Date(
+              painting.timeRange[0]['year'],
+              painting.timeRange[0]['month'],
+              1
+            );
+            painting.timeRange[1] = new Date(
+              painting.timeRange[1]['year'],
+              painting.timeRange[1]['month'],
+              1
+            );
+          })
+        )
+      );
+      return data;
+    },
+  },
+  async created() {
+    this.$parent.socket.emit("get_all_artists", (all_artists) => this.all_artists = all_artists);
+  },
+  mounted: function () {
+    this.$parent.socket.on("set_image", (data) => {
+      window.scroll({top: 0, left: 0, behaviour: 'smooth'});
+      this.image = data.generated;
+      this.fetched.img_generated = true;
+    });
+
+    this.$parent.socket.on("set_color_pie", (data) => {
+      this.pie_data.labels = data.colors;
+      this.pie_data.datasets = [{
+        label: "Data One",
+        backgroundColor: data.colors,
+        data: data.percentages,
+      }];
+      this.fetched.col_generated = true;
+      this.pie_key += 1;
+    });
+
+    this.$parent.socket.on("get_style_hists", (data) => {
+      this.style_hist_data.series = data.series;
+      this.fetched.histograms = true;
+      this.hist_key += 1;
+    });
+
+    this.$parent.socket.on("get_summary", (data) => {
+      this.summary = data.summary;
+      this.fetched.summary = true;
+      this.related_terms = data.related_terms;
+      this.fetched.related_terms = true;
+    });
+
+    this.$parent.socket.on("set_selected_artist", (data) => {
+      this.artist_options = data.artist_options;
+      this.fetched.artist_options = true;
+    });
+
+    this.$parent.socket.on("collect_line_chart", (data) => {
+      this.line_chart_data.series = data.series;
+      this.line_chart_data.plot.marker = data.plot.marker;
+      console.log(this.line_chart_data);
+      this.fetched.line_chart = true;
+      this.chart_key += 1;
+    });
+
+    this.$parent.socket.on("images_generated", (data) => {
+      console.log(data);
+      this.image = data.images[0];
+      this.fetched.img_generated = true;
+    });
+
+    window.addEventListener("resize", () => {
+        this.timeline.width(document.getElementById('timeline').clientWidth);
+    })
+
+    window.addEventListener("load", () => {
+        this.$parent.socket.emit('get_timeline_data', (data) => {
+            this.artists_on_timeline = data['artists'];
+            this.renderTimeline(data['timelineData']);
+        });
+    });
+  }
 }
 </script>

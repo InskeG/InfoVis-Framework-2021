@@ -106,26 +106,8 @@ def retrieve_info(genre, year, model_data):
     return dictionary
 
 
-'''
-def get_model_data():
-    stats_art = pd.read_csv('./data/omniart_v3_datadump.csv')
-    model_data = stats_art.copy()
-    model_data = model_data.drop(model_data[model_data['school'] == 'unknown'].index)
-    model_data = model_data.drop(model_data[model_data['creation_year'] == 'unknown'].index)
-    return model_data
-
-
-model_data = get_model_data()
-'''
-
-
-def stripp(x):
-    return x.strip(' ')
-
-
 def get_artists(model_data):
     all_artist_text = sorted(model_data['school'].astype(str).unique().tolist())
-    # art_list = list(map(stripp, all_artist_text))
 
     return all_artist_text
 
@@ -255,6 +237,7 @@ def collect_info(data):
     #     "series": get_line_chart(model_data),
     # })
 
+    '''
     histograms = get_artist_histograms()
     socketio.emit("get_style_hists", {
         "series": [{
@@ -262,6 +245,7 @@ def collect_info(data):
             "text": key,
         } for key, values in histograms.items()],
     })
+    '''
 
 
 @socketio.event
@@ -286,6 +270,9 @@ def generate_images(data):
     elif classification_type == "centuries":
         images = generate.generate_images(G_centuries, seeds, class_idx)
 
+
+    images = [f"data:image/png;base64, {image}" for image in images]
+
     socketio.emit("images_generated", {
         "images": images,
         "seeds": seeds.tolist(),
@@ -301,9 +288,11 @@ def get_timeline_data(artists=None, adding=False):
         'artists': artists
     }
 
+
 @socketio.event
 def get_all_artists():
     return all_artists
+
 
 @socketio.event
 def get_artist_histograms(data):
@@ -316,6 +305,7 @@ def get_artist_histograms(data):
             "text": key,
         } for key, values in histograms.items()],
     })
+
 
 @socketio.on('connect')
 def test_connect():
