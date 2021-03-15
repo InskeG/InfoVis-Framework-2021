@@ -269,6 +269,7 @@ def generate_images(data):
         socketio.emit("images_generated", {
             "images": [],
             "seeds": [],
+            "success": False,
             "message": "No Graphical Processing Unit available!"
         })
         return
@@ -280,13 +281,29 @@ def generate_images(data):
     seeds = np.random.randint(0, 10000, amount)
 
     if classification_type == "artists":
-        class_idx = generate.ARTIST_LABELS.index(class_idx)
+        try:
+            class_idx = generate.ARTIST_LABELS.index(class_idx)
+        finally:
+            socketio.emit("images_generated", {
+                "images": [],
+                "seeds": [],
+                "success": False,
+                "message": "Label {repr(class_idx)} does not exist!"
+            })
+
         images = generate.generate_images(G_artists, seeds, class_idx)
     elif classification_type == "centuries":
         print(f"Generating painting from the {class_idx}th century")
         images = generate.generate_images(G_centuries, seeds, class_idx)
     else:
-        raise ValueError(f"Type {repr(classification_type)} is not known!")
+        message = f"Type {repr(classification_type)} is not known!"
+        socketio.emit("images_generated", {
+            "images": [],
+            "seeds": [],
+            "success": False,
+            "message": message
+        })
+        raise ValueError(message)
 
     image_data = []
 
@@ -310,6 +327,7 @@ def generate_images(data):
     socketio.emit("images_generated", {
         "images": image_data,
         "seeds": seeds.tolist(),
+        "success": True,
         "message": ""
     })
 
