@@ -4,87 +4,170 @@ from data import *;
     <div>
       <!-- <div v-if="!chosen"> -->
 
-        <vs-col type="flex" vs-justify="left" vs-align="left" vs-w="6">
-          
-          <vs-card class="cardx" v-if="fetched.img_existend">
-            <vs-card class="cardx" v-if="fetched.img_existend" fixedHeight vs-w="6">
-                  <div slot="media">
-                      <img v-bind:src="img_existend">
+        <vs-col type="flex" vs-justify="left" vs-align="left" vs-w="7">
+           
+          <vs-row vs-justify="top">
+            <div v-if="fetched.img_existend">
+              <vs-col type="flex" vs-justify="left" vs-align="left" vs-w="6">
+                <vs-card class="cardx" v-if="fetched.img_existend" fixedHeight vs-w="6">
+                  <div slot="header"><h3>Existend Art Piece</h3></div>
+
+                      <div slot="media">
+                          <img v-bind:src="existend_img">
+                      </div>
+                </vs-card>
+              
+              </vs-col>
+                
+              <vs-col type="flex" vs-justify="right" vs-align="right" vs-w="6">
+                <vs-card class="cardx" fixedHeight vs-w="6">
+                  <div slot="header"><h3>Generated Art Piece</h3></div>
+
+                      <div slot="media"  v-if="fetched.img_generated">
+                          <img v-bind:src="generated_img">
+                      </div>
+
+                </vs-card>
+              </vs-col>
+
+            </div>
+          </vs-row>
+
+          <vs-row vs-justify="bottom">
+            <vs-col type="flex" vs-justify="left" vs-align="left" vs-w="5">  
+              <vs-card class="cardx" v-if="fetched.col_generated" vs-w="5">
+                <div slot="header"><h3>Dominant colors in this painting</h3></div>
+
+                <div>
+                  <div id="app">
+                    <pie-chart
+                      :data="pie_data"
+                      :key="pie_key"
+                    />
                   </div>
-            </vs-card>
-            
-            
-            <vs-card class="cardx" v-if="fetched.img_generated" fixedHeight vs-w="6">
-                  <div slot="media">
-                      <img v-bind:src="img_generated">
-                  </div>
-            </vs-card>
-          </vs-card>
+                  <div id="my_dataviz"></div>
+                </div>
+              </vs-card>
+
+                <vs-card class="cardx" v-if="fetched.summary">
+                <div slot="header"><h3>{{ genre }} on Wikipedia</h3></div>
+                <div>
+                  {{ summary }}
+                </div>
+              </vs-card>
+            </vs-col>
+
+            <vs-col type="flex" vs-justify="left" vs-align="left" vs-w="7">  
+              
+              <vs-card class="cardx" v-if="fetched.histograms">
+                <div slot="header"><h3>Usage of dominant colors by {{selected_artist}}</h3></div>
+                <zingchart
+                ref="style_hist"
+                :data="style_hist_data"
+                :key="hist_key"
+              />
+              </vs-card>
+              
+
+              <vs-card class="cardx" v-if="fetched.related_terms">
+                <div slot="header"><h3>Related terms</h3></div>
+                <div>
+                  {{ related_terms }}
+                </div>
+              </vs-card>
+
+
+            </vs-col>
+          </vs-row>
+
         </vs-col>
 
 
-        <vs-col type="flex" vs-justify="right" vs-align="right" vs-w="6">
-          <vs-card class="cardx">
-            <div slot="header">
-                <h3>Pick a <span v-if="fetched.img_generated">new</span> style!</h3>
-            </div>
-            <div class="col-8">
-              <v-container>
-                    <v-row>
-                        <v-combobox class="col-5" v-model="pending_add_artists" :items="all_artists" label="Select artist(s)"
-                                    hide-selected small-chips multiple>
-                            <template v-slot:prepend-inner>
-                                <v-progress-circular id="add-spinner" :size="20" :width="3"
-                                                    style="display: none;" indeterminate color="primary">
-                                </v-progress-circular>
-                            </template>
-                            <template v-slot:append>
-                                <v-btn height="auto" @click="addArtists" text>Add</v-btn>
-                            </template>
-                        </v-combobox>
-                        <v-combobox class="col-5 ml-4" v-model="pending_remove_artists" :items="artists_on_timeline"
-                                    label="Remove artist(s) from timeline" hide-selected small-chips multiple>
-                            <template v-slot:prepend-inner>
-                                <v-progress-circular id="remove-spinner" :size="20" :width="3"
-                                                    style="display: none;" indeterminate color="primary">
-                                </v-progress-circular>
-                            </template>
-                            <template v-slot:append>
-                                <v-btn height="auto" @click="removeArtists" text>Remove</v-btn>
-                            </template>
-                        </v-combobox>
-                    </v-row>
-              </v-container>
-            </div>
-            <div class="mt-3" id="timeline">
-                Painting happy little trees...
-            </div>
-            <div class="d-flex align-items-center dropdownbtn-alignment">
-              <vs-dropdown vs-trigger-click>
-                <vs-button
-                  class="btn-alignment"
-                  type="filled"
-                  icon="expand_more"
-                  :color="main_color"
-                >Pick a style!</vs-button>
-                <vs-dropdown-menu>
-                  <vs-dropdown-item @click="get_info('Impressionism')">
-                    Impressionism
-                  </vs-dropdown-item>
-                  <vs-dropdown-item @click="get_info('Expressionism (fine arts)')">
-                    Expressionism
-                  </vs-dropdown-item>
-                  <vs-dropdown-item @click="get_info('Cubism')">
-                    Cubism
-                  </vs-dropdown-item>
-                  <vs-dropdown-item @click="get_info('Surrealism')">
-                    Surealism
-                  </vs-dropdown-item>
-                </vs-dropdown-menu>
-              </vs-dropdown>
-            </div>
+        <vs-col type="flex" vs-justify="right" vs-align="right" vs-w="5">
+          
+          <vs-row vs-justify="top">
+          
+            <vs-card class="cardx">
+              <div slot="header">
+                  <h3>Pick a <span v-if="fetched.img_generated">new</span> style!</h3>
+              </div>
+              <div class="col-12">
+                <v-container>
+                      <v-row>
+                          <v-combobox class="col-5" v-model="pending_add_artists" :items="all_artists" label="Select artist(s)"
+                                      hide-selected small-chips multiple>
+                              <template v-slot:prepend-inner>
+                                  <v-progress-circular id="add-spinner" :size="20" :width="3"
+                                                      style="display: none;" indeterminate color="primary">
+                                  </v-progress-circular>
+                              </template>
+                              <template v-slot:append>
+                                  <v-btn height="auto" @click="addArtists" text>Add</v-btn>
+                              </template>
+                          </v-combobox>
+                          <v-combobox class="col-5 ml-4" v-model="pending_remove_artists" :items="artists_on_timeline"
+                                      label="Remove artist(s) from timeline" hide-selected small-chips multiple>
+                              <template v-slot:prepend-inner>
+                                  <v-progress-circular id="remove-spinner" :size="20" :width="3"
+                                                      style="display: none;" indeterminate color="primary">
+                                  </v-progress-circular>
+                              </template>
+                              <template v-slot:append>
+                                  <v-btn height="auto" @click="removeArtists" text>Remove</v-btn>
+                              </template>
+                          </v-combobox>
+                      </v-row>
+                </v-container>
+              </div>
+              <div class="mt-3" id="timeline">
+                  Painting happy little trees...
+              </div>
+              <div class="d-flex align-items-center dropdownbtn-alignment">
+                <vs-dropdown vs-trigger-click>
+                  <vs-button
+                    class="btn-alignment"
+                    type="filled"
+                    icon="expand_more"
+                    :color="main_color"
+                  >Pick a style!</vs-button>
+                  <vs-dropdown-menu>
+                    <vs-dropdown-item @click="get_info('Impressionism')">
+                      Impressionism
+                    </vs-dropdown-item>
+                    <vs-dropdown-item @click="get_info('Expressionism (fine arts)')">
+                      Expressionism
+                    </vs-dropdown-item>
+                    <vs-dropdown-item @click="get_info('Cubism')">
+                      Cubism
+                    </vs-dropdown-item>
+                    <vs-dropdown-item @click="get_info('Surrealism')">
+                      Surealism
+                    </vs-dropdown-item>
+                  </vs-dropdown-menu>
+                </vs-dropdown>
+              </div>
+            </vs-card>
+          </vs-row>
+
+          <vs-row vs-justify="bottom">
+    
+            <vs-card class="cardx" v-if="fetched.line_chart" >
+              <div slot="header"><h3>Dominant colors in art pieces over the years for specific artists</h3></div>
+
+              <select v-model="selected" @change="get_line_graph()">
+                <option v-for="option in artist_options" v-bind:key="option"> {{ option }}</option>
+              </select>
+
+              <zingchart
+                ref="line_chart"
+                :data="line_chart_data"
+                :key="chart_key"
+                @node_mouseover="handleNodeHighlight"
+              />
           </vs-card>
 
+
+          </vs-row>
 
           
         </vs-col>
@@ -137,8 +220,8 @@ export default {
         line_chart: false,
         histograms: false,
       },
-      img_generated: "@/assets/images/big/img1.jpg",
-      img_existend: "@/assets/images/big/img1.jpg",
+      generated_img: "@/assets/images/big/img1.jpg",
+      existend_img: "@/assets/images/big/img1.jpg",
       line_chart_data: {
         type: 'scatter',
         plot: {
@@ -261,8 +344,8 @@ export default {
     }
   },
   components: {
-    // PieChart,
-    // zingchart: zingchartVue
+    PieChart,
+    zingchart: zingchartVue
   },
   methods: {
     handleNodeHighlight(e) {
@@ -439,7 +522,7 @@ export default {
   mounted: function () {
     this.$parent.socket.on("set_image", (data) => {
       window.scroll({top: 0, left: 0, behaviour: 'smooth'});
-      this.img_existend = data.existend;
+      this.existend_img = data.existend;
       this.fetched.img_existend = true;
     });
 
@@ -482,7 +565,8 @@ export default {
 
     this.$parent.socket.on("images_generated", (data) => {
       console.log("Received generated image", data);
-      this.img_generated = data.images[0].image;
+      // this.generated_img = data.images[0].image;
+      this.generated_img = "@/assets/images/big/img1.jpg";
       this.fetched.img_generated = true;
     });
 

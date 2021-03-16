@@ -25,7 +25,8 @@ export default {
     Navbar
   },
   data:() => ({
-    main_color: "#061765",
+    // main_color: "#061765",
+    main_color: "#31B59E",
     logotitle: "ARTificial Intelligence",
     socket: null,
     timeline_data: null
