@@ -15,7 +15,7 @@ from data import *;
                   
                   <transition mode="out-in" enter-active-class="animate__animated animate__fadeInLeft" leave-active-class="animate__animated animate__fadeOutRight">
                     <vs-card class="cardx" v-if="fetched.img_existend" fixedHeight vs-w="5">
-                      <div slot="header"><h3>Existend Art Piece</h3></div>
+                      <div slot="header"><h3>Existend Art Piece: {{exist_title}}, {{exist_artist}}, {{exist_year}}</h3></div>
 
                           <div slot="media">
                               <img v-bind:src="existend_img">
@@ -289,6 +289,9 @@ export default {
       },
       generated_img: "@/assets/images/big/img1.jpg",
       existend_img: "@/assets/images/big/img1.jpg",
+      exist_title: '',
+      exist_year: '',
+      exist_artist: '',
       line_chart_data: {
         type: 'scatter',
         plot: {
@@ -623,6 +626,9 @@ export default {
     this.$parent.socket.on("set_image", (data) => {
       window.scroll({top: 0, left: 0, behaviour: 'smooth'});
       this.existend_img = data.existend;
+      this.exist_title = data.title;
+      this.exist_artist = data.artist;
+      this.exist_year = data.year;
       this.fetched.img_existend = true;
     });
 

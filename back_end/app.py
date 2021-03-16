@@ -210,15 +210,24 @@ def get_image(class_idx, class_type):
         nr = random.randint(0, len(data)-1)
         data = data['image_url'].iloc[nr]
         # data = model_data['creation_year' == class_idx][0]
+        image_url = data['image_url']
+        title = data['artwork_name']
+        year = class_idx
+        artist = data['artist_last_name']
 
     elif class_type == "artists":
         print('**********')
         # print(model_data.loc[model_data['artist_last_name'] == class_idx])
-        data = model_data.loc[model_data['artist_last_name'] == class_idx]['image_url']
+        data = model_data.loc[model_data['artist_last_name'] == class_idx]
         nr = random.randint(0, len(data)-1)
         data = data.iloc[nr] 
+        image_url = data['image_url']
+        title = data['artwork_name']
+        artist = class_idx
+        year = data['creation_year']
+
         # data = model_data['artist_full_name' == class_idx][0]
-    return data
+    return image_url, title, artist, year
 
 
 
@@ -228,8 +237,6 @@ def collect_info(data):
     class_type = data["type"]
     amount = data["amount"]
     class_idx = data["class_idx"]
-    print('-----------------------hellooooo')
-    # print(class_idx)
 
     # Load a placeholder image.
     # TODO: Obtain a generated image here.
@@ -239,13 +246,12 @@ def collect_info(data):
     #     "Cubism": "img3.jpg",
     #     "Surrealism": "img4.jpg",
     # }.get(gen, "img1.jpg")
-    image = get_image(class_idx, class_type)
+    image, title, artist, year = get_image(class_idx, class_type)
     # print(image)
 
     # path = os.path.join(os.path.dirname(__file__), image_file)
     # image = Image.open(urllib3.urlopen(image))
     image = Image.open(urllib.request.urlopen(image))
-    # print(image)
 
 
     # Encode the image for the response.
@@ -255,6 +261,9 @@ def collect_info(data):
 
     socketio.emit("set_image", {
         "existend": f"data:image/png;base64, {encoded_img}",
+        "title": title,
+        "artist": artist,
+        "year": year
     })
 
     # Get the primary color of the image.
