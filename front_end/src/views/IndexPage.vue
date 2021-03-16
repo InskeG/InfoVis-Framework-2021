@@ -109,8 +109,8 @@ from data import *;
 
 
           <vs-row vs-justify="bottom">
-
-          <vs-col type="flex" vs-justify="left" vs-align="left" vs-w="6">
+<!-- vs-w="6" -->
+          <vs-col type="flex" vs-justify="left" vs-align="left" :vs-w="time_line_size">
 
             <transition name="slide-fade">
             
@@ -118,7 +118,7 @@ from data import *;
                 <div slot="header">
                     <h3>Pick a <span v-if="fetched.img_generated">new</span> style!</h3>
                 </div>
-                <div class="col-12" :key="time_line_key">
+                <div class="col-12">
                   <v-container>
                         <v-row>
                             <v-combobox class="col-5" v-model="pending_add_artists" :items="all_artists" label="Select artist(s)"
@@ -187,7 +187,7 @@ from data import *;
              <transition mode="out-in" enter-active-class="animate__animated animate__fadeInUp" leave-active-class="animate__animated animate__fadeOutDown">
 
                   <vs-card class="cardx" v-if="fetched.histograms">
-                    <div slot="header"><h3>Usage of dominant colors by {{selected_artist}}</h3></div>
+                    <div slot="header"><h3>Usage of dominant colors: {{selected_artist}}</h3></div>
                     <zingchart
                     ref="style_hist"
                     :data="style_hist_data"
@@ -206,7 +206,7 @@ from data import *;
     
               <transition mode="out-in" enter-active-class="animate__animated animate__fadeInRight" leave-active-class="animate__animated animate__fadeOutLeft">
               <vs-card class="cardx" v-if="fetched.line_chart" >
-                <div slot="header"><h3>Dominant colors in art pieces over the years for specific artists</h3></div>
+                <div slot="header"><h3>Dominant colors over the years: {{selected_artist}}</h3></div>
 
                 <!-- <select v-model="selected" @change="get_line_graph()">
                   <option v-for="option in artist_options" v-bind:key="option"> {{ option }}</option>
@@ -267,7 +267,8 @@ export default {
   },
   data: () => {
     return {
-      time_line_size: "12",
+      time_line_size: "6",
+      // time_line_key: 0,
       artist_options: [],
       genre: 'Hallo',
       selected: 'airstream',
@@ -429,6 +430,9 @@ export default {
 
     async get_info(genre) {
       // this.$vs.loading();
+
+      this.time_line_size = "6",
+      // this.time_line_key += 1,
       this.genre = genre
       this.$parent.socket.emit("collect_info", {
         'genre': genre,
@@ -640,6 +644,7 @@ export default {
 
     window.addEventListener("resize", () => {
         this.timeline.width(document.getElementById('timeline').clientWidth);
+        this.timeline.width(document.getElementById('timeline2').clientWidth);
     })
 
     window.addEventListener("load", () => {
