@@ -8,6 +8,8 @@ import scipy
 import sys
 import torch
 import wikipedia
+import urllib.request
+
 
 from base64 import encodebytes
 from colour import Color
@@ -76,9 +78,9 @@ def detect_colors(image):
     return list(colors), list(percentages), dom_color
 
 
-def retrieve_info(genre, year, model_data):
-    year = float(year)
-    ranges = float(1)
+def retrieve_info(genre):
+    # year = float(year)
+    # ranges = float(1)
     dictionary = {}
 
     w = wikipedia.page(genre)
@@ -88,14 +90,14 @@ def retrieve_info(genre, year, model_data):
 
     # print('artworks in same time period:')
     # other art pieces created in same year
-    year_df = model_data.loc[model_data['creation_year'].astype('float') < year+ranges]
-    year_df = year_df.loc[year_df['creation_year'].astype('float') > year-ranges]
+    # year_df = model_data.loc[model_data['creation_year'].astype('float') < year+ranges]
+    # year_df = year_df.loc[year_df['creation_year'].astype('float') > year-ranges]
 
-    year_list = pd.Series.tolist(year_df['artwork_name'])
-    if len(year_list) < 5:
-        dictionary['same_year/genre'] = pd.Series.tolist(year_df['artwork_name'])
-    else:
-        dictionary['same_year/genre'] = pd.Series.tolist(year_df['artwork_name'])[:5]
+    # year_list = pd.Series.tolist(year_df['artwork_name'])
+    # if len(year_list) < 5:
+    #     dictionary['same_year/genre'] = pd.Series.tolist(year_df['artwork_name'])
+    # else:
+    #     dictionary['same_year/genre'] = pd.Series.tolist(year_df['artwork_name'])[:5]
 
     dictionary['related_terms'] = wikipedia.search(genre)
 
@@ -197,22 +199,51 @@ def collect_line_chart(data):
     socketio.emit("collect_line_chart", data)
 
 
+
+def get_image(class_idx, class_type):
+    # print('helloo')
+    # print(model_data[:10])
+    if class_type == "centuries":
+        print('**********')
+        data = model_data.loc[model_data['creation_year'] == class_idx][0]['image_url']
+        data = data['image_url'].iloc[0]
+        # data = model_data['creation_year' == class_idx][0]
+
+    elif class_type == "artists":
+        print('**********')
+        # print(model_data.loc[model_data['artist_last_name'] == class_idx])
+        data = model_data.loc[model_data['artist_last_name'] == class_idx]
+        data = data['image_url'].iloc[0]
+        # data = model_data['artist_full_name' == class_idx][0]
+    return data
+
+
+
 @socketio.event
 def collect_info(data):
-    print("Hallo, ik kom hier om dingen volledig in de war te gooien!")
-    gen = data['genre']
-    y = data['year']
+    # print("Hallo, ik kom hier om dingen volledig in de war te gooien!")
+    class_type = data["type"]
+    amount = data["amount"]
+    class_idx = data["class_idx"]
+    print('-----------------------hellooooo')
+    # print(class_idx)
 
     # Load a placeholder image.
     # TODO: Obtain a generated image here.
-    image_file = {
-        "Impressionism": "img1.jpg",
-        "Expressionism (fine arts)": "img2.jpg",
-        "Cubism": "img3.jpg",
-        "Surrealism": "img4.jpg",
-    }.get(gen, "img1.jpg")
-    path = os.path.join(os.path.dirname(__file__), image_file)
-    image = Image.open(path)
+    # image_file = {
+    #     "Impressionism": "img1.jpg",
+    #     "Expressionism (fine arts)": "img2.jpg",
+    #     "Cubism": "img3.jpg",
+    #     "Surrealism": "img4.jpg",
+    # }.get(gen, "img1.jpg")
+    image = get_image(class_idx, class_type)
+    # print(image)
+
+    # path = os.path.join(os.path.dirname(__file__), image_file)
+    # image = Image.open(urllib3.urlopen(image))
+    image = Image.open(urllib.request.urlopen(image))
+    # print(image)
+
 
     # Encode the image for the response.
     img_stream = BytesIO()
@@ -235,7 +266,7 @@ def collect_info(data):
 
     # model_data = get_model_data()
 
-    dictionary = retrieve_info(gen, y, model_data)
+    dictionary = retrieve_info(class_idx)
 
     socketio.emit("get_summary", {
         "summary": dictionary['summary'],

@@ -149,7 +149,7 @@ from data import *;
                 <div class="mt-3" id="timeline">
                     Painting happy little trees...
                 </div>
-                <div class="d-flex align-items-center dropdownbtn-alignment">
+                <!-- <div class="d-flex align-items-center dropdownbtn-alignment">
                   <vs-dropdown vs-trigger-click>
                     <vs-button
                       class="btn-alignment"
@@ -172,7 +172,7 @@ from data import *;
                       </vs-dropdown-item>
                     </vs-dropdown-menu>
                   </vs-dropdown>
-                </div>
+                </div> -->
               </vs-card>
 
           </transition>
@@ -478,6 +478,16 @@ export default {
               });
               this.selected_artist = filter;
 
+              // this.get_info(this.selected_artist)
+
+              this.genre = filter
+              
+              this.$parent.socket.emit("collect_info", {
+                type: "artists",
+                amount: 1,
+                class_idx: filter,
+              });
+
               this.$parent.socket.emit("generate_images", {
                 type: "artists",
                 amount: 1,
@@ -519,6 +529,14 @@ export default {
           var avg_year = 0.5 * (start_year + end_year);
           var century = Math.round(avg_year / 100);
 
+          this.genre = century
+
+          this.$parent.socket.emit("collect_info", {
+                type: "centuries",
+                amount: 1,
+                class_idx: century,
+              });
+
           this.$parent.socket.emit("generate_images", {
             type: "centuries",
             amount: 1,
@@ -528,6 +546,16 @@ export default {
         .onSegmentClick((s) => {
           console.log("Painting selected", s);
           // TODO: Generate GAN based on selected art piece
+
+
+          this.genre = s.val
+
+           this.$parent.socket.emit("collect_info", {
+                type: "artists",
+                amount: 1,
+                class_idx: s.val,
+              });
+
           this.$parent.socket.emit("generate_images", {
             type: "artists",
             amount: 1,
