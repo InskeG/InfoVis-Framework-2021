@@ -23,7 +23,7 @@ from data import *;
         </vs-card>
 
         <vs-card class="cardx" v-if="fetched.col_generated">
-          <div slot="header"><h3>Dominant Colors</h3></div>
+          <div slot="header"><h3>Dominant colors in this painting</h3></div>
 
           <div>
             <div id="app">
@@ -36,7 +36,7 @@ from data import *;
           </div>
         </vs-card>
 
-        <vs-card class="cardx" v-if="fetched.artist_options" >
+        <vs-card class="cardx" v-if="fetched.line_chart" >
           <div slot="header"><h3>Dominant colors in art pieces over the years for specific artists</h3></div>
 
           <select v-model="selected" @change="get_line_graph()">
@@ -68,7 +68,7 @@ from data import *;
         </vs-card>
 
         <vs-card class="cardx" v-if="fetched.histograms">
-          <div slot="header"><h3>Usage of dominant colors by genres</h3></div>
+          <div slot="header"><h3>Usage of dominant colors by {{selected_artist}}</h3></div>
           <zingchart
           ref="style_hist"
           :data="style_hist_data"
@@ -277,27 +277,28 @@ export default {
       pie_key: 0,
       hist_key: 0,
       all_artists: [],
+      selected_artist: "",
       pending_add_artists: [],
       timeline: TimelinesChart(),
       artists_on_timeline: [],
       pending_remove_artists: [],
       artPeriods: [
-          {"name": "Medieval", "timeRange": [new Date(500, 1, 1), new Date(1400, 1, 1)]},
-          {"name": "Renaissance", "timeRange": [new Date(1400, 1, 1), new Date(1600, 1, 1)]},
-          {"name": "Mannerism", "timeRange": [new Date(1527, 1, 1), new Date(1580, 1, 1)]},
-          {"name": "Baroque", "timeRange": [new Date(1600, 1, 1), new Date(1750, 1, 1)]},
-          {"name": "Rococo", "timeRange": [new Date(1699, 1, 1), new Date(1780, 1, 1)]},
-          {"name": "Neoclassicism", "timeRange": [new Date(1750, 1, 1), new Date(1850, 1, 1)]},
-          {"name": "Romanticism", "timeRange": [new Date(1780, 1, 1), new Date(1850, 1, 1)]},
-          {"name": "Realism", "timeRange": [new Date(1848, 1, 1), new Date(1900, 1, 1)]},
-          {"name": "Art Nouveau", "timeRange": [new Date(1890, 1, 1), new Date(1910, 1, 1)]},
-          {"name": "Impressionism", "timeRange": [new Date(1865, 1, 1), new Date(1885, 1, 1)]},
-          {"name": "Post-impressionism", "timeRange": [new Date(1885, 1, 1), new Date(1910, 1, 1)]},
-          {"name": "Fauvism", "timeRange": [new Date(1900, 1, 1), new Date(1935, 1, 1)]},
-          {"name": "Expressionism", "timeRange": [new Date(1905, 1, 1), new Date(1920, 1, 1)]},
-          {"name": "Cubism", "timeRange": [new Date(1907, 1, 1), new Date(1914, 1, 1)]},
-          {"name": "Surrealism", "timeRange": [new Date(1917, 1, 1), new Date(1950, 1, 1)]},
-          {"name": "Modern", "timeRange": [new Date(1950, 1, 1), new Date(2022, 1, 1)]},
+        {"name": "Medieval", "timeRange": [new Date(500, 1, 1), new Date(1400, 1, 1)]},
+        {"name": "Renaissance", "timeRange": [new Date(1400, 1, 1), new Date(1600, 1, 1)]},
+        {"name": "Mannerism", "timeRange": [new Date(1527, 1, 1), new Date(1580, 1, 1)]},
+        {"name": "Baroque", "timeRange": [new Date(1600, 1, 1), new Date(1750, 1, 1)]},
+        {"name": "Rococo", "timeRange": [new Date(1699, 1, 1), new Date(1780, 1, 1)]},
+        {"name": "Neoclassicism", "timeRange": [new Date(1750, 1, 1), new Date(1850, 1, 1)]},
+        {"name": "Romanticism", "timeRange": [new Date(1780, 1, 1), new Date(1850, 1, 1)]},
+        {"name": "Realism", "timeRange": [new Date(1848, 1, 1), new Date(1900, 1, 1)]},
+        {"name": "Art Nouveau", "timeRange": [new Date(1890, 1, 1), new Date(1910, 1, 1)]},
+        {"name": "Impressionism", "timeRange": [new Date(1865, 1, 1), new Date(1885, 1, 1)]},
+        {"name": "Post-impressionism", "timeRange": [new Date(1885, 1, 1), new Date(1910, 1, 1)]},
+        {"name": "Fauvism", "timeRange": [new Date(1900, 1, 1), new Date(1935, 1, 1)]},
+        {"name": "Expressionism", "timeRange": [new Date(1905, 1, 1), new Date(1920, 1, 1)]},
+        {"name": "Cubism", "timeRange": [new Date(1907, 1, 1), new Date(1914, 1, 1)]},
+        {"name": "Surrealism", "timeRange": [new Date(1917, 1, 1), new Date(1950, 1, 1)]},
+        {"name": "Modern", "timeRange": [new Date(1950, 1, 1), new Date(2022, 1, 1)]},
       ]
     }
   },
@@ -359,6 +360,10 @@ export default {
             } else {
               filter = s.innerHTML;
               this.$parent.socket.emit("get_artist_histograms", {artists: [filter]});
+              this.$parent.socket.emit("collect_line_chart", {
+                'artist': filter,
+              });
+              this.selected_artist = filter;
 
               this.$parent.socket.emit("generate_images", {
                 type: "artists",

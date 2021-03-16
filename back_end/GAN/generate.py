@@ -15,7 +15,7 @@ from base64 import encodebytes
 
 ARTIST_LABELS = [
     'michelangelo', 'raphael', 'bosch', 'vinci', 'greco', 'caravaggio',
-    'rubens', 'vermeer', 'rembrandt', 'dyck', 'hals', 'baele',  'steen',
+    'rubens', 'vermeer', 'rijn', 'dyck', 'hals', 'baele',  'steen',
     'turner', 'ingres', 'blake', 'delacroix', 'gogh', 'degas', 'monet',
     'magritte', 'kandinsky', 'picasso', 'renoir', 'warhol', 'banksy', 'eyck',
 ]

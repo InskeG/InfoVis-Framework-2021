@@ -137,7 +137,7 @@ def get_line_chart_artist(model_data, label):
     """
     series = []
 
-    data = model_data[model_data.school == label]
+    data = model_data[model_data.artist_last_name == label]
     data = data[['creation_year', 'dominant_color']]
     data = data.sort_values(by='creation_year')
     data['hue'] = [Color(color).hue for color in data.dominant_color]
@@ -192,11 +192,9 @@ def encode_image(image, format='png'):
 
 @socketio.event
 def collect_line_chart(data):
-    print("Collecting line chart data")
-    socketio.emit(
-        "collect_line_chart",
-        get_line_chart_artist(model_data, data['artist']),
-    )
+    data = get_line_chart_artist(model_data, data['artist'])
+    print("Collecting line chart data", data)
+    socketio.emit("collect_line_chart", data)
 
 
 @socketio.event
@@ -283,13 +281,15 @@ def generate_images(data):
     if classification_type == "artists":
         try:
             class_idx = generate.ARTIST_LABELS.index(class_idx)
-        finally:
+        except ValueError:
+            message = f"Label {repr(class_idx)} does not exist!"
             socketio.emit("images_generated", {
                 "images": [],
                 "seeds": [],
                 "success": False,
-                "message": "Label {repr(class_idx)} does not exist!"
+                "message": message,
             })
+            raise ValueError(message)
 
         images = generate.generate_images(G_artists, seeds, class_idx)
     elif classification_type == "centuries":
