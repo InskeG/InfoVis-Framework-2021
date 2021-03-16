@@ -220,7 +220,7 @@ def collect_info(data):
     encoded_img = encodebytes(img_stream.getvalue()).decode('ascii')
 
     socketio.emit("set_image", {
-        "generated": f"data:image/png;base64, {encoded_img}",
+        "existend": f"data:image/png;base64, {encoded_img}",
     })
 
     # Get the primary color of the image.
