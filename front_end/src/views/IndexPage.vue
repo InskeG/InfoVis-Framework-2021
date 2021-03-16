@@ -64,13 +64,13 @@ from data import *;
 
             </vs-col>
 
-                <vs-col type="flex" vs-justify="right" vs-align="right" vs-w="5">  
+                <vs-col type="flex" vs-justify="right" vs-align="right" vs-w="6">  
                     
                     <transition mode="out-in" enter-active-class="animate__animated animate__fadeInRight" leave-active-class="animate__animated animate__fadeOutLeft">
 
                       <vs-card class="cardx" v-if="fetched.summary">
                       <div slot="header"><h4>{{ genre }} on Wikipedia</h4></div>
-                      <div>
+                      <div style="font-size: 11pt">
                         {{ summary }}
                       </div>
                       </vs-card>
@@ -118,7 +118,7 @@ from data import *;
                 <div slot="header">
                     <h3>Pick a <span v-if="fetched.img_generated">new</span> style!</h3>
                 </div>
-                <div class="col-12">
+                <div class="col-12" :key="time_line_key">
                   <v-container>
                         <v-row>
                             <v-combobox class="col-5" v-model="pending_add_artists" :items="all_artists" label="Select artist(s)"
@@ -267,6 +267,7 @@ export default {
   },
   data: () => {
     return {
+      time_line_size: "12",
       artist_options: [],
       genre: 'Hallo',
       selected: 'airstream',
