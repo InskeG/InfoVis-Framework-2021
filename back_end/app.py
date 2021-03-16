@@ -9,6 +9,7 @@ import sys
 import torch
 import wikipedia
 import urllib.request
+import random 
 
 
 from base64 import encodebytes
@@ -206,14 +207,16 @@ def get_image(class_idx, class_type):
     if class_type == "centuries":
         print('**********')
         data = model_data.loc[model_data['creation_year'] == class_idx][0]['image_url']
-        data = data['image_url'].iloc[0]
+        nr = random.randint(0, len(data)-1)
+        data = data['image_url'].iloc[nr]
         # data = model_data['creation_year' == class_idx][0]
 
     elif class_type == "artists":
         print('**********')
         # print(model_data.loc[model_data['artist_last_name'] == class_idx])
-        data = model_data.loc[model_data['artist_last_name'] == class_idx]
-        data = data['image_url'].iloc[0]
+        data = model_data.loc[model_data['artist_last_name'] == class_idx]['image_url']
+        nr = random.randint(0, len(data)-1)
+        data = data.iloc[nr] 
         # data = model_data['artist_full_name' == class_idx][0]
     return data
 
