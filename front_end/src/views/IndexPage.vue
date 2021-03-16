@@ -44,11 +44,11 @@ from data import *;
 
               <vs-row vs-justify='top'>
 
-                <vs-col type="flex" vs-justify="right" vs-align="right" vs-w="5">  
+                <vs-col type="flex" vs-justify="right" vs-align="right" vs-w="6">  
                 
                 <transition mode="out-in" enter-active-class="animate__animated animate__fadeInRight" leave-active-class="animate__animated animate__fadeOutLeft">
                   <vs-card class="cardx" v-if="fetched.col_generated">
-                    <div slot="header"><h3>Dominant colors in this painting</h3></div>
+                    <div slot="header"><h4>Dominant colors in this painting</h4></div>
 
                     <div>
                       <div id="app">
@@ -69,7 +69,7 @@ from data import *;
                     <transition mode="out-in" enter-active-class="animate__animated animate__fadeInRight" leave-active-class="animate__animated animate__fadeOutLeft">
 
                       <vs-card class="cardx" v-if="fetched.summary">
-                      <div slot="header"><h3>{{ genre }} on Wikipedia</h3></div>
+                      <div slot="header"><h4>{{ genre }} on Wikipedia</h4></div>
                       <div>
                         {{ summary }}
                       </div>
@@ -87,8 +87,8 @@ from data import *;
 
                 <transition name="slide-fade">
 
-                <vs-card class="cardx" v-if="fetched.related_terms">
-                  <div slot="header"><h3>Related terms</h3></div>
+                <vs-card class="cardx" v-if="fetched.related_terms" >
+                  <div slot="header"><h4>Related terms</h4></div>
                   <div>
                     {{ related_terms }}
                   </div>
