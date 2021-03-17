@@ -28,12 +28,14 @@ data_by_artist["tempo"] = (data_by_artist["tempo"] - min_temp)/(
     max_temp-min_temp)
 
 # Data for home page
-# filtered_artists = song_data.groupby("artists").filter(lambda x: len(x) > 9)["artists"].unique()
-filtered_artists = data_by_artist.query("count>9")["artists"].to_list()
-top_artist_data = data_by_artist.query("artists in @filtered_artists").sort_values("popularity", 0, False).head(10)
-top_artists = top_artist_data["artists"]
+filtered_artists = song_data.groupby("artists").filter(lambda x: len(x) > 9)["artists"].unique().tolist()
+# filtered_artists = data_by_artist.query("count>9")["artists"].to_list()
+filtered_data = data_by_artist.query("artists in @filtered_artists")
+filtered_data = filtered_data.set_index("artists")
 
-top_artist_data = top_artist_data.set_index("artists")
+top_artist_data = filtered_data.sort_values("popularity", 0, False).head(10)
+top_artists = top_artist_data.index.to_list()
+
 home_data = top_artist_data.popularity
 
 
@@ -42,7 +44,13 @@ filter_columns = ["valence", "acousticness", "danceability",
                   "energy", "liveness", "speechiness", "instrumentalness",
                   "loudness", "tempo"]
 
-heatmap_data = data_by_artist.query("count>9").sort_values("popularity", ascending=False)
+# print(filtered_data)
+# for artist in top_artists:
+#     count_1 = filtered_data.at[artist, "count"]
+#     count_2 = song_data.query("artists == @artist").size
+#     print(count_1, count_2)
+
+heatmap_data = data_by_artist.query("artists in @filtered_artists").sort_values("popularity", ascending=False)
 heatmap_head = heatmap_data.head(10)
 
 heatmap_colors = pd.read_csv("app/data/heatmap_colors.csv")

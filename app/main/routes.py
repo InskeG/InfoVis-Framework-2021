@@ -55,7 +55,6 @@ def metrics():
     print([x[1] for x in barchart_data])
     barchart_data = barchart_data.head(10).groupby("artists")
     barchart_data = {x[0] : x[1].filter(items=keys).to_dict("records") for x in barchart_data}
-    artists = json.loads(artists.to_json(orient="records"))
     # print(barchart_data)
     return render_template("metrics.html", heatmap_data=heatmap_data,
                            heatmap_colors=colors, song_data=barchart_data,
