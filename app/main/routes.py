@@ -15,7 +15,6 @@ def index():
     home_data = data.home_data
     artists = data.top_artists
     song_data = dict(zip(artists, home_data))
-    artists = json.loads(artists.to_json(orient="values"))
 
     return render_template("home.html", song_data=song_data, artists=artists)
 
