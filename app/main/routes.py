@@ -41,25 +41,26 @@ def metrics():
     song_data = data.song_data
     keys = data.filter_columns
     artists = data.top_artists
+    all_artists = data.filtered_artists
     heatmap_data = data.heatmap_head
     colors = data.heatmap_colors
     # print(heatmap_data)
     popularity = dict(zip(heatmap_data.artists, heatmap_data.popularity))
-    print(popularity)
     heatmap_data = heatmap_data.filter(items=keys + ["artists"])
     heatmap_data = pd.melt(heatmap_data, id_vars=["artists"], var_name=["characteristic"])
     heatmap_data = heatmap_data.to_dict(orient="records")
     colors = colors.to_dict(orient="records")
+    barchart_data = song_data.query("artists in @artists").sort_values("popularity", 0, False).groupby("artists")
 
-    barchart_data = song_data.query("artists in @artists").sort_values("popularity", 0, False).groupby("artists").head(10)
-
-    barchart_data = barchart_data.groupby("artists")
+    print([x[1] for x in barchart_data])
+    barchart_data = barchart_data.head(10).groupby("artists")
     barchart_data = {x[0] : x[1].filter(items=keys).to_dict("records") for x in barchart_data}
     artists = json.loads(artists.to_json(orient="records"))
-
+    # print(barchart_data)
     return render_template("metrics.html", heatmap_data=heatmap_data,
                            heatmap_colors=colors, song_data=barchart_data,
-                           artists=artists, keys=keys, popularity=popularity)
+                           artists=artists, keys=keys, popularity=popularity,
+                           all_artists=all_artists)
 
 @main.route('/metrics_data', methods=['GET'])
 def metrics_data():

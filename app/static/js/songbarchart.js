@@ -138,7 +138,7 @@ function createRowChart(translation, id, chart_group_bar_charts, artist, colors)
     for (var key_attr in x_variables) {
         // Create vertical separator lines
         if ((id === 0) && (j !== 0)) {
-            var line_x = mini_chart_width * j + 30;
+            var line_x = mini_chart_width * j + 30 + x_2.bandwidth() - 1;
             var points = [[line_x, 0], [line_x, mini_chart_height * y_variables.length]];
             chart_group_bar_charts.append("path")
                        .attr("class", "vertline")

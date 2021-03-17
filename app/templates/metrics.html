@@ -54,8 +54,10 @@
 		</div>
 	</div>
 	<div id = "wrapper-filters">
-		<form class="artistForm" onSubmit="return addArtist(this)">
-			<input class="artistText" placeholder="Select an artist" type="text" name="artist" value="">
+		<form class="artistForm" autocomplete="off" onSubmit="return addArtist(this)">
+			<div class="autocomplete">
+				<input id="artistInput" class="artistText" placeholder="Select an artist" type="text" name="artist" value="">
+			</div>
 			<ul class="artist-list">
 				{% for artist in artists: %}
 				<li class="artist-list-element" id="list{{ artist.replace(' ', '') }}">
@@ -72,12 +74,14 @@
 <!-- End page content-->
 <script type="text/javascript" src="../static/js/songbarchart.js"></script>
 <script type="text/javascript" src="../static/js/heatmap.js"></script>
+<script type="text/javascript" src="../static/js/autocomplete.js"></script>
 <script type="text/javascript">
 	var heatmap_data = {{ heatmap_data | safe }};
 	var colors = {{ heatmap_colors | safe }};
 	var barchart_data = {{ song_data | safe }};
 	var popularity = {{ popularity | safe }};
 	var y_variables = {{ artists | safe }};
+	var all_artists = {{ all_artists | safe }}
 	var manual_artists = false;
 	var y_to_i = {};
 	var i = 0;
@@ -135,6 +139,7 @@
 
 	createHeatMapPlot();
 	createBarChartPlot();
+	autocomplete(document.getElementById("artistInput"), all_artists);
 </script>
 
 
