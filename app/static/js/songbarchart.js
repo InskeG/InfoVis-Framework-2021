@@ -64,7 +64,9 @@ function removeArtist(artist) {
         console.log("cannot find artist");
         return;
     }
-    console.log("found artist");
+    if (!manual_artists) {
+        manual_artists = true;
+    }
     var j = y_to_i[artist];
     delete y_to_i[artist];
     for (var object_artist in y_to_i) {
