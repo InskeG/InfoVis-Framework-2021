@@ -110,7 +110,7 @@ from data import *;
 
           <vs-row vs-justify="bottom">
 <!-- vs-w="6" -->
-          <vs-col type="flex" vs-justify="left" vs-align="left" :vs-w="time_line_size">
+          <vs-col type="flex" vs-justify="left" vs-align="left" id="timeline-card" :vs-w="time_line_size">
             <transition name="slide-fade">
               <vs-card class="cardx">
                 <div slot="header">
@@ -147,30 +147,6 @@ from data import *;
                 <div class="mt-3" id="timeline">
                     Painting happy little trees...
                 </div>
-                <!-- <div class="d-flex align-items-center dropdownbtn-alignment">
-                  <vs-dropdown vs-trigger-click>
-                    <vs-button
-                      class="btn-alignment"
-                      type="filled"
-                      icon="expand_more"
-                      :color="main_color"
-                    >Pick a style!</vs-button>
-                    <vs-dropdown-menu>
-                      <vs-dropdown-item @click="get_info('Impressionism')">
-                        Impressionism
-                      </vs-dropdown-item>
-                      <vs-dropdown-item @click="get_info('Expressionism (fine arts)')">
-                        Expressionism
-                      </vs-dropdown-item>
-                      <vs-dropdown-item @click="get_info('Cubism')">
-                        Cubism
-                      </vs-dropdown-item>
-                      <vs-dropdown-item @click="get_info('Surrealism')">
-                        Surealism
-                      </vs-dropdown-item>
-                    </vs-dropdown-menu>
-                  </vs-dropdown>
-                </div> -->
               </vs-card>
 
           </transition>
@@ -247,11 +223,11 @@ import PieChart from "./PieChart.js";
 /*eslint no-unused-vars: 0*/
 import zingchart from 'zingchart';
 import zingchartVue from 'zingchart-vue';
+import ResizeSensor from 'css-element-queries/src/ResizeSensor';
 import TimelinesChart from "../timeline";
 import 'animate.css';
 // import { VOverdrive } from 'vue-overdrive'
 // import * as easing from 'eases/quart-in-out' // Bring 'yr own easing functions!
-
 
 export default {
   name: 'Index',
@@ -265,7 +241,7 @@ export default {
   },
   data: () => {
     return {
-      time_line_size: "12",
+      time_line_size: 12,
       // time_line_key: 0,
       artist_options: [],
       genre: 'Hallo',
@@ -431,9 +407,9 @@ export default {
     async get_info(genre) {
       // this.$vs.loading();
 
-      this.time_line_size = "6",
+      this.time_line_size = 6;
       // this.time_line_key += 1,
-      this.genre = genre
+      this.genre = genre;
       this.$parent.socket.emit("collect_info", {
         'genre': genre,
         'year': 1993,
@@ -458,6 +434,7 @@ export default {
         .onZoom((a, b) => console.log(a, b))
         .onLegendClick((s) => {
           this.setZoomToFilter();
+          this.setZoomToFilter();d3
           window.setTimeout(() => {
             if (filters.includes(s.innerHTML)) {
               // Deselect clicked filters
@@ -477,6 +454,7 @@ export default {
 
             let zoomStart = null, zoomEnd = null;
             if (filters.length > 0) {
+              this.time_line_size = 6;
               this.$parent.socket.emit("get_artist_histograms", {artists: filters});
               this.$parent.socket.emit("collect_line_chart", {
                 'artist': filters[filters.length - 1],
@@ -675,9 +653,9 @@ export default {
       this.fetched.img_generated = true;
     });
 
-    window.addEventListener("resize", () => {
+    new ResizeSensor(document.getElementById('timeline-card'), () => {
         this.timeline.width(document.getElementById('timeline').clientWidth);
-    })
+    });
 
     window.addEventListener("load", () => {
         this.$parent.socket.emit('get_timeline_data', (data) => {
@@ -686,7 +664,6 @@ export default {
         });
     });
   }
-  
 }
 
 // .fade-enter-active, .fade-leave-active {
