@@ -493,7 +493,7 @@ export default Kapsule({
             state.segmentTooltip = d3Tip()
                 .attr('class', 'chart-tooltip segment-tooltip')
                 .direction('s')
-                .offset([5, 0])
+                .offset(e => [-e.y * 0.35 + 15, - e.x * 0.35 + 60 - (35 / 1298 * e.x)])
                 .html((event, d) => {
                     if (state.segmentTooltipContent) {
                         return state.segmentTooltipContent(d);
@@ -511,7 +511,7 @@ export default Kapsule({
             state.artPeriodTooltip = d3Tip()
                 .attr('class', 'chart-tooltip segment-tooltip')
                 .direction('n')
-                .offset([20, 0])
+                .offset(e => [-e.y * 0.15, - e.x * 0.35 - (40 / 1298 * e.x)])
                 .html((event, d) => {
                     const dateFormat = (state.useUtc ? d3UtcFormat : d3TimeFormat)(`${state.timeFormat}${state.useUtc ? ' (UTC)' : ''}`);
                     return `Click to select the <b>${d.artPeriod.toUpperCase()}</b> art period <br>
