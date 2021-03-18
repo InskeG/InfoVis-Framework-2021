@@ -1047,13 +1047,14 @@ export default Kapsule({
                 .style('fill-opacity', 0)
                 .remove();
 
-            let filter = null;
+            let filters = [];
             if (!d3Select(`.series-segment.disabled`).empty()) {
-                filter = d3Select(`.series-segment:not(.disabled)`).attr('class').split(' ').pop();
+                state.svg.selectAll(`.series-segment:not(.disabled)`)
+                    .each((s) => !filters.includes(s.val) && filters.push(s.val));
             }
 
             const newSegments = timelines.enter().append('rect')
-                .attr('class', (d) => { return `series-segment ${d.val} ${filter && filter !== d.val ? ' disabled' : ''}`})
+                .attr('class', (d) => { return `series-segment ${d.val} ${filters.length && !filters.includes(d.val) ? ' disabled' : ''}`})
                 .attr('rx', 1)
                 .attr('ry', 1)
                 .attr('x', state.graphW / 2)
@@ -1127,7 +1128,7 @@ export default Kapsule({
                     return state.yScale(d.group + '+&+' + d.label) - state.lineHeight / 2;
                 })
                 .attr('height', state.lineHeight)
-                .style('fill-opacity', (d) => filter && filter !== d.val ? .1 : .8);
+                .style('fill-opacity', (d) => filters.length && !filters.includes(d.val) ? .1 : .8);
         }
     }
 });

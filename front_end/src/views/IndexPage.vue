@@ -111,9 +111,7 @@ from data import *;
           <vs-row vs-justify="bottom">
 <!-- vs-w="6" -->
           <vs-col type="flex" vs-justify="left" vs-align="left" :vs-w="time_line_size">
-
             <transition name="slide-fade">
-            
               <vs-card class="cardx">
                 <div slot="header">
                     <h3>Pick a <span v-if="fetched.img_generated">new</span> style!</h3>
@@ -267,7 +265,7 @@ export default {
   },
   data: () => {
     return {
-      time_line_size: "6",
+      time_line_size: "12",
       // time_line_key: 0,
       artist_options: [],
       genre: 'Hallo',
@@ -419,7 +417,6 @@ export default {
     // 'overdrive': VOverdrive
   },
   methods: {
-    
     handleNodeHighlight(e) {
       this.lastVisited = `Node: ${e.nodeindex} Value: ${e.value}`;
     },
@@ -445,7 +442,7 @@ export default {
     renderTimeline(data) {
       let container = document.getElementById('timeline');
       container.innerHTML = "";
-      let filter = null;
+      let filters = [];
 
       this.timeline
         .data(this.parseTimeLineData(data))
@@ -462,63 +459,65 @@ export default {
         .onLegendClick((s) => {
           this.setZoomToFilter();
           window.setTimeout(() => {
-            if (filter === s.innerHTML) {
-              // Deselect all filters
-              filter = null;
-              d3.selectAll('.series-segment')
-                .attr('class', (d) => {
-                  return `series-segment ${d.val}`
-                }).style('fill-opacity', .8);
+            if (filters.includes(s.innerHTML)) {
+              // Deselect clicked filters
+              filters.splice(filters.indexOf(s.innerHTML));
+              if (filters.length === 0) {
+                d3.selectAll('.series-segment')
+                    .attr('class', (d) => { return `series-segment ${d.val}` })
+                    .style('fill-opacity', .8);
 
-              d3.selectAll('.color-slot').style('fill-opacity', 1);
-
-              this.setZoomToFilter();
+                d3.selectAll('.color-slot').style('fill-opacity', 1);
+                this.setZoomToFilter();
+              }
             } else {
-              filter = s.innerHTML;
-              this.$parent.socket.emit("get_artist_histograms", {artists: [filter]});
+                if (filters.length === 2) filters.shift();
+                filters.push(s.innerHTML);
+            }
+
+            let zoomStart = null, zoomEnd = null;
+            if (filters.length > 0) {
+              this.$parent.socket.emit("get_artist_histograms", {artists: filters});
               this.$parent.socket.emit("collect_line_chart", {
-                'artist': filter,
+                'artist': filters[filters.length - 1],
               });
-              this.selected_artist = filter;
+              this.selected_artist = filters;
 
-              // this.get_info(this.selected_artist)
-
-              this.genre = filter
-              
+              this.genre = filters[filters.length - 1];
               this.$parent.socket.emit("collect_info", {
                 type: "artists",
                 amount: 1,
-                class_idx: filter,
+                class_idx: filters[filters.length - 1],
               });
 
               this.$parent.socket.emit("generate_images", {
                 type: "artists",
                 amount: 1,
-                class_idx: filter,
+                class_idx: filters[filters.length - 1],
               });
 
-              let zoomStart = null, zoomEnd = null;
-
-              // Select specific filter
-              d3.selectAll(`.series-segment.${s.innerHTML}`)
-                .attr('class', (d) => {
-                  return `series-segment ${d.val}`
-                }).style('fill-opacity', .8)
+              // Select specific filters
+              d3.selectAll(`.series-segment.${filters.join(',.series-segment.')}`)
+                .attr('class', (d) => { return `series-segment ${d.val}`})
+                .style('fill-opacity', .8)
                 .each((d, i) => {
-                  if (i === 0) zoomStart = d.timeRange[0]
+                  if (i === 0 && (!zoomStart || d.timeRange[0] < zoomStart)) zoomStart = d.timeRange[0]
                   if (!zoomEnd || d.timeRange[1] > zoomEnd) zoomEnd = d.timeRange[1]
                 });
-              d3.selectAll(`.color-slot.${s.innerHTML}`)
+
+              d3.selectAll(`.color-slot.${filters.join(',color-slot.')}`)
                 .style('fill-opacity', 1);
-              // Deselect all not selected
-              d3.selectAll(`.series-segment:not(.${s.innerHTML})`)
-                .attr('class', (d) => {
-                  return `series-segment ${d.val} disabled`
-                }).style('fill-opacity', .1);
-              d3.selectAll(`.color-slot:not(.${s.innerHTML})`)
-                .style('fill-opacity', .2);
-              this.setZoomToFilter(zoomStart, zoomEnd);
             }
+
+            // Deselect all not selected
+            d3.selectAll(`.series-segment:not(.${filters.join(',.')})`)
+              .attr('class', (d) => { return `series-segment ${d.val} disabled` })
+              .style('fill-opacity', .1);
+
+            d3.selectAll(`.color-slot:not(.${filters.join(',.')})`)
+              .style('fill-opacity', .2);
+
+            this.setZoomToFilter(zoomStart, zoomEnd);
           }, 1000);  // Hackerman to the rescue
         })
         .onArtPeriodTickClick((period) => {
@@ -678,7 +677,6 @@ export default {
 
     window.addEventListener("resize", () => {
         this.timeline.width(document.getElementById('timeline').clientWidth);
-        this.timeline.width(document.getElementById('timeline2').clientWidth);
     })
 
     window.addEventListener("load", () => {

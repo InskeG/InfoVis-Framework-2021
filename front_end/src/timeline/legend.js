@@ -1,4 +1,4 @@
-import {select} from 'd3-selection';
+import {select, selectAll} from 'd3-selection';
 import Kapsule from 'kapsule';
 import tinycolor from 'tinycolor2';
 import {fitToBox} from 'svg-text-fit';
@@ -56,9 +56,10 @@ var DiscreteLegend = Kapsule({
         state.el = select(el);
     },
     update: function update(state) {
-        let filter = null;
+        let filters = [];
         if (!select(`.series-segment.disabled`).empty()) {
-            filter = select(`.series-segment:not(.disabled)`).attr('class').split(' ').pop();
+            selectAll(`.series-segment:not(.disabled)`)
+                .each((s) => !filters.includes(s.val) && filters.push(s.val));
         }
 
         var colorBinWidth = state.width / state.scale.domain().length;
@@ -68,7 +69,7 @@ var DiscreteLegend = Kapsule({
         var newSlot = slot.enter()
             .append('g')
             .attr('class', (d) => `color-slot ${d}`)
-            .style('fill-opacity', (d) => filter && filter !== d ? .2 : 1);
+            .style('fill-opacity', (d) => filters.length && !filters.includes(d) ? .2 : 1);
 
         newSlot.append('rect').attr('y', 0).attr('rx', 0).attr('ry', 0).attr('stroke-width', 0);
         newSlot.append('text').style('text-anchor', 'middle').style('dominant-baseline', 'central');
