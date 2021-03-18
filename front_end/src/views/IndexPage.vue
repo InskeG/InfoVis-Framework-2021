@@ -24,7 +24,7 @@ from data import *;
                   </transition>
                 </vs-col>
                   
-                <vs-col type="flex" vs-justify="right" vs-align="right" vs-w="6">
+                <!-- <vs-col type="flex" vs-justify="right" vs-align="right" vs-w="6">
                   <transition mode="out-in" enter-active-class="animate__animated animate__fadeInDown" leave-active-class="animate__animated animate__fadeOutUp">
                     <vs-card class="cardx" v-if="fetched.img_generated" fixedHeight vs-w="5">
                       <div slot="header"><h3>Generated Art Piece</h3></div>
@@ -35,7 +35,7 @@ from data import *;
 
                     </vs-card>
                   </transition>
-                </vs-col>
+                </vs-col> -->
 
 
             </vs-col>
@@ -718,10 +718,16 @@ export default {
   height: 80px;
   background-color: skyblue;
 } */
-
+/* 
 .scale{
     zoom: 0.75;
     -moz-transform: scale(0.75);
+} */
+
+
+.scale{
+    zoom: 0.6;
+    -moz-transform: scale(0.6);
 }
 
 </style>
