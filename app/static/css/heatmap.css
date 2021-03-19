@@ -37,6 +37,11 @@
     stroke: #fff;
 }
 
+.popularity:hover {
+    stroke-width:1px;
+    stroke: #fff;
+}
+
 .tooltip {
     background-color: #262626;
     color: #ddd;
@@ -45,6 +50,10 @@
     border-width: 1px;
     border-radius: 5px;
     padding: 5px;
+}
+
+.tooltip td {
+    padding-left: 10px;
 }
 
 #wrapper-full {

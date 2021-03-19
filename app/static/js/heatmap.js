@@ -23,29 +23,7 @@ function createHeatMapPlot() {
         .call(d3.axisLeft(y).tickSize(0))
         .select(".domain").remove();
 
-    var pop_map = d3.map(popularity);
-    var x_pop = d3.scaleLinear().range([0, 75]).domain([0, 100]);
 
-    // console.log(pop_map)
-    for (var pop_artist in popularity) {
-        d3.select(".heatmap_y_axis").selectAll(".tick")
-          .filter(function(d) { return d === pop_artist})
-          .append("rect")
-          .attr("x", "-40")
-          .attr("y", "12")
-          .attr("width", x_pop(popularity[pop_artist]))
-          .attr("height", "10")
-          .style("fill", spotifyColor);
-
-        d3.select(".heatmap_y_axis").selectAll(".tick")
-          .filter(function(d) { return d === pop_artist})
-          .append("rect")
-          .attr("x", -40 + x_pop(popularity[pop_artist]))
-          .attr("y", "12")
-          .attr("width", 75 - x_pop(popularity[pop_artist]))
-          .attr("height", "10")
-          .style("fill", "darkGrey");
-    }
     // d3.select(".heatmap_y_axis").selectAll(".tick")
     //   .data(pop_map)
     //   .append("rect")
@@ -72,7 +50,7 @@ function createHeatMapPlot() {
 
     var toValue = function(c, v) {
         if (c == "tempo") {
-            return (v * 155.7211 + 31.7663).toFixed(1).toString() + " BPM"
+            return (v * (max_temp - min_temp) + min_temp).toFixed(1).toString() + " BPM"
         } else {
             return (v * 100).toFixed(1).toString() + "%"
         }
@@ -80,7 +58,14 @@ function createHeatMapPlot() {
 
     var mousemove = function(d) {
         tooltip
-            .html("Average " + d.characteristic + " of " + d.artists + ":<br>" + toValue(d.characteristic,d.value))
+            .html("Average " + d.characteristic + " of " + d.artists + ":<br />" + toValue(d.characteristic,d.value))
+            .style("left", (d3.event.pageX + 20) + "px")
+            .style("top", (d3.event.pageY - 60) + "px")
+    }
+
+    var mousemove_pop = function(d) {
+        tooltip
+            .html("Average popularity of " + d + ":<br /> temp%")
             .style("left", (d3.event.pageX + 20) + "px")
             .style("top", (d3.event.pageY - 60) + "px")
     }
@@ -88,6 +73,38 @@ function createHeatMapPlot() {
     var mouseleave = function(d) {
         tooltip
             .style("opacity", 0)
+            .html(" ")
+    }
+
+    var pop_map = d3.map(popularity);
+    var x_pop = d3.scaleLinear().range([0, 75]).domain([0, 100]);
+
+    // console.log(pop_map)
+    for (var pop_artist in popularity) {
+        d3.select(".heatmap_y_axis").selectAll(".tick")
+          .filter(function(d) { return d === pop_artist})
+          .append("rect")
+          .attr("x", "-40")
+          .attr("y", "12")
+          .attr("width", x_pop(popularity[pop_artist]))
+          .attr("height", "10")
+          .style("fill", spotifyColor)
+          .attr("class", "popularity")
+          .on("mouseover", mouseover)
+          .on("mousemove", mousemove_pop)
+          .on("mouseleave", mouseleave);
+
+        d3.select(".heatmap_y_axis").selectAll(".tick")
+          .filter(function(d) { return d === pop_artist})
+          .append("rect")
+          .attr("x", -40 + x_pop(popularity[pop_artist]))
+          .attr("y", "12")
+          .attr("width", 75 - x_pop(popularity[pop_artist]))
+          .attr("height", "10")
+          .style("fill", "darkGrey")
+          .on("mouseover", mouseover)
+          .on("mousemove", mousemove_pop)
+          .on("mouseleave", mouseleave);
     }
 
     // add the squares

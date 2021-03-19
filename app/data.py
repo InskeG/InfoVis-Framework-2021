@@ -18,14 +18,16 @@ song_data["loudness"] = (song_data["loudness"] - min_loud)/(
 song_data["tempo"] = (song_data["tempo"] - min_temp)/(
     max_temp-min_temp)
 
+song_data["name"] = song_data["name"].str.split(pat="(", expand=True)[0]
+
 max_loud = max(data_by_artist["loudness"])
 min_loud = min(data_by_artist["loudness"])
-max_temp = max(data_by_artist["tempo"])
-min_temp = min(data_by_artist["tempo"])
+max_temp_art = max(data_by_artist["tempo"])
+min_temp_art = min(data_by_artist["tempo"])
 data_by_artist["loudness"] = (data_by_artist["loudness"] - min_loud)/(
     max_loud-min_loud)
-data_by_artist["tempo"] = (data_by_artist["tempo"] - min_temp)/(
-    max_temp-min_temp)
+data_by_artist["tempo"] = (data_by_artist["tempo"] - min_temp_art)/(
+    max_temp_art-min_temp_art)
 
 # Data for home page
 filtered_artists = song_data.groupby("artists").filter(lambda x: len(x) > 9)["artists"].unique().tolist()
@@ -42,7 +44,7 @@ home_data = top_artist_data.popularity
 # Data for metrics page
 filter_columns = ["valence", "acousticness", "danceability",
                   "energy", "liveness", "speechiness", "instrumentalness",
-                  "loudness", "tempo"]
+                  "loudness", "tempo", "popularity", "name"]
 
 # print(filtered_data)
 # for artist in top_artists:

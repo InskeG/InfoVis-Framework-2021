@@ -9,10 +9,14 @@
 
 .bar_song {
 	fill: #1ED760;
+	stroke: #000;
+	stroke-width: 0.5px;
 }
 
 .non_hover_bar {
     fill: #16532C;
+    stroke: #000;
+    stroke-width: 0.5px;
 }
 
 #barChartAxisTop line {

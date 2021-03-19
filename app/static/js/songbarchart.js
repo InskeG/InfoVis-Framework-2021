@@ -30,7 +30,7 @@ function addArtist(formObject) {
         var new_artist_barchart = data["barchart"];
         var new_artist_heatmap = data["heatmap"];
         var new_artist_popularity = data["popularity"];
-        console.log(new_artist_heatmap);
+        //console.log(new_artist_heatmap);
         if (manual_artists) {
             y_variables.push(artist);
         } else {
@@ -76,7 +76,7 @@ function removeArtist(artist) {
     }
     i--;
     y_variables = y_variables.filter(function(value, index, arr) { return value != artist });
-    console.log(y_variables);
+    //console.log(y_variables);
     delete barchart_data[artist];
     heatmap_data = heatmap_data.filter(function(value, index, arr) { return value.artists != artist });
     d3.select("#list" + artist.replace(/\s/g, ''))
@@ -107,6 +107,7 @@ function createBarChartPlot() {
     var chart_group_bar_charts = svgBarCharts.append("g")
                                 .attr("class", "chart_group")
                                 .attr("transform", "translate(0," + 16 + ")");
+
 
     for (var artist in barchart_data) {
         var n = y_to_i[artist];
@@ -171,33 +172,37 @@ function createBarChart(x_variables, key_attr, map, mini_chart_group, artist) {
                 }
             });
 
+        tooltip_bar
+            .style("opacity", 1)
+    }
+
+    var toValue = function(c, v) {
+        if (c == "tempo") {
+            return (v * (max_temp_art - min_temp_art) + min_temp_art).toFixed(1).toString() + " BPM"
+        } else {
+            return (v * 100).toFixed(1).toString() + "%"
+        }
+    }
+
+    var bar_song_mousemove = function(d) {
+        current_key = d.key;
+        current_artist = d3.select(this).attr("artist");
+
+        tooltip_bar
+            .html(d3.select(this).attr("artist") + " - " + d.value.name +
+                "<table><tr><td>popularity:</td><td>" + d.value.popularity + ".0%</td></tr> <br />" +
+                "<tr><td>" + x_variables[key_attr] + ":</td><td>" + toValue(x_variables[key_attr],d.value[attr]) + "</td></tr></table>")
+            .style("left", (d3.event.pageX - 50) + "px")
+            .style("top", (d3.event.pageY - 110) + "px")
     }
 
     var bar_song_mouseleave = function(d) {
         d3.selectAll(".non_hover_bar")
             .attr("class", "bar_song");
+        tooltip_bar
+            .style("opacity", 0)
+            .html(" ");
     }
-    //
-    // var toValue = function(c, v) {
-    //     if (c == "tempo") {
-    //         return (v * 155.7211 + 31.7663).toFixed(1).toString() + " BPM"
-    //     } else {
-    //         return (v * 100).toFixed(1).toString() + "%"
-    //     }
-    // }
-    // console.log(attr)
-    // var mousemove = function(d) {
-    //     tooltip
-    //         .html("Value of " + attr + " of song " + d.key + ":<br>" + toValue(attr, d.value[attr]))
-    //         .style("left", (d3.event.pageX + 20) + "px")
-    //         .style("top", (d3.event.pageY - 60) + "px")
-    // }
-    //
-    // var mouseleave = function(d) {
-    //     tooltip
-    //         .style("opacity", 0)
-    // }
-
 
     // Horizontal axis for the bars
     mini_chart_group.append("g")
@@ -212,12 +217,17 @@ function createBarChart(x_variables, key_attr, map, mini_chart_group, artist) {
     .append("rect")
     .attr("x", function (d) { return x_2(d.key)})
     .attr("y", function (d) { return y_2(d.value[attr] * 100)  })
-    .attr("width", x_2.bandwidth() - 1)
+    .attr("width", x_2.bandwidth())
     .attr("height", function(d) { return (mini_chart_height / 2 - y_2(d.value[attr] * 100)) * 2; })
     .attr("class", "bar_song")
     .attr("artist", artist)
     .on("mouseover", bar_song_mouseover)
-    // .on("mousemove", mousemove)
+    .on("mousemove", bar_song_mousemove)
     .on("mouseleave", bar_song_mouseleave);
     // .style("fill", function(d) { return myColor(attr, d.value[attr])} );
+
+    var tooltip_bar = d3.select("#barchart")
+        .append("div")
+        .style("opacity", 0)
+        .attr("class", "tooltip");
 }

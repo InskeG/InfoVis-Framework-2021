@@ -74,6 +74,11 @@
 <script type="text/javascript" src="../static/js/heatmap.js"></script>
 <script type="text/javascript" src="../static/js/autocomplete.js"></script>
 <script type="text/javascript">
+	var max_temp_art = {{ max_temp_art | safe }};
+	var min_temp_art = {{ min_temp_art | safe }};
+	var max_temp = {{ max_temp | safe }};
+	var min_temp = {{ min_temp | safe }};
+
 	var heatmap_data = {{ heatmap_data | safe }};
 	var colors = {{ heatmap_colors | safe }};
 	var barchart_data = {{ song_data | safe }};
