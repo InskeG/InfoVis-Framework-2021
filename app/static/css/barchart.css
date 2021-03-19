@@ -7,6 +7,34 @@
 	fill: DarkOrange;
 }
 
+.bar_song {
+	fill: #1ED760;
+}
+
+.non_hover_bar {
+    fill: #16532C;
+}
+
+#barChartAxisTop line {
+    display: none;
+}
+
+#barChartAxisTop path {
+    display: none;
+}
+
+.rowChartAxis line {
+    display: none;
+}
+
+.rowChartAxis path {
+    color: #16532C;
+}
+
+.vertline {
+    stroke: #444;
+}
+
 .autocomplete {
   	/*the container must be positioned relative:*/
   	position: relative;

@@ -2,7 +2,6 @@ function createHeatMapPlot() {
     var spotifyColor = "#1ED760";
     var charact = d3.map(heatmap_data, function(d){return d.characteristic;}).keys()
     var color_names = d3.map(colors, function(d){return d.characteristic;}).keys()
-    console.log(charact)
     chart_group_heatmap = svgHeatMap.append("g")
     				 .attr("class", "chart_group");
 
@@ -33,18 +32,18 @@ function createHeatMapPlot() {
           .filter(function(d) { return d === pop_artist})
           .append("rect")
           .attr("x", "-40")
-          .attr("y", "10")
+          .attr("y", "12")
           .attr("width", x_pop(popularity[pop_artist]))
-          .attr("height", "20")
+          .attr("height", "10")
           .style("fill", spotifyColor);
 
         d3.select(".heatmap_y_axis").selectAll(".tick")
           .filter(function(d) { return d === pop_artist})
           .append("rect")
           .attr("x", -40 + x_pop(popularity[pop_artist]))
-          .attr("y", "10")
+          .attr("y", "12")
           .attr("width", 75 - x_pop(popularity[pop_artist]))
-          .attr("height", "20")
+          .attr("height", "10")
           .style("fill", "darkGrey");
     }
     // d3.select(".heatmap_y_axis").selectAll(".tick")

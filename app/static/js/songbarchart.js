@@ -106,7 +106,7 @@ function removeOldPlot() {
 function createBarChartPlot() {
     var chart_group_bar_charts = svgBarCharts.append("g")
                                 .attr("class", "chart_group")
-                                .attr("transform", "translate(0," + 20 + ")");
+                                .attr("transform", "translate(0," + 16 + ")");
 
     for (var artist in barchart_data) {
         var n = y_to_i[artist];
@@ -122,6 +122,7 @@ function createRowChart(translation, id, chart_group_bar_charts, artist, colors)
     // Top x axis
     if (id === 0) {
         mini_artist_group.append("g")
+                        .attr("id", "barChartAxisTop")
                         .call(d3.axisTop(x_1));
     }
 
@@ -145,25 +146,37 @@ function createRowChart(translation, id, chart_group_bar_charts, artist, colors)
             chart_group_bar_charts.append("path")
                        .attr("class", "vertline")
                        .attr("d", line(points))
-                       .attr("stroke", "lightgrey");
        }
         var mini_chart_group = mini_artist_group.append("g")
             .attr("id", "mini_chart_group" + id + j)
             .attr("transform", "translate(" + (mini_chart_width * j) + "," + 0 + ")");
 
-        createBarChart(x_variables, key_attr, map, mini_chart_group);
+        createBarChart(x_variables, key_attr, map, mini_chart_group, artist);
 
         j += 1;
     }
 }
 
-function createBarChart(x_variables, key_attr, map, mini_chart_group) {
+function createBarChart(x_variables, key_attr, map, mini_chart_group, artist) {
     var attr = x_variables[key_attr];
 
-    // var mouseover = function(d) {
-    //     tooltip
-    //         .style("opacity", 1)
-    // }
+    var bar_song_mouseover = function(d) {
+        current_key = d.key;
+        current_artist = d3.select(this).attr("artist");
+
+        d3.selectAll(".bar_song")
+            .each(function(d) {
+                if (d.key != current_key || d3.select(this).attr("artist") != current_artist) {
+                    d3.select(this).attr("class", "non_hover_bar")
+                }
+            });
+
+    }
+
+    var bar_song_mouseleave = function(d) {
+        d3.selectAll(".non_hover_bar")
+            .attr("class", "bar_song");
+    }
     //
     // var toValue = function(c, v) {
     //     if (c == "tempo") {
@@ -189,7 +202,8 @@ function createBarChart(x_variables, key_attr, map, mini_chart_group) {
     // Horizontal axis for the bars
     mini_chart_group.append("g")
     .attr("transform", "translate(" + 0 + "," + mini_chart_height / 2 + ")")
-    .call(d3.axisBottom(x_2).tickFormat(""));
+    .attr("class", "rowChartAxis")
+    .call(d3.axisBottom(x_2).tickFormat("").tickSize(0));
 
     // Creating the bars
     mini_chart_group.selectAll("#bar")
@@ -200,9 +214,10 @@ function createBarChart(x_variables, key_attr, map, mini_chart_group) {
     .attr("y", function (d) { return y_2(d.value[attr] * 100)  })
     .attr("width", x_2.bandwidth() - 1)
     .attr("height", function(d) { return (mini_chart_height / 2 - y_2(d.value[attr] * 100)) * 2; })
-    .attr("class", "bar");
-    // .on("mouseover", mouseover)
+    .attr("class", "bar_song")
+    .attr("artist", artist)
+    .on("mouseover", bar_song_mouseover)
     // .on("mousemove", mousemove)
-    // .on("mouseleave", mouseleave);
+    .on("mouseleave", bar_song_mouseleave);
     // .style("fill", function(d) { return myColor(attr, d.value[attr])} );
 }
