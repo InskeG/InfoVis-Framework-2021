@@ -493,7 +493,7 @@ export default Kapsule({
             state.segmentTooltip = d3Tip()
                 .attr('class', 'chart-tooltip segment-tooltip')
                 .direction('s')
-                .offset([5, 0])
+                .offset(e => [-e.y * 0.35 + 15, - e.x * 0.35 + 60 - (35 / 1298 * e.x)])
                 .html((event, d) => {
                     if (state.segmentTooltipContent) {
                         return state.segmentTooltipContent(d);
@@ -511,7 +511,7 @@ export default Kapsule({
             state.artPeriodTooltip = d3Tip()
                 .attr('class', 'chart-tooltip segment-tooltip')
                 .direction('n')
-                .offset([20, 0])
+                .offset(e => [-e.y * 0.15, - e.x * 0.35 - (40 / 1298 * e.x)])
                 .html((event, d) => {
                     const dateFormat = (state.useUtc ? d3UtcFormat : d3TimeFormat)(`${state.timeFormat}${state.useUtc ? ' (UTC)' : ''}`);
                     return `Click to select the <b>${d.artPeriod.toUpperCase()}</b> art period <br>
@@ -1047,13 +1047,14 @@ export default Kapsule({
                 .style('fill-opacity', 0)
                 .remove();
 
-            let filter = null;
+            let filters = [];
             if (!d3Select(`.series-segment.disabled`).empty()) {
-                filter = d3Select(`.series-segment:not(.disabled)`).attr('class').split(' ').pop();
+                state.svg.selectAll(`.series-segment:not(.disabled)`)
+                    .each((s) => !filters.includes(s.val) && filters.push(s.val));
             }
 
             const newSegments = timelines.enter().append('rect')
-                .attr('class', (d) => { return `series-segment ${d.val} ${filter && filter !== d.val ? ' disabled' : ''}`})
+                .attr('class', (d) => { return `series-segment ${d.val} ${filters.length && !filters.includes(d.val) ? ' disabled' : ''}`})
                 .attr('rx', 1)
                 .attr('ry', 1)
                 .attr('x', state.graphW / 2)
@@ -1127,7 +1128,7 @@ export default Kapsule({
                     return state.yScale(d.group + '+&+' + d.label) - state.lineHeight / 2;
                 })
                 .attr('height', state.lineHeight)
-                .style('fill-opacity', (d) => filter && filter !== d.val ? .1 : .8);
+                .style('fill-opacity', (d) => filters.length && !filters.includes(d.val) ? .1 : .8);
         }
     }
 });

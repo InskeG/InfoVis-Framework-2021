@@ -110,10 +110,8 @@ from data import *;
 
           <vs-row vs-justify="bottom">
 <!-- vs-w="6" -->
-          <vs-col type="flex" vs-justify="left" vs-align="left" :vs-w="time_line_size">
-
+          <vs-col type="flex" vs-justify="left" vs-align="left" id="timeline-card" :vs-w="time_line_size">
             <transition name="slide-fade">
-            
               <vs-card class="cardx">
                 <div slot="header">
                     <h3>Pick a <span v-if="fetched.img_generated">new</span> style!</h3>
@@ -149,30 +147,6 @@ from data import *;
                 <div class="mt-3" id="timeline">
                     Painting happy little trees...
                 </div>
-                <!-- <div class="d-flex align-items-center dropdownbtn-alignment">
-                  <vs-dropdown vs-trigger-click>
-                    <vs-button
-                      class="btn-alignment"
-                      type="filled"
-                      icon="expand_more"
-                      :color="main_color"
-                    >Pick a style!</vs-button>
-                    <vs-dropdown-menu>
-                      <vs-dropdown-item @click="get_info('Impressionism')">
-                        Impressionism
-                      </vs-dropdown-item>
-                      <vs-dropdown-item @click="get_info('Expressionism (fine arts)')">
-                        Expressionism
-                      </vs-dropdown-item>
-                      <vs-dropdown-item @click="get_info('Cubism')">
-                        Cubism
-                      </vs-dropdown-item>
-                      <vs-dropdown-item @click="get_info('Surrealism')">
-                        Surealism
-                      </vs-dropdown-item>
-                    </vs-dropdown-menu>
-                  </vs-dropdown>
-                </div> -->
               </vs-card>
 
           </transition>
@@ -249,11 +223,11 @@ import PieChart from "./PieChart.js";
 /*eslint no-unused-vars: 0*/
 import zingchart from 'zingchart';
 import zingchartVue from 'zingchart-vue';
+import ResizeSensor from 'css-element-queries/src/ResizeSensor';
 import TimelinesChart from "../timeline";
 import 'animate.css';
 // import { VOverdrive } from 'vue-overdrive'
 // import * as easing from 'eases/quart-in-out' // Bring 'yr own easing functions!
-
 
 export default {
   name: 'Index',
@@ -267,7 +241,7 @@ export default {
   },
   data: () => {
     return {
-      time_line_size: "6",
+      time_line_size: 12,
       // time_line_key: 0,
       artist_options: [],
       genre: 'Hallo',
@@ -419,7 +393,6 @@ export default {
     // 'overdrive': VOverdrive
   },
   methods: {
-    
     handleNodeHighlight(e) {
       this.lastVisited = `Node: ${e.nodeindex} Value: ${e.value}`;
     },
@@ -434,9 +407,9 @@ export default {
     async get_info(genre) {
       // this.$vs.loading();
 
-      this.time_line_size = "6",
+      this.time_line_size = 6;
       // this.time_line_key += 1,
-      this.genre = genre
+      this.genre = genre;
       this.$parent.socket.emit("collect_info", {
         'genre': genre,
         'year': 1993,
@@ -445,7 +418,7 @@ export default {
     renderTimeline(data) {
       let container = document.getElementById('timeline');
       container.innerHTML = "";
-      let filter = null;
+      let filters = [];
 
       this.timeline
         .data(this.parseTimeLineData(data))
@@ -461,64 +434,68 @@ export default {
         .onZoom((a, b) => console.log(a, b))
         .onLegendClick((s) => {
           this.setZoomToFilter();
+          this.setZoomToFilter();d3
           window.setTimeout(() => {
-            if (filter === s.innerHTML) {
-              // Deselect all filters
-              filter = null;
-              d3.selectAll('.series-segment')
-                .attr('class', (d) => {
-                  return `series-segment ${d.val}`
-                }).style('fill-opacity', .8);
+            if (filters.includes(s.innerHTML)) {
+              // Deselect clicked filters
+              filters.splice(filters.indexOf(s.innerHTML));
+              if (filters.length === 0) {
+                d3.selectAll('.series-segment')
+                    .attr('class', (d) => { return `series-segment ${d.val}` })
+                    .style('fill-opacity', .8);
 
-              d3.selectAll('.color-slot').style('fill-opacity', 1);
-
-              this.setZoomToFilter();
+                d3.selectAll('.color-slot').style('fill-opacity', 1);
+                this.setZoomToFilter();
+              }
             } else {
-              filter = s.innerHTML;
-              this.$parent.socket.emit("get_artist_histograms", {artists: [filter]});
+                if (filters.length === 2) filters.shift();
+                filters.push(s.innerHTML);
+            }
+
+            let zoomStart = null, zoomEnd = null;
+            if (filters.length > 0) {
+              this.time_line_size = 6;
+              this.$parent.socket.emit("get_artist_histograms", {artists: filters});
               this.$parent.socket.emit("collect_line_chart", {
-                'artist': filter,
+                'artist': filters[filters.length - 1],
               });
-              this.selected_artist = filter;
+              this.selected_artist = filters;
 
-              // this.get_info(this.selected_artist)
-
-              this.genre = filter
-              
+              this.genre = filters[filters.length - 1];
               this.$parent.socket.emit("collect_info", {
                 type: "artists",
                 amount: 1,
-                class_idx: filter,
+                class_idx: filters[filters.length - 1],
               });
 
               this.$parent.socket.emit("generate_images", {
                 type: "artists",
                 amount: 1,
-                class_idx: filter,
+                class_idx: filters[filters.length - 1],
               });
 
-              let zoomStart = null, zoomEnd = null;
-
-              // Select specific filter
-              d3.selectAll(`.series-segment.${s.innerHTML}`)
-                .attr('class', (d) => {
-                  return `series-segment ${d.val}`
-                }).style('fill-opacity', .8)
+              // Select specific filters
+              d3.selectAll(`.series-segment.${filters.join(',.series-segment.')}`)
+                .attr('class', (d) => { return `series-segment ${d.val}`})
+                .style('fill-opacity', .8)
                 .each((d, i) => {
-                  if (i === 0) zoomStart = d.timeRange[0]
+                  if (i === 0 && (!zoomStart || d.timeRange[0] < zoomStart)) zoomStart = d.timeRange[0]
                   if (!zoomEnd || d.timeRange[1] > zoomEnd) zoomEnd = d.timeRange[1]
                 });
-              d3.selectAll(`.color-slot.${s.innerHTML}`)
+
+              d3.selectAll(`.color-slot.${filters.join(',color-slot.')}`)
                 .style('fill-opacity', 1);
-              // Deselect all not selected
-              d3.selectAll(`.series-segment:not(.${s.innerHTML})`)
-                .attr('class', (d) => {
-                  return `series-segment ${d.val} disabled`
-                }).style('fill-opacity', .1);
-              d3.selectAll(`.color-slot:not(.${s.innerHTML})`)
-                .style('fill-opacity', .2);
-              this.setZoomToFilter(zoomStart, zoomEnd);
             }
+
+            // Deselect all not selected
+            d3.selectAll(`.series-segment:not(.${filters.join(',.')})`)
+              .attr('class', (d) => { return `series-segment ${d.val} disabled` })
+              .style('fill-opacity', .1);
+
+            d3.selectAll(`.color-slot:not(.${filters.join(',.')})`)
+              .style('fill-opacity', .2);
+
+            this.setZoomToFilter(zoomStart, zoomEnd);
           }, 1000);  // Hackerman to the rescue
         })
         .onArtPeriodTickClick((period) => {
@@ -676,10 +653,9 @@ export default {
       this.fetched.img_generated = true;
     });
 
-    window.addEventListener("resize", () => {
+    new ResizeSensor(document.getElementById('timeline-card'), () => {
         this.timeline.width(document.getElementById('timeline').clientWidth);
-        this.timeline.width(document.getElementById('timeline2').clientWidth);
-    })
+    });
 
     window.addEventListener("load", () => {
         this.$parent.socket.emit('get_timeline_data', (data) => {
@@ -688,7 +664,6 @@ export default {
         });
     });
   }
-  
 }
 
 // .fade-enter-active, .fade-leave-active {

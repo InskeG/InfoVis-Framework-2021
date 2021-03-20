@@ -1,8 +1,5 @@
 import binascii
-import json
 import numpy as np
-import os
-import pandas as pd
 import pickle
 import scipy
 import sys
@@ -11,11 +8,9 @@ import wikipedia
 import urllib.request
 import random 
 
-
 from base64 import encodebytes
 from colour import Color
-from io import BytesIO
-from flask import Flask, jsonify
+from flask import Flask
 from flask_cors import CORS
 from flask_socketio import SocketIO
 from io import BytesIO
