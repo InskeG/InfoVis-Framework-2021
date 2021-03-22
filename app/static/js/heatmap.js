@@ -65,7 +65,7 @@ function createHeatMapPlot() {
 
     var mousemove_pop = function(d) {
         tooltip
-            .html("Average popularity of " + d + ":<br /> temp%")
+            .html("Average popularity of " + d + ":<br />" + popularity[d].toFixed(2) + "%")
             .style("left", (d3.event.pageX + 20) + "px")
             .style("top", (d3.event.pageY - 60) + "px")
     }
