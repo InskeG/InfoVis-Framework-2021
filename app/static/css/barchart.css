@@ -1,10 +1,78 @@
 
 .bar {
-	fill: steelblue;
-	cursor: crosshair;
+	fill: #1ED760;
 }
 
 .bar:hover {
 	fill: DarkOrange;
-	cursor: crosshair;
+}
+
+.bar_song {
+	fill: #1ED760;
+	stroke: #000;
+	stroke-width: 0.5px;
+}
+
+.non_hover_bar {
+    fill: #16532C;
+    stroke: #000;
+    stroke-width: 0.5px;
+}
+
+#barChartAxisTop line {
+    display: none;
+}
+
+#barChartAxisTop path {
+    display: none;
+}
+
+.rowChartAxis line {
+    display: none;
+}
+
+.rowChartAxis path {
+    color: #16532C;
+}
+
+.vertline {
+    stroke: #444;
+}
+
+.autocomplete {
+  	/*the container must be positioned relative:*/
+  	position: relative;
+  	display: inline-block;
+  	margin-top: 15px;
+	margin-left: 30px;
+  	margin-bottom: 10px;
+}
+
+.autocomplete-items {
+	color: black;
+	position: absolute;
+	border: 1px solid #d4d4d4;
+	border-bottom: none;
+	border-top: none;
+	z-index: 99;
+	/*position the autocomplete items to be the same width as the container:*/
+	width: 75%;
+	top: 100%;
+	left: 0;
+	right: 0;
+}
+.autocomplete-items div {
+	padding: 10px;
+	cursor: pointer;
+	background-color: #fff;
+	border-bottom: 1px solid #d4d4d4;
+}
+.autocomplete-items div:hover {
+	/*when hovering an item:*/
+	background-color: #e9e9e9;
+}
+.autocomplete-active {
+	/*when navigating through the items using the arrow keys:*/
+	background-color: DodgerBlue !important;
+	color: #ffffff;
 }

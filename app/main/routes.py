@@ -6,117 +6,92 @@ from decimal import Decimal
 import pandas as pd
 import numpy as np
 
-from app import models, plots, data
+from app import models, data
 from . import main
 
 
 @main.route('/', methods=['GET'])
 def index():
-	return render_template("home.html")
+    home_data = data.home_data
+    artists = data.top_artists
+    song_data = dict(zip(artists, home_data))
+
+    return render_template("home.html", song_data=song_data, artists=artists)
+
+# @main.route('/d3', methods = ['GET'])
+# def d3():
+#     mj_data = data.song_data
+#     mj_json = json.loads(mj_data.to_json(orient="index"))
+#     names = json.loads(data.song_names.to_json(orient="values"))
+#
+#     return render_template("d3.html", song_data=mj_json, names=names)
+#
+#
+# @main.route('/d3_plot_data', methods = ['GET'])
+# def d3_plot_data():
+#     mj_data = data.song_data
+#     mj_valence = mj_data.filter(items=["valence", "name"])
+#     mj_json = json.loads(mj_valence.to_json(orient="records"))
+#     print(mj_json)
+#     return jsonify(mj_json)
+
+@main.route('/metrics', methods=['GET'])
+def metrics():
+    song_data = data.song_data
+    keys = data.filter_columns
+    keysAxis = keys[:9]
+    artists = data.top_artists
+    all_artists = data.filtered_artists
+    heatmap_data = data.heatmap_head
+    colors = data.heatmap_colors
+    # print(heatmap_data)
+    popularity = dict(zip(heatmap_data.artists, heatmap_data.popularity))
+    heatmap_data = heatmap_data.filter(items=keysAxis + ["artists"])
+    heatmap_data = pd.melt(heatmap_data, id_vars=["artists"], var_name=["characteristic"])
+    heatmap_data = heatmap_data.to_dict(orient="records")
+    colors = colors.to_dict(orient="records")
+    barchart_data = song_data.query("artists in @artists").sort_values("popularity", 0, False).groupby("artists")
+
+    #data for getting BPM in tooltips
+    max_temp_art = data.max_temp_art
+    min_temp_art = data.min_temp_art
+    max_temp = data.max_temp
+    min_temp = data.min_temp
+
+    #print([x[1] for x in barchart_data])
+    barchart_data = barchart_data.head(10).groupby("artists")
+    barchart_data = {x[0] : x[1].filter(items=keys).to_dict("records") for x in barchart_data}
+    # print(barchart_data)
+    return render_template("metrics.html", heatmap_data=heatmap_data,
+                           heatmap_colors=colors, song_data=barchart_data,
+                           artists=artists, keys=keysAxis, popularity=popularity,
+                           all_artists=all_artists, max_temp_art=max_temp_art,
+                           min_temp_art=min_temp_art, max_temp=max_temp,
+                           min_temp=min_temp)
+
+@main.route('/metrics_data', methods=['GET'])
+def metrics_data():
+    song_data = data.song_data
+    heatmap_data = data.heatmap_data
+    artist = request.args.get("artist")
+    keys = data.filter_columns
+    if artist not in data.filtered_artists:
+        print("Artist not found")
+        return {}
+
+    barchart_data = song_data.query("artists == @artist").sort_values("popularity", 0, False).head(10)
+    barchart_data = {artist: barchart_data.filter(items=keys).to_dict("records")}
+
+    artist_data = heatmap_data.query("artists == @artist")
+    popularity = {artist: artist_data["popularity"].to_list()}
+    #print(popularity)
+    heatmap_data = artist_data.filter(items=keys + ["artists"])
+    heatmap_data = pd.melt(heatmap_data, id_vars=["artists"], var_name=["characteristic"])
+    heatmap_data = heatmap_data.to_dict(orient="records")
+
+    return {"heatmap" : heatmap_data, "barchart": barchart_data, "popularity": popularity}
 
 
-@main.route('/bokeh', methods = ['GET', 'POST'])
-def bokeh():
-	property_type = request.args.get("property_type")
-	rental_price = request.args.get("rental_price")
-	surface_area = request.args.get("surface_area")
-
-	if property_type is None:
-		property_type = 'WCORHUUR_P'
-		rental_price = 'WHUURTSLG_P'
-		surface_area = 'WOPP0040_P'
-
-	return render_template("bokeh.html",
-		all_property_types=data.all_property_types, all_property_types_text=data.all_property_types_text,
-		all_rental_prices=data.all_rental_prices, all_rental_prices_text=data.all_rental_prices_text,
-		all_surface_areas=data.all_surface_areas, all_surface_areas_text=data.all_surface_areas_text,
-		selected_property_type=property_type, selected_rental_price=rental_price, selected_surface_area=surface_area)
-
-
-@main.route("/data", methods=['GET'])
-def get_data():
-	area = request.args.get("area")
-	
-	property_type = request.args.get("property")
-	rental_price = request.args.get("price")
-	surface_area = request.args.get("surface")
-	plot = request.args.get("plot")
-
-	query_input = []
-	for idx, var in enumerate([surface_area, rental_price, property_type]):
-		vars_query_input = [0] * len(data.all_var_types[idx])
-		idx_query_var = data.all_var_types[idx].index(var)
-		vars_query_input[idx_query_var] = 100
-		query_input.extend(vars_query_input)
-
-	#reshape query_input to correct format for input to our model
-	query_input = np.array(query_input).reshape(1, -1)
-
-	#retrain model based on new data
-	trained_model = models.train_model(data.model_data, data.area_names, data.model_vars)
-
-	#have our trained model make a prediction based on our query input
-	_, probabilities = models.pred_proba(model=trained_model, input_vars=query_input)
-	proba_idx = np.where(probabilities[0] == np.amax(probabilities[0]))
-	proba_idx = proba_idx[0][0]
-	
-	#determine the index of the predicted area within the returned probabiblities array
-	pred_area = data.area_names[proba_idx]
-	proba = probabilities[0][proba_idx]
-	proba = '%.3f' % Decimal(proba)
-
-	#determine how the prediction probability of our previously predicted area has changed 
-	#due to the change in data variables of this area
-	if area is not None:
-		proba_idx = data.area_names.index(area)
-		new_proba_prev_area = probabilities[0][proba_idx]
-		new_proba_prev_area = '%.3f' % Decimal(new_proba_prev_area)
-		plot_area = area
-	else:
-		new_proba_prev_area = None
-		plot_area = pred_area
-
-	del probabilities
-		
-	if plot is not None:
-		plot_data = data.model_data.loc[data.model_data['area_name'] == plot_area]
-		plot_data = plot_data.loc[:, data.model_vars]
-		plot = plots.create_hbar(plot_area, plot_data)
-		return jsonify(prediction=pred_area, prediction_proba=proba, 
-				area_changed_proba=new_proba_prev_area, plotData=plot)
-	else:
-		return jsonify(prediction=pred_area, prediction_proba=proba, 
-				area_changed_proba=new_proba_prev_area)
-
-	
-
-
-@main.route('/d3', methods = ['GET'])
-def d3():
-	area_name = request.args.get("area_name")
-
-	if area_name is None:
-		area_name = "Centrum-West"
-
-	plot_data = data.stats_ams.loc[data.stats_ams['area_name'] == area_name]
-	plot_data = plot_data.drop(['area_name', 'area_code'], axis=1)
-	plot_data = plot_data.to_json(orient='records')
-
-	meta_data = data.stats_ams_meta.to_json(orient='records')
-	return render_template("d3.html", meta_data=meta_data,
-		x_variables=data.model_vars, area_names=data.area_names, selected_area_name=area_name)
-
-
-@main.route('/d3_plot_data', methods = ['GET'])
-def d3_plot_data():
-	area_name = request.args.get("area_name")
-
-	plot_data = data.stats_ams.loc[data.stats_ams['area_name'] == area_name]
-	plot_data = plot_data.drop(['area_name', 'area_code'], axis=1)
-	plot_data = plot_data.to_json(orient='records')
-
-	return plot_data
-
-
-
-
+@main.route('/popularity', methods=['GET'])
+def popularity():
+    return render_template("popularity.html")

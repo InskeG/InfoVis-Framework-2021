@@ -1,43 +1,58 @@
 import pandas as pd
-from . import models
+import numpy as np
+import ast
 
-# Load data as panda dfs #
-stats_ams = pd.read_csv('app/data/ams_stats_infovis.csv')
-stats_ams_meta = pd.read_csv("app/data/ams_stats_infovis_metadata.csv", sep=";")
-##########################
+# Reading in data
+definitions = pd.read_csv("app/data/spotify_definitions.csv", sep = ";", header =0)
+data_by_artist = pd.read_csv("app/data/data_by_artist.csv", sep=",")
+data = pd.read_csv("app/data/data.csv", sep=",")
+data["artists"] = data["artists"].apply(lambda x: ast.literal_eval(x))
 
-model_data = stats_ams.copy()
-model_vars = stats_ams.drop(['area_name', 'area_code', 'WOPPONB_P'], axis=1)
-model_vars = model_vars.columns.tolist()
-model_vars_text = ['Living space of 0-40 m2', 'Living space of 40-60 m2', 'Living space of 60-80 m2', 
-'Living space of 80-100 m2', 'Living space of > 100 m2', 'Low rent (< 711 euro)', 'Middle high rent (711 - 971 euro)', 
-'High rent (> 971 euro)', 'Housing corporation rental', 'Private rental']
+song_data = data.explode("artists")
+max_loud = max(song_data["loudness"])
+min_loud = min(song_data["loudness"])
+max_temp = max(song_data["tempo"])
+min_temp = min(song_data["tempo"])
+song_data["loudness"] = (song_data["loudness"] - min_loud)/(
+    max_loud-min_loud)
+song_data["tempo"] = (song_data["tempo"] - min_temp)/(
+    max_temp-min_temp)
 
-area_names = stats_ams['area_name'].unique().tolist()
+song_data["name"] = song_data["name"].str.split(pat="(", expand=True)[0]
 
-label_def = stats_ams_meta['Definition'].tolist()
-label_extra = stats_ams_meta['Label_1'].tolist()
-label_var = stats_ams_meta['Variabele'].tolist()
+max_loud = max(data_by_artist["loudness"])
+min_loud = min(data_by_artist["loudness"])
+max_temp_art = max(data_by_artist["tempo"])
+min_temp_art = min(data_by_artist["tempo"])
+data_by_artist["loudness"] = (data_by_artist["loudness"] - min_loud)/(
+    max_loud-min_loud)
+data_by_artist["tempo"] = (data_by_artist["tempo"] - min_temp_art)/(
+    max_temp_art-min_temp_art)
 
-#fixed lists of all vars + textual explanation of each var (for query menu)
-all_property_types = ['WCORHUUR_P', 'WPARTHUUR_P']
-all_rental_prices = ['WHUURTSLG_P', 'WHUURMIDDEN_P', 'WHUURHOOG_P']
-all_surface_areas = ['WOPP0040_P', 'WOPP4060_P', 'WOPP6080_P', 'WOPP80100_P', 'WOPP100PLUS_P']
-all_property_types_text = ['Housing corporation rental', 'Private rental']
-all_rental_prices_text = ['Low rent (< 711 euro)', 'Middle high rent (711 - 971 euro)', 'High rent (> 971 euro)']
-all_surface_areas_text = ['Living space of 0-40 m2', 'Living space of 40-60 m2', 'Living space of 60-80 m2', 
-'Living space of 80-100 m2', 'Living space of > 100 m2']
-all_var_types = [all_surface_areas, all_rental_prices, all_property_types]
+# Data for home page
+filtered_artists = song_data.groupby("artists").filter(lambda x: len(x) > 9)["artists"].unique().tolist()
+# filtered_artists = data_by_artist.query("count>9")["artists"].to_list()
+filtered_data = data_by_artist.query("artists in @filtered_artists")
+filtered_data = filtered_data.set_index("artists")
 
-label_def_ordered = []
-label_extra_ordered = []
-for var in model_vars:
-	idx = label_var.index(var)
-	label_def_ordered.append(label_def[idx])
-	label_extra_ordered.append(label_extra[idx])
+top_artist_data = filtered_data.sort_values("popularity", 0, False).head(10)
+top_artists = top_artist_data.index.to_list()
+
+home_data = top_artist_data.popularity
 
 
-def update_data(area, var, new_value):
-    model_data.loc[model_data['area_name']==area, var] = new_value
+# Data for metrics page
+filter_columns = ["valence", "acousticness", "danceability",
+                  "energy", "liveness", "speechiness", "instrumentalness",
+                  "loudness", "tempo", "popularity", "name"]
 
-    return model_data
+# print(filtered_data)
+# for artist in top_artists:
+#     count_1 = filtered_data.at[artist, "count"]
+#     count_2 = song_data.query("artists == @artist").size
+#     print(count_1, count_2)
+
+heatmap_data = data_by_artist.query("artists in @filtered_artists").sort_values("popularity", ascending=False)
+heatmap_head = heatmap_data.head(10)
+
+heatmap_colors = pd.read_csv("app/data/heatmap_colors.csv")

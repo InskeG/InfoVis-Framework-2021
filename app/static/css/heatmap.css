@@ -1,0 +1,169 @@
+.artist-list {
+    overflow: hidden;
+}
+
+.artist-list-element {
+    list-style-type: none;
+    font-size: 12px;
+    margin-right: 5%;
+}
+
+.artist-list-button {
+    background: #262626;
+    border: none;
+    color: darkGrey;
+    float: right;
+}
+
+.heatmap_x_axis {
+    color: #fff;
+    font-size: 10px;
+}
+
+.heatmap_y_axis {
+    color: #fff;
+    font-size: 12px;
+    text-anchor: middle;
+}
+
+.heatmap_rect {
+    stroke-width: 4px;
+    stroke: none;
+    opacity:0.8;
+}
+
+.heatmap_rect:hover {
+    stroke-width:2px;
+    stroke: #fff;
+}
+
+.popularity:hover {
+    stroke-width:1px;
+    stroke: #fff;
+}
+
+.tooltip {
+    background-color: #262626;
+    color: #ddd;
+    border: solid;
+    border-color: #ddd;
+    border-width: 1px;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.tooltip td {
+    padding-left: 10px;
+}
+
+#wrapper-full {
+    margin-left: 0;
+    margin-right: auto;
+    width: 1800px;
+    height: 800px;
+}
+
+#wrapper-full div {
+
+}
+
+#wrapper-viz {
+    float: left;
+    width: 87%;
+    height: 100%;
+}
+
+#wrapper-filters {
+    float: right;
+    background-color: #262626;
+    width: 13%;
+    height: 100%;
+}
+
+#viz-title {
+    float: left;
+    width: 100%;
+    padding: 0px 10px;
+    display: flex;
+    align-items: center;
+    height: 6%;
+}
+
+#viz-title h1 {
+    color: #ddd;
+    font-size: 25px;
+}
+
+#viz-subtitle-heatmap {
+    width: 42.5%;
+}
+
+#viz-subtitle-artist {
+    width: 12.5%;
+}
+
+#viz-subtitle-barchart {
+    width: 45%;
+}
+
+.viz-subtitle {
+    float:left;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 5%;
+}
+
+.viz-subtitle-center {
+    float:left;
+    height: 5%;
+    text-align: center;
+    padding: 2px 0px;
+}
+
+.viz-subtitle h2 {
+    font-size: 13px;
+    margin-top: auto;
+    margin-bottom: auto;
+    color: #888;
+}
+
+.viz-subtitle-center h2 {
+    font-size: 13px;
+    margin: 2px 0px;
+    color: #888;
+}
+
+.legend_axis path {
+    display: none;
+}
+
+.legend_axis text {
+    color: #888;
+}
+
+.legend_axis line {
+    color: #888;
+}
+
+.artistText {
+    width: 75%;
+}
+
+.resetButton {
+    margin-left: 5%;
+    margin-right: 5%;
+    width: 40%;
+    height: 10%;
+    background-color: darkGrey;
+    border-color: black;
+}
+
+.showButton {
+    margin-right: 5%;
+    width: 40%;
+    height: 10%;
+    background-color: #1ED760;
+    border-color: black;
+
+}
