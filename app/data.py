@@ -9,7 +9,7 @@ data = pd.read_csv("app/data/data.csv", sep=",")
 data["artists"] = data["artists"].apply(lambda x: ast.literal_eval(x))
 
 song_data = data.explode("artists")
-song_data = song_data.drop_duplicates(subset="name")
+song_data = song_data.sort_values("popularity", 0, False).drop_duplicates(subset=["name", "artists"], keep="first")
 
 max_loud = max(song_data["loudness"])
 min_loud = min(song_data["loudness"])
