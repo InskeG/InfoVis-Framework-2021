@@ -11,7 +11,7 @@ from data import *;
             <vs-col type="flex" vs-justify="left" vs-align="left" vs-w="8">  
 
               <!-- <div v-if="fetched.img_existend"> -->
-                <vs-col type="flex" vs-justify="left" vs-align="left" vs-w="6">
+                <!-- <vs-col type="flex" vs-justify="left" vs-align="left" vs-w="6">
                   
                   <transition mode="out-in" enter-active-class="animate__animated animate__fadeInLeft" leave-active-class="animate__animated animate__fadeOutRight">
                     <vs-card class="cardx" v-if="fetched.img_existend" fixedHeight vs-w="5">
@@ -22,9 +22,51 @@ from data import *;
                           </div>
                     </vs-card>
                   </transition>
+                </vs-col> -->
+
+                <vs-col type="flex" vs-justify="left" vs-align="left" vs-w="6">
+                  
+                  <transition mode="out-in" enter-active-class="animate__animated animate__fadeInLeft" leave-active-class="animate__animated animate__fadeOutRight">
+                    <vs-card class="cardx" v-if="fetched.img_existend" fixedHeight vs-w="5">
+                      <!-- <div slot="header"><h3>Existend Art Piece: {{exist_title}}, {{exist_artist}}, {{exist_year}}</h3></div> -->
+                      <div slot="header"><h3>Existend Art Pieces: {{exist_artist}} </h3></div>
+
+                          <div slot="media">
+
+
+                              <carousel-3d>
+
+                              <!-- <slide v-for="img in existend_imgs" v-bind:src="img"> </option> -->
+                              <!-- <div > -->
+                                <slide v-for="(slide, i) in existend_imgs" :index="i" :key="i">
+                                  <template slot-scope="{ index, isCurrent, leftIndex, rightIndex }">
+                                    <img :data-index="index" :class="{ current: isCurrent, onLeft: (leftIndex >= 0), onRight: (rightIndex >= 0) }" :src="slide">
+                                  </template>
+                                </slide>
+                              <!-- </div> -->
+                            </carousel-3d>
+                          </div>
+                    </vs-card>
+                  </transition>
                 </vs-col>
                   
-                <!-- <vs-col type="flex" vs-justify="right" vs-align="right" vs-w="6">
+                
+
+                <vs-col type="flex" vs-justify="right" vs-align="right" vs-w="6">
+                 <!-- <vs-card class="cardx" v-if="fetched.img_existend" fixedHeight vs-w="5">
+
+                  <carousel-3d>
+                <slide :index="0">
+                  <img v-bind:src="existend_img">
+                </slide>
+                <slide :index="1">
+                <img v-bind:src="existend_img">
+
+                </slide>
+              </carousel-3d>
+
+                  </vs-card> -->
+                  
                   <transition mode="out-in" enter-active-class="animate__animated animate__fadeInDown" leave-active-class="animate__animated animate__fadeOutUp">
                     <vs-card class="cardx" v-if="fetched.img_generated" fixedHeight vs-w="5">
                       <div slot="header"><h3>Generated Art Piece</h3></div>
@@ -33,9 +75,19 @@ from data import *;
                               <img v-bind:src="generated_img">
                           </div>
 
+                           <!-- <carousel-3d>
+
+                   
+                                <slide v-for="(slide, i) in generated_imgs" :index="i" :key="i">
+                                  <template slot-scope="{ index, isCurrent, leftIndex, rightIndex }">
+                                    <img :data-index="index" :class="{ current: isCurrent, onLeft: (leftIndex >= 0), onRight: (rightIndex >= 0) }" :src="slide">
+                                  </template>
+                                </slide>
+                            </carousel-3d> -->
+
                     </vs-card>
                   </transition>
-                </vs-col> -->
+                </vs-col>
 
 
             </vs-col>
@@ -226,6 +278,8 @@ import zingchartVue from 'zingchart-vue';
 import ResizeSensor from 'css-element-queries/src/ResizeSensor';
 import TimelinesChart from "../timeline";
 import 'animate.css';
+import { Carousel3d, Slide } from 'vue-carousel-3d';
+
 // import { VOverdrive } from 'vue-overdrive'
 // import * as easing from 'eases/quart-in-out' // Bring 'yr own easing functions!
 
@@ -242,13 +296,11 @@ export default {
   data: () => {
     return {
       time_line_size: 12,
-      // time_line_key: 0,
       artist_options: [],
       genre: 'Hallo',
       selected: 'airstream',
       summary: '',
       related_terms: '',
-      // reload_time_line: false,
       fetched: {
         img_existend: false,
         img_generated: false,
@@ -263,6 +315,8 @@ export default {
       },
       generated_img: "@/assets/images/big/img1.jpg",
       existend_img: "@/assets/images/big/img1.jpg",
+      existend_imgs: [],
+      generated_imgs: [],
       exist_title: '',
       exist_year: '',
       exist_artist: '',
@@ -390,6 +444,8 @@ export default {
   components: {
     PieChart,
     zingchart: zingchartVue,
+    Carousel3d,
+    Slide
     // 'overdrive': VOverdrive
   },
   methods: {
@@ -603,6 +659,7 @@ export default {
     this.$parent.socket.on("set_image", (data) => {
       window.scroll({top: 0, left: 0, behaviour: 'smooth'});
       this.existend_img = data.existend;
+      this.existend_imgs = data.existend_imgs;
       this.exist_title = data.title;
       this.exist_artist = data.artist;
       this.exist_year = data.year;
@@ -649,6 +706,7 @@ export default {
     this.$parent.socket.on("images_generated", (data) => {
       console.log("Received generated image", data);
       // this.generated_img = data.images[0].image;
+      // this.generated_imgs = data.images.image;
       this.generated_img = "@/assets/images/big/img1.jpg";
       this.fetched.img_generated = true;
     });

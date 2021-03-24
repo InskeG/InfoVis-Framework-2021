@@ -31,6 +31,7 @@
     "svg-utils": "^1.2.8",
     "tinycolor2": "^1.4.2",
     "vue": "^2.6.10",
+    "vue-carousel-3d": "^1.0.1",
     "vue-chartjs": "^3.4.2",
     "vue-overdrive": "^1.2.0",
     "vue-prism-component": "^1.1.1",
