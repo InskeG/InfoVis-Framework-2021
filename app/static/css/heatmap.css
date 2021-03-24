@@ -57,9 +57,9 @@
 }
 
 #wrapper-full {
-    margin-left: 0;
+    margin-left: auto;
     margin-right: auto;
-    width: 1800px;
+    width: 1600px;
     height: 800px;
 }
 

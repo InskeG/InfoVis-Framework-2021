@@ -14,15 +14,12 @@
     height: 1000px;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
 body{
     font-family: Verdana;
     height: 100%;
     width: 100%;
     background-color:black;
+    color: white;
     overflow-x: hidden;
 }
 
@@ -191,60 +188,6 @@ body{
 
 .h1_content{
     color:white;
-}
-
-
-/* #### ARROWS #### */
-
-#arrowAnim {
-  width: 100vw;
-  height: 4vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transform: rotate(-90deg);
-}
-
-.arrow {
-  width: 4vw;
-  height: 5vw;
-  border: 2.5vw solid;
-  border-color: #1DB954 transparent transparent #1DB954;
-  transform: rotate(-45deg);
-  padding:10%;
-}
-
-
-.arrowSliding {
-  position: absolute;
-  -webkit-animation: slide 3s linear infinite;
-          animation: slide 3s linear infinite;
-}
-
-.delay1 {
-  -webkit-animation-delay: 1s;
-    animation-delay: 1s;
-}
-.delay2 {
-  -webkit-animation-delay: 2s;
-    animation-delay: 2s;
-}
-.delay3 {
-  -webkit-animation-delay: 3s;
-    animation-delay: 3s;
-}
-
-@-webkit-keyframes slide {
-    0% { opacity:0; transform: translateX(7vw); }
-   20% { opacity:1; transform: translateX(3vw); }
-   80% { opacity:1; transform: translateX(-3vw); }
-  100% { opacity:0; transform: translateX(-7vw); }
-}
-@keyframes slide {
-    0% { opacity:0; transform: translateX(7vw); }
-   20% { opacity:1; transform: translateX(3vw); }
-   80% { opacity:1; transform: translateX(-3vw); }
-  100% { opacity:0; transform: translateX(-7vw); }
 }
 
 /* #### FOOTER #### */

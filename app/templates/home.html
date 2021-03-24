@@ -19,7 +19,7 @@
 	<link rel="stylesheet" type="text/css" href="../static/css/barchart.css">
 	<link rel="stylesheet" type="text/css" href="../static/css/heatmap.css">
 	<link rel="stylesheet" type="text/css" href="../static/css/home.css">
-	<link rel="stylesheet" type="text/css" href="../static/css/base.css">
+	<!--<link rel="stylesheet" type="text/css" href="../static/css/base.css">-->
 
 	<!-- D3 package -->
 	<script src="https://d3js.org/d3.v5.min.js"></script>
@@ -179,7 +179,7 @@
 	var x_variables = {{ keys | safe }};
 
 	var padding = {top: 10, right: 50, bottom: 5, left: 10},
-	  	fullwidth = (1800 * 0.87)  - padding.left - padding.right,
+	  	fullwidth = (1600 * 0.87)  - padding.left - padding.right,
 	  	fullheight = (800 * 0.85) - padding.top - padding.bottom,
 	  	width_heatmap = fullwidth * 0.45,
 	  	width_artists = fullwidth * 0.1,
@@ -235,7 +235,7 @@
 	$(document).ready(function() {
 		$(".nav-link").click(function(event){
             event.preventDefault();
-            $('html,body').animate({scrollTop:$(this.hash).offset().top}, 100);
+            $("html").animate({scrollTop:$(this.hash).offset().top}, 800);
         });
 
     	$(document).on("scroll", onScroll);
