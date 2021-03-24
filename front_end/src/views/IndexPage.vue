@@ -29,7 +29,7 @@ from data import *;
                   <transition mode="out-in" enter-active-class="animate__animated animate__fadeInLeft" leave-active-class="animate__animated animate__fadeOutRight">
                     <vs-card class="cardx" v-if="fetched.img_existend" fixedHeight vs-w="5">
                       <!-- <div slot="header"><h3>Existend Art Piece: {{exist_title}}, {{exist_artist}}, {{exist_year}}</h3></div> -->
-                      <div slot="header"><h3>Existend Art Pieces: {{exist_artist}} </h3></div>
+                      <div slot="header"><h3>Existend Art Pieces: {{exist_artist}}</h3></div>
 
                           <div slot="media">
 
@@ -205,9 +205,9 @@ from data import *;
 
           </vs-col>
 
-          <vs-col type="flex" vs-justify="right" vs-align="right" vs-w="6">
+          <!-- <vs-col type="flex" vs-justify="right" vs-align="right" vs-w="5"> -->
 
-            <vs-col type="flex" vs-justify="left" vs-align="left" vs-w="6">
+            <vs-col type="flex" vs-justify="left" vs-align="left" vs-w="3">
 
 
              <transition mode="out-in" enter-active-class="animate__animated animate__fadeInUp" leave-active-class="animate__animated animate__fadeOutDown">
@@ -227,7 +227,7 @@ from data import *;
 
 
 
-              <vs-col type="flex" vs-justify="right" vs-align="right" vs-w="6">
+              <vs-col type="flex" vs-justify="right" vs-align="right" vs-w="3">
 
     
               <transition mode="out-in" enter-active-class="animate__animated animate__fadeInRight" leave-active-class="animate__animated animate__fadeOutLeft">
@@ -251,7 +251,7 @@ from data import *;
             
 
 
-          </vs-col>
+          <!-- </vs-col> -->
           </vs-row>
           <!-- </vs-row> -->
 
