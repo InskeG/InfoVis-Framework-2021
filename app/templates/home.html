@@ -5,17 +5,21 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="description" content="">
 	<meta name="author" content="">
-	<title>Home page</title>
+	<title>Spotify musical characteristics - Group 15</title>
 
-
-	<link href="../static/css/barchart.css" rel="stylesheet">
+	<link rel="icon"
+      type="image/png"
+      href="/../../static/img/favicon.png" />
 
 	<!-- Bootstrap core CSS -->
 	<link href="https://getbootstrap.com/docs/4.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet" >
 
+	<!-- CSS -->
+	<link rel="stylesheet" type="text/css" href="../static/css/barchart.css">
+	<link rel="stylesheet" type="text/css" href="../static/css/heatmap.css">
+	<link rel="stylesheet" type="text/css" href="../static/css/home.css">
+	<link rel="stylesheet" type="text/css" href="../static/css/base.css">
 
 	<!-- D3 package -->
 	<script src="https://d3js.org/d3.v5.min.js"></script>
@@ -26,43 +30,75 @@
 <!--spotify-color:	#1DB954-->
 
 <body>
-<!--	<nav class="navbar navbar-dark bg-dark flex-md-nowrap navbar-expand-md" id="navbar-top">-->
-<!--		<a class="navbar-brand col-1" id="title" href="#">Spotify Dataset</a>-->
-
-	<div class ="title-picture">
-		<img src = "/static/img/spotify-gif.gif" class = "spotify-gif">
-	</div>
-
-	<nav class="navbar navbar-default justify-content-center flex-md-nowrap navbar-expand-md" id = "navbar-top">
+	<div id="top"></div>
+	<nav class="navbar navbar-default justify-content-center flex-md-nowrap navbar-expand-md sticky" id = "navbar-top">
 		<div class="navbar-collapse" id="navbarCollapse">
 			<ul class="navbar-nav">
 				<li class="nav-item active">
-					<a class="nav-link" id="nav-link-home" href="/">Home</a>
+					<a class="nav-link active" id="nav-link-home" href="#top">Visualization</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link"  id="nav-link-metrics" href="/metrics">Music Metrics</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link"  id="nav-link-popularity" href="/popularity">Music Popularity</a>
+					<a class="nav-link"  id="nav-link-metrics" href="#help">Help</a>
 				</li>
 			</ul>
 		</div>
 	</nav>
 
-	<script type="text/javascript">
-		d3.selectAll(".nav-link").classed("active", false);
-		d3.select("#nav-link-home").classed("active", true);
-	</script>
 
-<link rel="stylesheet" type="text/css" href="../static/css/home.css">
 
-<div class = "content_1">
+<div id = "wrapper-full">
+	<div id = "wrapper-viz">
+		<div id = "viz-title">
+			<h1>Spotify artists and musical characteristics: a visualization</h1>
+		</div>
+		<div id = "viz-subtitle-heatmap" class = "viz-subtitle">
+			<h2>Average value of musical characteristics</h2>
+		</div>
+		<div id = "viz-subtitle-artist" class = "viz-subtitle-center">
+			<h2>Artist</h2>
+			<h2>Current popularity</h2>
+		</div>
+		<div id = "viz-subtitle-barchart" class = "viz-subtitle">
+			<h2>Musical characteristics of most popular songs</h2>
+		</div>
+		<div id="heatmap">
+
+		</div>
+		<div id="legend">
+
+		</div>
+		<div id="barchart">
+
+		</div>
+	</div>
+	<div id = "wrapper-filters">
+		<form class="artistForm" autocomplete="off" onSubmit="return addArtist(this)">
+			<div class="autocomplete">
+				<input id="artistInput" class="artistText" placeholder="Select an artist" type="text" name="artist" value="">
+			</div>
+			<ul class="artist-list">
+				{% for artist in artists: %}
+				<li class="artist-list-element" id="list{{ artist.replace(' ', '') }}">
+					{{ artist }}
+					<button class="artist-list-button" type="button" name="delete{{ artist.replace(' ', '') }}" onClick="removeArtist('{{ artist }}')">x</button>
+				</li>{% endfor %}
+			</ul>
+			<input class="resetButton" type="button" name="button" value="Reset" onClick="window.location.reload(true)">
+			<input class="showButton" type="submit" name="submit" value="Show >" >
+		</form>
+	</div>
+</div>
+
+
+<div id = "help" class="content_1">
 	<div class = "content_1_div_img">
 		<img src = "/static/img/popular_artists.jpg" class = "content_1_img">
 	</div>
 
 	<div class = "content_1_div_text">
-		<h3 class = "h3_content">Introduction</h3>
+		<h3 class = "h3_content">Help section</h3>
+
+		<p>Lorem Ipsum</p>
 
 		<p>Our job is to make YOUR wildest visualisations come true and give you insight into the most popular trends
 		currently on spofity. We focus on providing multiple ways to investigate these trends. All these visualisations
@@ -70,28 +106,6 @@
 		change the visualisations according to the users prefreences. Moreover, it also provides a template for others
 		who are interested in diving deeper into the spotify dataset that was obtained from Kaggle. The sky is the limit
 		and we hope to inspire others in data analysis!</p>
-	</div>
-</div>
-
-<div id="arrowAnim">
-  <div class="arrowSliding">
-    <div class="arrow"></div>
-  </div>
-  <div class="arrowSliding delay1">
-    <div class="arrow"></div>
-  </div>
-  <div class="arrowSliding delay2">
-    <div class="arrow"></div>
-  </div>
-  <div class="arrowSliding delay3">
-    <div class="arrow"></div>
-  </div>
-</div>
-
-<div class = "content_2">
-	<div class = "content_2_plot" id="barchart">
-
-
 	</div>
 </div>
 
@@ -140,29 +154,112 @@
 </div>
 
 {% block body %}
+<!-- End page content-->
+<script type="text/javascript" src="../static/js/songbarchart.js"></script>
+<script type="text/javascript" src="../static/js/heatmap.js"></script>
+<script type="text/javascript" src="../static/js/autocomplete.js"></script>
+<script type="text/javascript">
+	var max_temp_art = {{ max_temp_art | safe }};
+	var min_temp_art = {{ min_temp_art | safe }};
+	var max_temp = {{ max_temp | safe }};
+	var min_temp = {{ min_temp | safe }};
+
+	var heatmap_data = {{ heatmap_data | safe }};
+	var colors = {{ heatmap_colors | safe }};
+	var barchart_data = {{ song_data | safe }};
+	var popularity = {{ popularity | safe }};
+	var y_variables = {{ artists | safe }};
+	var all_artists = {{ all_artists | safe }}
+	var manual_artists = false;
+	var y_to_i = {};
+	var i = 0;
+	for (var key in y_variables) {
+		y_to_i[y_variables[key]] = i++;
+	}
+	var x_variables = {{ keys | safe }};
+
+	var padding = {top: 10, right: 50, bottom: 5, left: 10},
+	  	fullwidth = (1800 * 0.87)  - padding.left - padding.right,
+	  	fullheight = (800 * 0.85) - padding.top - padding.bottom,
+	  	width_heatmap = fullwidth * 0.45,
+	  	width_artists = fullwidth * 0.1,
+	  	width_barchart = fullwidth * 0.45,
+		width_transform = width_heatmap + 78;
+
+	var mini_chart_height = (fullheight - 40) / y_variables.length ,
+		mini_chart_width = width_barchart / x_variables.length;
+
+	var x_1 = d3.scaleBand().rangeRound([0, width_barchart]),
+        x_2 = d3.scaleBand().rangeRound([0, mini_chart_width]),
+        y_2 = d3.scaleLinear().rangeRound([mini_chart_height-7, 7]);
+
+    x_1.domain(x_variables);
+    x_2.domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    y_2.domain([-100, 100]);
+
+	var y = d3.scaleBand()
+		.range([padding.top+5, fullheight - 20])
+		.domain(y_variables)
+		.padding(0.05);
+
+	var tooltip = d3.select("#heatmap")
+        .append("div")
+        .style("opacity", 0)
+        .attr("class", "tooltip");
+
+	var svgHeatMap = d3.select("#heatmap").append("svg")
+			    .attr("height", fullheight)
+				.attr("width", width_heatmap + width_artists + padding.left);
+
+	var svgBarCharts = d3.select("#heatmap").append("svg")
+	.attr("height", fullheight)
+	.attr("width", width_barchart + padding.right);
+
+	var svgLegendHeatMap = d3.select("#heatmap") // HTML tag
+    .append("svg")
+    .attr("width", width_heatmap+5)
+    .attr("height", 40);
+
+	var svgLegendPop = d3.select("#heatmap")
+	.append("svg")
+	.attr("width", width_artists)
+	.attr("height", 40);
+
+	createHeatMapPlot();
+	createBarChartPlot();
+	autocomplete(document.getElementById("artistInput"), all_artists);
+</script>
 {% endblock %}
 </body>
-<script type="text/javascript" src="../static/js/homechart.js"></script>
 <script type="text/javascript">
-	var song_data = {{ song_data | safe }};
-	var x_variables = {{ artists | safe }};
+	$(document).ready(function() {
+		$(".nav-link").click(function(event){
+            event.preventDefault();
+            $('html,body').animate({scrollTop:$(this.hash).offset().top}, 100);
+        });
 
-	var width = 1500;
-	var height = 700;
-	var chart_height = 400,
-		chart_width = 1300;
+    	$(document).on("scroll", onScroll);
+	});
+  function onScroll(event){
+    var scrollPos = $(document).scrollTop();
+    $('a.nav-link').each(function () {
+        var currLink = $(this);
+        var currParent = currLink.parent();
+        var refElement = $(currLink.attr("href"));
 
-	var svgContainer = d3.select("#barchart").append("svg")
-					.attr("height", height)
-					.attr("width", width);
+        if (refElement.position().top <= scrollPos && refElement.position().top + refElement.height() > scrollPos) {
+            $('a.nav-link').removeClass("active");
+            $('li.nav-item').removeClass("active");
+            currParent.addClass("active");
+            currLink.addClass("active");
+        }
+        else {
+            currLink.removeClass("active");
+        }
+    });
+  }
 
-	var x = d3.scaleBand().rangeRound([0, chart_width]),
-	    y = d3.scaleLinear().rangeRound([chart_height, 0]);
-
-	x.domain(x_variables);
-	y.domain([0, 100]);
 
 
-	createPlot();
 </script>
 </html>
