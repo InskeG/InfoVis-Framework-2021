@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="description" content="">
 	<meta name="author" content="">
-	<title>Spotify musical characteristics - Group 15</title>
+	<title>Spotify Musical Characteristics - Project Group 15</title>
 
 	<link rel="icon"
       type="image/png"
@@ -38,7 +38,7 @@
 					<a class="nav-link active" id="nav-link-home" href="#top">Visualization</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link"  id="nav-link-metrics" href="#help">Help</a>
+					<a class="nav-link"  id="nav-link-metrics" href="#help">Explanation</a>
 				</li>
 			</ul>
 		</div>
@@ -49,17 +49,17 @@
 <div id = "wrapper-full">
 	<div id = "wrapper-viz">
 		<div id = "viz-title">
-			<h1>Spotify artists and musical characteristics: a visualization</h1>
+			<h1>Spotify artists and their musical characteristics: a visualization</h1>
 		</div>
 		<div id = "viz-subtitle-heatmap" class = "viz-subtitle">
-			<h2>Average value of musical characteristics</h2>
+			<h2>Average values of artist's musical characteristics</h2>
 		</div>
 		<div id = "viz-subtitle-artist" class = "viz-subtitle-center">
 			<h2>Artist</h2>
 			<h2>Current popularity</h2>
 		</div>
 		<div id = "viz-subtitle-barchart" class = "viz-subtitle">
-			<h2>Musical characteristics of most popular songs</h2>
+			<h2>Musical characteristics of artist's ten most popular songs</h2>
 		</div>
 		<div id="heatmap">
 
@@ -90,40 +90,62 @@
 </div>
 
 
-<div id = "help" class="content_1">
-	<div class = "content_1_div_img">
-		<img src = "/static/img/popular_artists.jpg" class = "content_1_img">
+<div id = "help" class="help_div_content">
+	<div class = "help_div_img">
+		<img src = "/static/img/screenshot.PNG" class = "help_img help_img_1">
 	</div>
 
-	<div class = "content_1_div_text">
-		<h3 class = "h3_content">Help section</h3>
+	<div class = "help_div_text">
+		<h3 class = "h3_content">Visualization elements</h3>
 
-		<p>Lorem Ipsum</p>
+		<ol>
+			<li>Currently selected <span class="emph">artists</span> and their average <span class="emph">popularity</span>.</li>
+			<li>Heatmapof <span class="emph">artist</span> 's average <span class="emph">musical characteristics</span> . A dark square represents a low value, while a bright
+			square represents a high value.</li>
+			<li>Symmetric bar chart of <span class="emph">musical characteristics</span> of artist's ten most popular <span class="emph">songs</span>.</li>
+			<li><span class="emph">Filter bar</span> to select specific artists or specific ranges of musical characteristics.</li>
+		</ol>
 
-		<p>Our job is to make YOUR wildest visualisations come true and give you insight into the most popular trends
-		currently on spofity. We focus on providing multiple ways to investigate these trends. All these visualisations
-		we performed with HTML, CSS and Javascript to provide the user with the required interactivity necessary to
-		change the visualisations according to the users prefreences. Moreover, it also provides a template for others
-		who are interested in diving deeper into the spotify dataset that was obtained from Kaggle. The sky is the limit
-		and we hope to inspire others in data analysis!</p>
+		<h3 class = "h3_content">Popularity and musical characteristics</h3>
+
+		<ul>
+			<li><span class="emph">Popularity</span>: the relative popularity of the track. </li>
+			<li><span class="emph">Valence</span>: a measure describing the musical positiveness conveyed by a track.</li>
+			<li><span class="emph">Acousticness</span>: a measure of whether the track is acoustic. 100% represents
+				high confidence the track is acoustic.</li>
+			<li><span class="emph">Danceability</span>: describes how suitable a track is for dancing based on a combination of
+				musical elements including tempo, rhythm stability, beat strength, and overall regularity.</li>
+			<li><span class="emph">Energy</span>: represents a perceptual measure of intensity and
+				activity. Typically, energetic tracks feel fast, loud, and noisy.</li>
+			<li><span class="emph">Liveness</span>: detects the presence of an audience in the recording. Higher liveness values represent
+				an increased probability that the track was performed live.</li>
+			<li><span class="emph">Speechiness</span>: detects the presence of spoken words in a track. The more exclusively speech-like the
+				recording (e.g. talk show, audio book, poetry), the closer to 100% the attribute value. </li>
+			<li><span class="emph">Instrumentalness</span>: predicts whether a track contains no vocals. “Ooh” and “aah” sounds are treated as
+				instrumental in this context. Rap or spoken word tracks are clearly “vocal”.</li>
+			<li><span class="emph">Loudness</span>: the overall loudness of a track. Loudness values are averaged across the entire track and are
+				useful for comparing relative loudness of tracks.</li>
+			<li><span class="emph">Tempo</span>: the overall estimated tempo of a track in beats per minute (BPM).</li>
+		</ul>
 	</div>
+
 </div>
 
 <div class = "footer">
 	<div class = "footer_element" id = "footer_element_1">
 		<h3 class = "h3_new">About</h3>
 		<p>
-		Our job is to make YOUR wildest visualisations come true and give you insight into the most popular trends
-		currently on spofity. We focus on providing multiple ways to investigate these trends. All these visualisations
-		we performed with HTML, CSS and Javascript to provide the user with the required interactivity necessary to
-		change the visualisations according to the users prefreences. Moreover, it also provides a template for others
-		who are interested in diving deeper into the spotify dataset that was obtained from Kaggle. The sky is the limit
-		and we hope to inspire others in data analysis!
+		This visualization has been created by Project Group 15 as part of the Information Visualization course at the
+		Universiteit van Amsterdam. It is based on the Spotify data set from 2021/01/24 as found on Kaggle.</p>
+		<p>
+		Our visualization allows the user to interactively investigate the various musical characteristics of the most popular
+		artists on Spotify and make comparisons between them. It was created using mostly Python, HTML, CSS and JavaScript
+		(d3, jQuery and plain).
 		</p>
 	</div>
 
 	<div class = "footer_element" id = "footer_element_2">
-		<h3 class = "h3_new">Artists</h3>
+		<h3 class = "h3_new">Team members</h3>
 		<ul class = "ul_artists">
 			<li>Sjors Peerdeman</li>
 			<li>Piet Snel</li>
@@ -140,6 +162,7 @@
 			<li><a class = "footer_link" href = "https://www.vu.nl/nl/index.aspx">Vrije Universiteit</a></li>
 			<li><a class = "footer_link" href = "https://www.uva.nl/">Universiteit van Amsterdam</a></li>
 			<li><a class = "footer_link" href = "https://www.spotify.com/nl/">Spotify</a></li>
+			<li><a class = "footer_link" href = "https://www.kaggle.com/yamaerenay/spotify-dataset-19212020-160k-tracks">Data set (version 10)</a></li>
 		</ul>
 	</div>
 
@@ -179,8 +202,8 @@
 	var x_variables = {{ keys | safe }};
 
 	var padding = {top: 10, right: 50, bottom: 5, left: 10},
-	  	fullwidth = (1600 * 0.87)  - padding.left - padding.right,
-	  	fullheight = (800 * 0.85) - padding.top - padding.bottom,
+	  	fullwidth = (document.getElementById('wrapper-full').offsetWidth * 0.86)  - padding.left - padding.right,
+	  	fullheight = (document.getElementById('wrapper-full').offsetHeight * 0.85) - padding.top - padding.bottom,
 	  	width_heatmap = fullwidth * 0.45,
 	  	width_artists = fullwidth * 0.1,
 	  	width_barchart = fullwidth * 0.45,
@@ -235,7 +258,7 @@
 	$(document).ready(function() {
 		$(".nav-link").click(function(event){
             event.preventDefault();
-            $("html").animate({scrollTop:$(this.hash).offset().top}, 800);
+            $("html").animate({scrollTop:$(this.hash).offset().top - 70}, 800);
         });
 
     	$(document).on("scroll", onScroll);

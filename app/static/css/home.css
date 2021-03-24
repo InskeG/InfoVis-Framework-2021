@@ -100,19 +100,19 @@ body{
 
 /* #### CONTENT #### */
 
-.content_1{
-    width: 90vw;
-    height: 475px;
+#help {
+    width: 90%;
+    height: 900px;
     margin:auto;
     display: block;
     position: relative;
-    margin-top:5vh;
-    margin-bottom:5vh;
+    margin-top:5%;
+    margin-bottom:5%;
 }
-.content_1::after{
+#help::after{
   content: "";
   background: url("/static/img/music_spotify_bg.jpg");
-  opacity: 0.5;
+  opacity: 0.25;
   top: 0;
   left: 0;
   bottom: 0;
@@ -121,69 +121,53 @@ body{
   z-index: -1;
 }
 
-.content_1 > .content_1_div_img{
+#help > .help_div_img {
     float:left;
-    width: 40%;
+    width: 50%;
     height:100%;
-    margin-left:10%;
-    margin-rigth:5%;
+    margin-left:2%;
+    margin-right:2%;
     display: flex;
     align-items: center;
 }
 
-.content_1 > .content_1_div_img > .content_1_img {
+#help > .help_div_img > .help_img {
     display:block;
     width:100%;
     margin:auto
 }
 
-
-.content_1 > .content_1_div_text{
-    float:left;
-    margin:5% auto;
-    margin-left: 5%;
+#help > .help_div_text {
+    float: left;
+    margin:2% auto;
+    margin-left: 2%;
     width: 40%;
-    height:100%;
-    margin-right:10%
+    height:60%;
+    margin-right:2%
     z-index: -2;
 }
 
-.content_1 > .content_1_div_text > p{
+#help > .help_div_text > p {
     color:white;
     display: flex;
     align-items: center;
 }
 
+#help > .help_div_text li {
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+#help > .help_div_text li > .emph {
+    color: #1DB954;
+}
+
 .h3_content{
-    color: white;
-    opacity: 0.85;
-    font-size: 23px;
-    font-weight: bold;
-    margin-bottom:2vh;
-    margin-top:
-}
-
-.content_2{
-    width:90vw;
-    height:800px;
-    margin:auto;
-    display: block;
-    position: relative;
-    margin-top:20vh;
-    margin-bottom:5vh;
-    text-align:center;
-}
-
-.content_2::after{
-  content: "";
-  background: url("/static/img/blue_circle_background.jpg");
-  opacity: 0.5;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  position: absolute;
-  z-index: -1;
+    color: #ddd;
+    font-size: 25px;
+    font-weight: none;
+    margin-bottom:20px;
+    margin-top: 25px;
 }
 
 .h1_content{

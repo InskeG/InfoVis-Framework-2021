@@ -59,12 +59,8 @@
 #wrapper-full {
     margin-left: auto;
     margin-right: auto;
-    width: 1600px;
-    height: 800px;
-}
-
-#wrapper-full div {
-
+    width: 95%;
+    height: 88vh;
 }
 
 #wrapper-viz {
@@ -86,6 +82,8 @@
     padding: 0px 10px;
     display: flex;
     align-items: center;
+    text-align: center;
+    justify-content: center;
     height: 6%;
 }
 
@@ -95,11 +93,11 @@
 }
 
 #viz-subtitle-heatmap {
-    width: 42.5%;
+    width: 42%;
 }
 
 #viz-subtitle-artist {
-    width: 12.5%;
+    width: 12%;
 }
 
 #viz-subtitle-barchart {
