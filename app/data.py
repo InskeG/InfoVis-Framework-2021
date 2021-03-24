@@ -9,6 +9,8 @@ data = pd.read_csv("app/data/data.csv", sep=",")
 data["artists"] = data["artists"].apply(lambda x: ast.literal_eval(x))
 
 song_data = data.explode("artists")
+song_data = song_data.drop_duplicates(subset="name")
+
 max_loud = max(song_data["loudness"])
 min_loud = min(song_data["loudness"])
 max_temp = max(song_data["tempo"])
@@ -47,10 +49,7 @@ filter_columns = ["valence", "acousticness", "danceability",
                   "loudness", "tempo", "popularity", "name"]
 
 # print(filtered_data)
-# for artist in top_artists:
-#     count_1 = filtered_data.at[artist, "count"]
-#     count_2 = song_data.query("artists == @artist").size
-#     print(count_1, count_2)
+
 
 heatmap_data = data_by_artist.query("artists in @filtered_artists").sort_values("popularity", ascending=False)
 heatmap_head = heatmap_data.head(10)

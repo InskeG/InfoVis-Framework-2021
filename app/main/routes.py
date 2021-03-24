@@ -39,14 +39,14 @@ from . import main
 def metrics():
     song_data = data.song_data
     keys = data.filter_columns
-    keysAxis = keys[:9]
+    keys_axis = keys[:9]
     artists = data.top_artists
     all_artists = data.filtered_artists
     heatmap_data = data.heatmap_head
     colors = data.heatmap_colors
     # print(heatmap_data)
     popularity = dict(zip(heatmap_data.artists, heatmap_data.popularity))
-    heatmap_data = heatmap_data.filter(items=keysAxis + ["artists"])
+    heatmap_data = heatmap_data.filter(items=keys_axis + ["artists"])
     heatmap_data = pd.melt(heatmap_data, id_vars=["artists"], var_name=["characteristic"])
     heatmap_data = heatmap_data.to_dict(orient="records")
     colors = colors.to_dict(orient="records")
@@ -64,7 +64,7 @@ def metrics():
     # print(barchart_data)
     return render_template("home.html", heatmap_data=heatmap_data,
                            heatmap_colors=colors, song_data=barchart_data,
-                           artists=artists, keys=keysAxis, popularity=popularity,
+                           artists=artists, keys=keys_axis, popularity=popularity,
                            all_artists=all_artists, max_temp_art=max_temp_art,
                            min_temp_art=min_temp_art, max_temp=max_temp,
                            min_temp=min_temp)
@@ -75,7 +75,7 @@ def metrics_data():
     heatmap_data = data.heatmap_data
     artist = request.args.get("artist")
     keys = data.filter_columns
-    keysAxis = keys[:9]
+    keys_axis = keys[:9]
     if artist not in data.filtered_artists:
         print("Artist not found")
         return {}
@@ -86,7 +86,7 @@ def metrics_data():
     artist_data = heatmap_data.query("artists == @artist")
     popularity = {artist: artist_data["popularity"].to_list()}
     #print(popularity)
-    heatmap_data = artist_data.filter(items=keysAxis + ["artists"])
+    heatmap_data = artist_data.filter(items=keys_axis + ["artists"])
     heatmap_data = pd.melt(heatmap_data, id_vars=["artists"], var_name=["characteristic"])
     heatmap_data = heatmap_data.to_dict(orient="records")
 
