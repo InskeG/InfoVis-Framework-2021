@@ -64,8 +64,14 @@ function createHeatMapPlot() {
     }
 
     var mousemove_pop = function(d) {
+        if (popularity[d][0]) {
+            popul = popularity[d][0]
+        } else {
+            popul = popularity[d]
+        }
+
         tooltip
-            .html("Average popularity of " + d + ":<br />" + popularity[d].toFixed(2) + "%")
+            .html("Average popularity of " + d + ":<br />" + popul.toFixed(1) + "%")
             .style("left", (d3.event.pageX + 20) + "px")
             .style("top", (d3.event.pageY - 60) + "px")
     }

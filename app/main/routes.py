@@ -10,13 +10,13 @@ from app import models, data
 from . import main
 
 
-@main.route('/', methods=['GET'])
-def index():
-    home_data = data.home_data
-    artists = data.top_artists
-    song_data = dict(zip(artists, home_data))
+#@main.route('/', methods=['GET'])
+#def index():
+    #home_data = data.home_data
+    #artists = data.top_artists
+    #song_data = dict(zip(artists, home_data))
 
-    return render_template("home.html", song_data=song_data, artists=artists)
+    #return render_template("home.html", song_data=song_data, artists=artists)
 
 # @main.route('/d3', methods = ['GET'])
 # def d3():
@@ -35,7 +35,7 @@ def index():
 #     print(mj_json)
 #     return jsonify(mj_json)
 
-@main.route('/metrics', methods=['GET'])
+@main.route('/', methods=['GET'])
 def metrics():
     song_data = data.song_data
     keys = data.filter_columns
@@ -62,7 +62,7 @@ def metrics():
     barchart_data = barchart_data.head(10).groupby("artists")
     barchart_data = {x[0] : x[1].filter(items=keys).to_dict("records") for x in barchart_data}
     # print(barchart_data)
-    return render_template("metrics.html", heatmap_data=heatmap_data,
+    return render_template("home.html", heatmap_data=heatmap_data,
                            heatmap_colors=colors, song_data=barchart_data,
                            artists=artists, keys=keys_axis, popularity=popularity,
                            all_artists=all_artists, max_temp_art=max_temp_art,
@@ -76,7 +76,6 @@ def metrics_data():
     artist = request.args.get("artist")
     keys = data.filter_columns
     keys_axis = keys[:9]
-    print(keys_axis)
     if artist not in data.filtered_artists:
         print("Artist not found")
         return {}
@@ -94,7 +93,6 @@ def metrics_data():
     return {"heatmap" : heatmap_data, "barchart": barchart_data, "popularity": popularity}
 
 
-
-@main.route('/popularity', methods=['GET'])
-def popularity():
-    return render_template("popularity.html")
+#@main.route('/popularity', methods=['GET'])
+#def popularity():
+    #return render_template("popularity.html")
