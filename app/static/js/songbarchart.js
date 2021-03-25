@@ -90,6 +90,10 @@ function filterArtists() {
         for (var key in y_variables) {
     		y_to_i[y_variables[key]] = i++;
     	}
+        
+        if (manual_artists) {
+            manual_artists = false;
+        }
 
         remakePlot();
     });
