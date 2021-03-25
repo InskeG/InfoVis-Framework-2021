@@ -1,0 +1,62 @@
+.displot_x_axis {
+    color: #e00101;
+    opacity: .8;
+}
+
+.displot_y_axis {
+    color: #e00101;
+    opacity: .8;
+}
+
+.displot_y_text{
+    font-size: 8px;
+    fill: #ffffff;
+    text-anchor: middle;
+}
+
+.displot_line {
+    stroke-width: 1;
+    stroke-linejoin: round;
+    stroke: #6c757d;
+    opacity: .5;
+
+}
+
+.displot_area_fill {
+    fill: #6c757d;
+    opacity: .5;
+    stroke-width: 0
+}
+
+.displot_y_axis g text {
+  display: none;
+}
+
+.displot_x_axis g text {
+  display: none;
+}
+.slider text {
+  fill: #e00101;
+  font-size: 20px;
+}
+.axis text {
+  fill: #e00101;
+}
+.axis text,
+.slider text {
+  font-size: 8px;
+}
+.distplot {
+    width:90%;
+    height:auto;
+    margin:0;
+    margin-top: 10px;
+    margin-bottom:20px;
+}
+
+.slider {
+    width:90%;
+    height:auto;
+    margin:0;
+    margin-bottom: 5px;
+}

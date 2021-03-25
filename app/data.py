@@ -33,7 +33,13 @@ data_by_artist["tempo"] = (data_by_artist["tempo"] - min_temp_art)/(
 
 # Data for home page
 filtered_artists = song_data.groupby("artists").filter(lambda x: len(x) > 9)["artists"].unique().tolist()
-# filtered_artists = data_by_artist.query("count>9")["artists"].to_list()
+
+# Data for distributions plot
+filter_characteristics = ["valence", "acousticness", "danceability",
+                  "energy", "liveness", "speechiness", "instrumentalness",
+                  "loudness", "tempo"]
+distplot_data = song_data.loc[song_data['artists'].isin(filtered_artists)].filter(items=filter_characteristics).sample(n=10000)
+
 filtered_data = data_by_artist.query("artists in @filtered_artists")
 filtered_data = filtered_data.set_index("artists")
 

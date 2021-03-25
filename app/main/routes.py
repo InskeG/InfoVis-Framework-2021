@@ -51,7 +51,8 @@ def metrics():
     heatmap_data = heatmap_data.to_dict(orient="records")
     colors = colors.to_dict(orient="records")
     barchart_data = song_data.query("artists in @artists").sort_values("popularity", 0, False).groupby("artists")
-
+    distplot_data = pd.melt(data.distplot_data, var_name=["characteristic"])
+    distplot_data  = distplot_data.to_dict(orient="records")
     #data for getting BPM in tooltips
     max_temp_art = data.max_temp_art
     min_temp_art = data.min_temp_art
@@ -67,12 +68,13 @@ def metrics():
                            artists=artists, keys=keys_axis, popularity=popularity,
                            all_artists=all_artists, max_temp_art=max_temp_art,
                            min_temp_art=min_temp_art, max_temp=max_temp,
-                           min_temp=min_temp)
+                           min_temp=min_temp, distplot_data=distplot_data)
 
 @main.route('/metrics_data', methods=['GET'])
 def metrics_data():
     song_data = data.song_data
     heatmap_data = data.heatmap_data
+    distplot_data = data.distplot_data
     artist = request.args.get("artist")
     keys = data.filter_columns
     keys_axis = keys[:9]
@@ -92,6 +94,44 @@ def metrics_data():
 
     return {"heatmap" : heatmap_data, "barchart": barchart_data, "popularity": popularity}
 
+@main.route('/filter_data', methods=['GET'])
+def filter_data():
+    song_data = data.song_data
+    keys = data.filter_columns
+    keys_axis = keys[:9]
+    heatmap_data = data.heatmap_data
+
+
+    max_temp_art = data.max_temp_art
+    min_temp_art = data.min_temp_art
+    print("first: ", heatmap_data)
+    for key in keys_axis:
+        min_key = float(request.args.get("min_" + key)) / 100
+        max_key = float(request.args.get("max_" + key)) / 100
+        queryString = "{0} >= {1} and {0} <= {2}".format(key, min_key, max_key)
+        print(queryString)
+        heatmap_data = heatmap_data.query(queryString)
+        print(heatmap_data["tempo"])
+
+    heatmap_data = heatmap_data.sort_values("popularity", ascending=False)
+    heatmap_data = heatmap_data.head(10)
+
+    artists = heatmap_data["artists"].to_list()
+    print(artists)
+
+    popularity = dict(zip(heatmap_data.artists, heatmap_data.popularity))
+
+    heatmap_data = heatmap_data.filter(items=keys_axis + ["artists"])
+    heatmap_data = pd.melt(heatmap_data, id_vars=["artists"], var_name=["characteristic"])
+    heatmap_data = heatmap_data.to_dict(orient="records")
+
+    barchart_data = song_data.query("artists in @artists").sort_values("popularity", 0, False).groupby("artists")
+
+    #print([x[1] for x in barchart_data])
+    barchart_data = barchart_data.head(10).groupby("artists")
+    barchart_data = {x[0] : x[1].filter(items=keys).to_dict("records") for x in barchart_data}
+
+    return {"heatmap" : heatmap_data, "barchart": barchart_data, "popularity": popularity, "artists": artists}
 
 #@main.route('/popularity', methods=['GET'])
 #def popularity():

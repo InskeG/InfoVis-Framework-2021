@@ -39,7 +39,7 @@
 			<h2>Current popularity</h2>
 		</div>
 		<div id = "viz-subtitle-barchart" class = "viz-subtitle">
-			<h2>Musical characteristics of most popular songs</h2>
+			<h2>Musical characteristics of most POPULAR songs</h2>
 		</div>
 		<div id="heatmap">
 
@@ -52,20 +52,20 @@
 		</div>
 	</div>
 	<div id = "wrapper-filters">
-		<form class="artistForm" autocomplete="off" onSubmit="return addArtist(this)">
-			<div class="autocomplete">
-				<input id="artistInput" class="artistText" placeholder="Select an artist" type="text" name="artist" value="">
-			</div>
-			<ul class="artist-list">
-				{% for artist in artists: %}
-				<li class="artist-list-element" id="list{{ artist.replace(' ', '') }}">
-					{{ artist }}
-					<button class="artist-list-button" type="button" name="delete{{ artist.replace(' ', '') }}" onClick="removeArtist('{{ artist }}')">x</button>
-				</li>{% endfor %}
-			</ul>
-			<input class="resetButton" type="button" name="button" value="Reset" onClick="window.location.reload(true)">
-			<input class="showButton" type="submit" name="submit" value="Show >" >
-		</form>
+{#		<form class="artistForm" autocomplete="off" onSubmit="return addArtist(this)">#}
+{#			<div class="autocomplete">#}
+{#				<input id="artistInput" class="artistText" placeholder="Select an artist" type="text" name="artist" value="">#}
+{#			</div>#}
+{#			<ul class="artist-list">#}
+{#				{% for artist in artists: %}#}
+{#				<li class="artist-list-element" id="list{{ artist.replace(' ', '') }}">#}
+{#					{{ artist }}#}
+{#					<button class="artist-list-button" type="button" name="delete{{ artist.replace(' ', '') }}" onClick="removeArtist('{{ artist }}')">x</button>#}
+{#				</li>{% endfor %}#}
+{#			</ul>#}
+{#			<input class="resetButton" type="button" name="button" value="Reset" onClick="window.location.reload(true)">#}
+{#			<input class="showButton" type="submit" name="submit" value="Show >" >#}
+{#		</form>#}
 	</div>
 </div>
 
@@ -73,6 +73,8 @@
 <script type="text/javascript" src="../static/js/songbarchart.js"></script>
 <script type="text/javascript" src="../static/js/heatmap.js"></script>
 <script type="text/javascript" src="../static/js/autocomplete.js"></script>
+<script type="text/javascript" src="../static/js/distributions.js"></script>
+<script src="https://unpkg.com/d3-simple-slider@1.10.4/dist/d3-simple-slider.min.js"></script>
 <script type="text/javascript">
 	var max_temp_art = {{ max_temp_art | safe }};
 	var min_temp_art = {{ min_temp_art | safe }};
@@ -143,6 +145,32 @@
 	createHeatMapPlot();
 	createBarChartPlot();
 	autocomplete(document.getElementById("artistInput"), all_artists);
+
+		//Distributions plots
+	var margin = {top: 10, right: 50, bottom: 5, left: 30},
+	    width = 260 - margin.left - margin.right,
+	    height = 50 - margin.top - margin.bottom;
+	var slider_margin = {top: 0, right: 200, bottom: 5, left: 10},
+	    slider_height = 60 - margin.top - margin.bottom;
+
+	// append the svg object to the body of the page
+	var svg = d3.select("#distplot_energy")
+	    .append("svg")
+	    .attr("width", width + margin.left + margin.right)
+	    .attr("height", height + margin.top + margin.bottom)
+	    .append("g")
+	    .attr("transform",
+	        "translate(" + margin.left + "," + margin.top + ")");
+	createDistributionPlots('energy', svg);
+    var  svg2 = d3.select("#distplot_acousticness")
+	    .append("svg")
+	    .attr("width", width + margin.left + margin.right)
+	    .attr("height", height + margin.top + margin.bottom)
+	    .append("g")
+	    .attr("transform",
+	        "translate(" + margin.left + "," + margin.top + ")");
+    createDistributionPlots('acousticness', svg2)
+
 </script>
 
 

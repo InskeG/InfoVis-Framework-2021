@@ -165,3 +165,20 @@
     border-color: black;
 
 }
+.distplotResetButton {
+    margin-left: 5%;
+    margin-right: 5%;
+    width: 40%;
+    height: 10%;
+    background-color: darkGrey;
+    border-color: black;
+}
+
+.distplotShowButton {
+    margin-right: 5%;
+    width: 40%;
+    height: 10%;
+    background-color: #1ED760;
+    border-color: black;
+
+}
