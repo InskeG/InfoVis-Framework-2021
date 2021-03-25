@@ -50,6 +50,7 @@
     width:90%;
     height:auto;
     margin:0;
+    margin-top: 10px;
     margin-bottom:20px;
 }
 
@@ -57,4 +58,5 @@
     width:90%;
     height:auto;
     margin:0;
+    margin-bottom: 5px;
 }
