@@ -15,7 +15,6 @@ function addToList(artist) {
 }
 
 function addArtist(formObject) {
-    var new_artist_barchart;
     var artist = formObject.artist.value;
     var fetch_url = "/metrics_data?artist=" + artist;
     if (manual_artists && (y_variables.includes(artist) || y_variables.length == 10)) {
@@ -53,6 +52,44 @@ function addArtist(formObject) {
         barchart_data = Object.assign({}, barchart_data, new_artist_barchart);
         popularity = Object.assign({}, popularity, new_artist_popularity);
         heatmap_data = heatmap_data.concat(new_artist_heatmap);
+
+        remakePlot();
+    });
+    return false;
+}
+
+function filterArtists() {
+    var fetch_url = "/filter_data?"
+
+    for (var key_index in x_variables) {
+        var key = x_variables[key_index];
+        console.log(key);
+        var min_string = "min_" + key;
+        var max_string = "max_" + key;
+        var min_key = characteristics_range[key].min;
+        var max_key = characteristics_range[key].max;
+
+        fetch_url = fetch_url + min_string + "=" + min_key + "&";
+        fetch_url = fetch_url + max_string + "=" + max_key + "&";
+    }
+
+    fetch_url = fetch_url.slice(0, -1);
+    console.log(fetch_url);
+
+    fetch(fetch_url)
+    .then(function(response) { return response.json(); })
+    .then((data) => {
+        barchart_data = data["barchart"];
+        heatmap_data = data["heatmap"];
+        popularity = data["popularity"];
+        y_variables = data["artists"];
+
+        i = 0;
+        y_to_i = {};
+
+        for (var key in y_variables) {
+    		y_to_i[y_variables[key]] = i++;
+    	}
 
         remakePlot();
     });
