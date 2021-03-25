@@ -1,15 +1,23 @@
 .displot_x_axis {
-    color: #e00101;
-    opacity: .8;
+    color: #fff;
+    opacity: 1;
 }
 
 .displot_y_axis {
-    color: #e00101;
-    opacity: .8;
+    color: #fff;
+    opacity: 1;
+}
+
+.displot_y_axis > .tick {
+    display: none;
+}
+
+.displot_x_axis line {
+
 }
 
 .displot_y_text{
-    font-size: 8px;
+    font-size: 10px;
     fill: #ffffff;
     text-anchor: middle;
 }
@@ -19,12 +27,11 @@
     stroke-linejoin: round;
     stroke: #6c757d;
     opacity: .5;
-
 }
 
 .displot_area_fill {
     fill: #6c757d;
-    opacity: .5;
+    opacity: 1;
     stroke-width: 0
 }
 
@@ -35,10 +42,23 @@
 .displot_x_axis g text {
   display: none;
 }
+
 .slider text {
-  fill: #e00101;
-  font-size: 20px;
+  display: none;
 }
+
+.slider > line.track-inset {
+    stroke: #262626;
+}
+
+.slider > line.track-fill {
+    stroke: #1ED760;
+}
+
+.slider > .parameter-value {
+    cursor: pointer;
+}
+
 .axis text {
   fill: #e00101;
 }
@@ -50,13 +70,18 @@
     width:90%;
     height:auto;
     margin:0;
-    margin-top: 10px;
-    margin-bottom:20px;
+    margin-top: 5px;
+    margin-bottom:10px;
 }
 
-.slider {
-    width:90%;
+div.slider {
+    width:80%;
     height:auto;
     margin:0;
-    margin-bottom: 5px;
+    margin-bottom: 0px;
 }
+
+#distplot_valence {
+    margin-top: 22%;
+}
+

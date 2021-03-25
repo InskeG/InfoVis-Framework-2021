@@ -5,7 +5,7 @@
 .artist-list-element {
     list-style-type: none;
     font-size: 12px;
-    margin-right: 5%;
+    margin-right: 20%;
 }
 
 .artist-list-button {
@@ -13,6 +13,7 @@
     border: none;
     color: darkGrey;
     float: right;
+    clear: right;
 }
 
 .heatmap_x_axis {
@@ -60,7 +61,7 @@
     margin-left: auto;
     margin-right: auto;
     width: 95%;
-    height: 88vh;
+    height: 50vw;
 }
 
 #wrapper-viz {
@@ -132,6 +133,36 @@
     color: #888;
 }
 
+.filter_top_button {
+    width: 50%;
+    height: 4%;
+    float: left;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.filter_top_active {
+    background-color: #262626;
+    cursor: auto;
+}
+
+.filter_type_artists {
+    display: none;
+    height: 100%;
+}
+
+.filter_type_range {
+    display: none;
+}
+
+.filter_type_active {
+    display: block;
+}
+
 .legend_axis path {
     display: none;
 }
@@ -145,40 +176,44 @@
 }
 
 .artistText {
-    width: 75%;
+    width: 80%;
 }
 
 .resetButton {
-    margin-left: 5%;
-    margin-right: 5%;
-    width: 40%;
-    height: 10%;
+    margin-left: 10%;
+    margin-right: 10%;
+    width: 80%;
+    height: 35px;
     background-color: darkGrey;
-    border-color: black;
+    border: none;
+    cursor: pointer;
 }
 
 .showButton {
-    margin-right: 5%;
-    width: 40%;
-    height: 10%;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-bottom: 16px;
+    width: 80%;
+    height: 35px;
     background-color: #1ED760;
-    border-color: black;
-
+    border: none;
+    cursor: pointer;
 }
 .distplotResetButton {
     margin-left: 5%;
     margin-right: 5%;
     width: 40%;
-    height: 10%;
+    height: 30px;
     background-color: darkGrey;
-    border-color: black;
+    border: none;
+    cursor: pointer;
 }
 
 .distplotShowButton {
     margin-right: 5%;
     width: 40%;
-    height: 10%;
+    height: 30px;
     background-color: #1ED760;
-    border-color: black;
-
+    border: none;
+    cursor: pointer;
 }

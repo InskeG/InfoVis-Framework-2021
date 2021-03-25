@@ -57,39 +57,39 @@ function createDistributionPlots(selected_char, svg) {
             .attr("class", "displot_area_fill")
             .attr("d", area);
 
+        //add slider
+        var sliderRange = d3
+            .sliderBottom()
+            .min(0)
+            .max(100)
+            .width(width)
+            .ticks(1)
+            .default([0, 100])
+            .fill('#6c757d')
+            .on('onchange', val => {
+                d3.select('p#value-range').text(val.map(d3.format('.2%')).join('-'));
+                characteristics_range[selected_char] = {"min":val[0],"max":val[1]}
+            });
+
+        var gRange = d3
+            .select('#slider_' + selected_char)
+            .append('svg')
+            .attr('width', width + 50)
+            .attr('height', slider_height)
+            .append('g')
+            .attr('transform', 'translate(30,5)');
+
+        gRange.call(sliderRange);
+
+        d3.select('#value-range').text(
+            sliderRange
+            .value()
+            .map(d3.format('.2%'))
+            .join('-')
+        );
 
     });
-    //add slider
-	var sliderRange = d3
-	    .sliderBottom()
-	    .min(0)
-	    .max(100)
-	    .width(width)
-	    .ticks(10)
-	    .default([0, 100])
-	    .fill('#6c757d')
-	    .on('onchange', val => {
-	        d3.select('p#value-range').text(val.map(d3.format('.2%')).join('-'));
-	        characteristics_range[selected_char] = {"min":val[0],"max":val[1]}
-	        console.log(characteristics_range)
-	    });
 
-    var gRange = d3
-        .select('#slider_' + selected_char)
-        .append('svg')
-        .attr('width', width + 50)
-        .attr('height', slider_height)
-        .append('g')
-        .attr('transform', 'translate(30,10)');
-
-	gRange.call(sliderRange);
-
-	d3.select('#value-range').text(
-	    sliderRange
-	    .value()
-	    .map(d3.format('.2%'))
-	    .join('-')
-	);
 
     // Function to compute density
     function kernelDensityEstimator(kernel, X) {

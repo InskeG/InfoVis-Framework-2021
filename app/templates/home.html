@@ -19,7 +19,7 @@
 	<link rel="stylesheet" type="text/css" href="../static/css/barchart.css">
 	<link rel="stylesheet" type="text/css" href="../static/css/heatmap.css">
 	<link rel="stylesheet" type="text/css" href="../static/css/home.css">
-	<link rel="stylesheet" type="text/css" href="../static/css/base.css">
+	<!--<link rel="stylesheet" type="text/css" href="../static/css/base.css">-->
     <link rel="stylesheet" type="text/css" href="../static/css/displot.css">
 
 	<!-- D3 package -->
@@ -73,7 +73,9 @@
 		</div>
 	</div>
 	<div id = "wrapper-filters">
-        <div class="distplot" id = "displot">
+		<div id = "filter_top_button_artists" class = "filter_top_button filter_top_active" onclick="switchFilter(this);">Artists</div>
+		<div id = "filter_top_button_range" class = "filter_top_button" onclick="switchFilter(this);">Range</div>
+        <div class="distplot filter_type_range" id = "displot">
                     <div id="distplot_valence"></div><div class="slider" id = "slider_valence"></div>
                     <div id="distplot_acousticness"></div><div class="slider" id = "slider_acousticness"></div>
                     <div id="distplot_danceability"></div><div class="slider" id = "slider_danceability"></div>
@@ -84,26 +86,28 @@
                     <div id="distplot_loudness"></div><div class="slider" id = "slider_loudness"></div>
                     <div id="distplot_tempo"></div><div class="slider" id = "slider_tempo"></div>
         </div>
-        <div>
+        <div class = "filter_type_range">
             <input class="distplotResetButton" type="button" name="button" value="Reset" onClick="window.location.reload(true)">
 			<input class="distplotShowButton" type="submit" name="submit" value="Show >" autocomplete="off" onClick="return filterArtists()">
         </div>
 
 
-{#		<form class="artistForm" autocomplete="off" onSubmit="return addArtist(this)">#}
-{#			<div class="autocomplete">#}
-{#				<input id="artistInput" class="artistText" placeholder="Select an artist" type="text" name="artist" value="">#}
-{#			</div>#}
-{#			<ul class="artist-list">#}
-{#				{% for artist in artists: %}#}
-{#				<li class="artist-list-element" id="list{{ artist.replace(' ', '') }}">#}
-{#					{{ artist }}#}
-{#					<button class="artist-list-button" type="button" name="delete{{ artist.replace(' ', '') }}" onClick="removeArtist('{{ artist }}')">x</button>#}
-{#				</li>{% endfor %}#}
-{#			</ul>#}
-{#			<input class="resetButton" type="button" name="button" value="Reset" onClick="window.location.reload(true)">#}
-{#			<input class="showButton" type="submit" name="submit" value="Show >" >#}
-{#		</form>#}
+		<div class = "filter_type_artists filter_type_active">
+			<form class="artistForm" autocomplete="off" onSubmit="return addArtist(this)">
+				<div class="autocomplete">
+					<input id="artistInput" class="artistText" placeholder="Select an artist" type="text" name="artist" value="">
+				</div>
+				<input class="showButton" type="submit" name="submit" value="Add >" >
+				<ul class="artist-list">
+					{% for artist in artists: %}
+					<li class="artist-list-element" id="list{{ artist.replace(' ', '') }}">
+						{{ artist }}
+						<button class="artist-list-button" type="button" name="delete{{ artist.replace(' ', '') }}" onClick="removeArtist('{{ artist }}')">x</button>
+					</li>{% endfor %}
+				</ul>
+				<input class="resetButton" type="button" name="button" value="Reset" onClick="window.location.reload(true)">
+			</form>
+		</div>
 	</div>
 </div>
 
@@ -197,6 +201,7 @@
 {% block body %}
 <!-- End page content-->
 <script type="text/javascript" src="../static/js/songbarchart.js"></script>
+<script type="text/javascript" src="../static/js/switchfilters.js"></script>
 <script type="text/javascript" src="../static/js/heatmap.js"></script>
 <script type="text/javascript" src="../static/js/autocomplete.js"></script>
 <script type="text/javascript" src="../static/js/distributions.js"></script>
@@ -223,7 +228,7 @@
 
 	var padding = {top: 10, right: 50, bottom: 5, left: 10},
 	  	fullwidth = (document.getElementById('wrapper-full').offsetWidth * 0.86)  - padding.left - padding.right,
-	  	fullheight = (document.getElementById('wrapper-full').offsetHeight * 0.85) - padding.top - padding.bottom,
+	  	fullheight = (document.getElementById('wrapper-full').offsetHeight * 0.80) - padding.top - padding.bottom,
 	  	width_heatmap = fullwidth * 0.45,
 	  	width_artists = fullwidth * 0.1,
 	  	width_barchart = fullwidth * 0.45,
@@ -270,13 +275,13 @@
 
 	createHeatMapPlot();
 	createBarChartPlot();
-	{#autocomplete(document.getElementById("artistInput"), all_artists);#}
+	autocomplete(document.getElementById("artistInput"), all_artists);
 		//Distributions plots
 	var margin = {top: 15, right: 50, bottom: 5, left: 30},
-	    width = 260 - margin.left - margin.right,
-	    height = 44 - margin.top - margin.bottom;
+	    width = (document.getElementById('wrapper-full').offsetWidth * 0.14) - margin.left - margin.right,
+	    height = (document.getElementById('wrapper-full').offsetHeight * 0.06) - margin.top - margin.bottom;
 	var slider_margin = {top: 0, right: 200, bottom: 10, left: 10},
-	    slider_height = 40 - margin.top - margin.bottom;
+	    slider_height = (document.getElementById('wrapper-full').offsetHeight * 0.025);
 
 	var characteristics_range = {
 	    "valence": {"min":0,"max":100},
@@ -302,8 +307,6 @@
 	    .attr("transform",
 	        "translate(" + margin.left + "," + margin.top + ")");
         createDistributionPlots(characteristic, svg)};
-        console.log(distplot_data)
-
 
 </script>
 {% endblock %}

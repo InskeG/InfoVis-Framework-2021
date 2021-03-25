@@ -24,16 +24,6 @@ function createHeatMapPlot() {
         .select(".domain").remove();
 
 
-    // d3.select(".heatmap_y_axis").selectAll(".tick")
-    //   .data(pop_map)
-    //   .append("rect")
-    //   .attr("x", "-40")
-    //   .attr("y", "10")
-    //   .attr("width", function(d) { return x_pop(d.value)})
-    //   .attr("height", "20")
-    //   .style("fill", spotifyColor);
-
-
     // Build color scale
     var myColor = d3.scaleLinear()
         .range(["#121212", spotifyColor])
@@ -114,7 +104,7 @@ function createHeatMapPlot() {
     }
 
     // add the squares
-    let squares = chart_group_heatmap.selectAll()
+    chart_group_heatmap.selectAll()
         .data(heatmap_data, function(d) {return d.characteristic+':'+d.artists;})
         .enter()
         .append("rect")
@@ -125,17 +115,13 @@ function createHeatMapPlot() {
             .attr("ry", 4)
             .attr("width", x.bandwidth() )
             .attr("height", y.bandwidth() )
-            //.style("fill", function(d) { return myColor(d.characteristic, d.value)} )
+            .style("opacity", 1)
             .style("fill", function(d) { return myColor(d.value)} )
-            .style("opacity", 0)
         .on("mouseover", mouseover)
         .on("mousemove", mousemove)
         .on("mouseleave", mouseleave)
 
-    squares.transition()
-        .duration(1000)
-        .delay(function(d,i) { return Math.random() * 1200 } )
-        .style("opacity", 1)
+
 
 
     //HEATMAP LEGEND

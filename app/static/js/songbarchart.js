@@ -44,7 +44,9 @@ function addArtist(formObject) {
             popularity = {};
         }
         addToList(artist);
-        y_to_i[artist] = i++;
+        console.log(i)
+        y_to_i[artist] = i;
+        i += 1;
 
         // if (mini_chart_height > 110) {
         //     mini_chart_height = 110;
@@ -103,6 +105,8 @@ function filterArtists() {
 function removeArtist(artist) {
     if (!y_variables.includes(artist)) {
         console.log("cannot find artist");
+        d3.select("#list" + artist.replace(/\s/g, ''))
+            .remove();
         return;
     }
     if (!manual_artists) {
@@ -115,9 +119,8 @@ function removeArtist(artist) {
             y_to_i[object_artist]--;
         }
     }
-    i--;
+    i -= 1;
     y_variables = y_variables.filter(function(value, index, arr) { return value != artist });
-    //console.log(y_variables);
     delete barchart_data[artist];
     heatmap_data = heatmap_data.filter(function(value, index, arr) { return value.artists != artist });
     d3.select("#list" + artist.replace(/\s/g, ''))
@@ -259,7 +262,7 @@ function createBarChart(x_variables, key_attr, map, mini_chart_group, artist) {
     .attr("x", function (d) { return x_2(d.key)})
     .attr("y", function (d) { return y_2(d.value[attr] * 100)  })
     .attr("width", x_2.bandwidth())
-    .attr("height", function(d) { return (mini_chart_height / 2 - y_2(d.value[attr] * 100)) * 2; })
+    .attr("height", function(d) { return (Math.max(mini_chart_height / 2 - y_2(d.value[attr] * 100), 0) * 2); })
     .attr("class", "bar_song")
     .attr("artist", artist)
     .on("mouseover", bar_song_mouseover)
