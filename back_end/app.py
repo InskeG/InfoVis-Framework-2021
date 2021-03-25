@@ -204,7 +204,7 @@ def get_image(class_idx, class_type):
     # print(model_data[:10])
     if class_type == "centuries":
         data = model_data.loc[model_data['creation_year'] == class_idx]  
-        urls = data['image_url'].tolist()
+        urls = data['image_url'].tolist()[:6]
         # urls = list(map(decode, urls))
         image_list = urls
         # image_list = json.dumps({"image_urls": urls,
@@ -222,7 +222,7 @@ def get_image(class_idx, class_type):
     elif class_type == "artists":
         # print(model_data.loc[model_data['artist_last_name'] == class_idx])
         data = model_data.loc[model_data['artist_last_name'] == class_idx]
-        urls = data['image_url'].tolist()
+        urls = data['image_url'].tolist()[:6]
         # urls = list(map(decode, urls))
         image_list = urls
         # image_list = json.dumps({"image_urls": urls,
