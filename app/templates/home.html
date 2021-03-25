@@ -73,9 +73,6 @@
 		</div>
 	</div>
 	<div id = "wrapper-filters">
-        <div id = "viz-subtitle-artist" class = "viz-subtitle-center">
-			<h2>Musical Characteristics</h2>
-		</div>
         <div class="distplot" id = "displot">
                     <div id="distplot_valence"></div><div class="slider" id = "slider_valence"></div>
                     <div id="distplot_acousticness"></div><div class="slider" id = "slider_acousticness"></div>
@@ -87,6 +84,11 @@
                     <div id="distplot_loudness"></div><div class="slider" id = "slider_loudness"></div>
                     <div id="distplot_tempo"></div><div class="slider" id = "slider_tempo"></div>
         </div>
+        <div>
+            <input class="distplotResetButton" type="button" name="button" value="Reset" onClick="window.location.reload(true)">
+			<input class="distplotShowButton" type="submit" name="submit" value="Show >" >
+        </div>
+
 
 {#		<form class="artistForm" autocomplete="off" onSubmit="return addArtist(this)">#}
 {#			<div class="autocomplete">#}
@@ -247,9 +249,9 @@
 	createBarChartPlot();
 	{#autocomplete(document.getElementById("artistInput"), all_artists);#}
 		//Distributions plots
-	var margin = {top: 10, right: 50, bottom: 5, left: 30},
+	var margin = {top: 15, right: 50, bottom: 5, left: 30},
 	    width = 260 - margin.left - margin.right,
-	    height = 46 - margin.top - margin.bottom;
+	    height = 50 - margin.top - margin.bottom;
 	var slider_margin = {top: 0, right: 200, bottom: 0, left: 10},
 	    slider_height = 40 - margin.top - margin.bottom;
 

@@ -18,7 +18,7 @@ function createDistributionPlots(selected_char, svg) {
             .call(d3.axisBottom(x));
 
         // Compute kernel density estimation
-        var kde = kernelDensityEstimator(kernelEpanechnikov(7), x.ticks(100))
+        var kde = kernelDensityEstimator(kernelEpanechnikov(4), x.ticks(100))
         var density = kde(data.map(function(d) {
             return d.value * 100;
         }))
@@ -30,13 +30,14 @@ function createDistributionPlots(selected_char, svg) {
         var y = d3.scaleLinear()
             .range([height, 0])
             .domain([0, max_density]);
+
         svg.append("g")
-            .call(d3.axisLeft(y))
+            .call(d3.axisLeft(y).ticks(5))
             .attr("class", "displot_y_axis");
 
         svg.append("text")
         .attr("x", (width / 2))
-        .attr("y", 0 - (margin.top / 5))
+        .attr("y", 0 - (margin.top / 2))
         .attr("class", "displot_y_text")
         .text(selected_char);
 
