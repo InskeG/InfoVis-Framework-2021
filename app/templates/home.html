@@ -255,6 +255,18 @@
 	var slider_margin = {top: 0, right: 200, bottom: 0, left: 10},
 	    slider_height = 40 - margin.top - margin.bottom;
 
+	var characteristics_range = {
+	    "valence": {"min":0,"max":100},
+        "acousticness": {"min":0,"max":100},
+        "danceability": {"min":0,"max":100},
+        "energy": {"min":0,"max":100},
+        "liveness": {"min":0,"max":100},
+        "speechiness": {"min":0,"max":100},
+        "instrumentalness": {"min":0,"max":100},
+        "loudness": {"min":0,"max":100},
+        "tempo": {"min":0,"max":100}
+    }
+
 	// append the svg object to the body of the page
     var characteristics = ['valence', 'acousticness', 'danceability', 'energy', 'liveness', 'speechiness', 'instrumentalness', 'loudness', 'tempo' ];
     for (var i = 0; i < 9; i++) {

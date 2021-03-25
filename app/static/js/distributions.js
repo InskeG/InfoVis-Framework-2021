@@ -70,7 +70,8 @@ function createDistributionPlots(selected_char, svg) {
 	    .fill('#6c757d')
 	    .on('onchange', val => {
 	        d3.select('p#value-range').text(val.map(d3.format('.2%')).join('-'));
-	        console.log(selected_char, val)
+	        characteristics_range[selected_char] = {"min":val[0],"max":val[1]}
+	        console.log(characteristics_range)
 	    });
 
     var gRange = d3
