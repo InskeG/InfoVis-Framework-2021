@@ -51,7 +51,8 @@ def metrics():
     heatmap_data = heatmap_data.to_dict(orient="records")
     colors = colors.to_dict(orient="records")
     barchart_data = song_data.query("artists in @artists").sort_values("popularity", 0, False).groupby("artists")
-
+    distplot_data = pd.melt(data.distplot_data, var_name=["characteristic"])
+    distplot_data  = distplot_data.to_dict(orient="records")
     #data for getting BPM in tooltips
     max_temp_art = data.max_temp_art
     min_temp_art = data.min_temp_art
@@ -67,12 +68,13 @@ def metrics():
                            artists=artists, keys=keys_axis, popularity=popularity,
                            all_artists=all_artists, max_temp_art=max_temp_art,
                            min_temp_art=min_temp_art, max_temp=max_temp,
-                           min_temp=min_temp)
+                           min_temp=min_temp, distplot_data=distplot_data)
 
 @main.route('/metrics_data', methods=['GET'])
 def metrics_data():
     song_data = data.song_data
     heatmap_data = data.heatmap_data
+    distplot_data = data.distplot_data
     artist = request.args.get("artist")
     keys = data.filter_columns
     keys_axis = keys[:9]

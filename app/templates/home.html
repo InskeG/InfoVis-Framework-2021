@@ -20,6 +20,7 @@
 	<link rel="stylesheet" type="text/css" href="../static/css/heatmap.css">
 	<link rel="stylesheet" type="text/css" href="../static/css/home.css">
 	<link rel="stylesheet" type="text/css" href="../static/css/base.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/displot.css">
 
 	<!-- D3 package -->
 	<script src="https://d3js.org/d3.v5.min.js"></script>
@@ -72,20 +73,35 @@
 		</div>
 	</div>
 	<div id = "wrapper-filters">
-		<form class="artistForm" autocomplete="off" onSubmit="return addArtist(this)">
-			<div class="autocomplete">
-				<input id="artistInput" class="artistText" placeholder="Select an artist" type="text" name="artist" value="">
-			</div>
-			<ul class="artist-list">
-				{% for artist in artists: %}
-				<li class="artist-list-element" id="list{{ artist.replace(' ', '') }}">
-					{{ artist }}
-					<button class="artist-list-button" type="button" name="delete{{ artist.replace(' ', '') }}" onClick="removeArtist('{{ artist }}')">x</button>
-				</li>{% endfor %}
-			</ul>
-			<input class="resetButton" type="button" name="button" value="Reset" onClick="window.location.reload(true)">
-			<input class="showButton" type="submit" name="submit" value="Show >" >
-		</form>
+        <div id = "viz-subtitle-artist" class = "viz-subtitle-center">
+			<h2>Musical Characteristics</h2>
+		</div>
+        <div class="distplot" id = "displot">
+                    <div id="distplot_valence"></div><div class="slider" id = "slider_valence"></div>
+                    <div id="distplot_acousticness"></div><div class="slider" id = "slider_acousticness"></div>
+                    <div id="distplot_danceability"></div><div class="slider" id = "slider_danceability"></div>
+                    <div id="distplot_energy"></div><div class="slider" id = "slider_energy"></div>
+                    <div id="distplot_liveness"></div><div class="slider" id = "slider_liveness"></div>
+                    <div id="distplot_speechiness"></div><div class="slider" id = "slider_speechiness"></div>
+                    <div id="distplot_instrumentalness"></div><div class="slider" id = "slider_instrumentalness"></div>
+                    <div id="distplot_loudness"></div><div class="slider" id = "slider_loudness"></div>
+                    <div id="distplot_tempo"></div><div class="slider" id = "slider_tempo"></div>
+        </div>
+
+{#		<form class="artistForm" autocomplete="off" onSubmit="return addArtist(this)">#}
+{#			<div class="autocomplete">#}
+{#				<input id="artistInput" class="artistText" placeholder="Select an artist" type="text" name="artist" value="">#}
+{#			</div>#}
+{#			<ul class="artist-list">#}
+{#				{% for artist in artists: %}#}
+{#				<li class="artist-list-element" id="list{{ artist.replace(' ', '') }}">#}
+{#					{{ artist }}#}
+{#					<button class="artist-list-button" type="button" name="delete{{ artist.replace(' ', '') }}" onClick="removeArtist('{{ artist }}')">x</button>#}
+{#				</li>{% endfor %}#}
+{#			</ul>#}
+{#			<input class="resetButton" type="button" name="button" value="Reset" onClick="window.location.reload(true)">#}
+{#			<input class="showButton" type="submit" name="submit" value="Show >" >#}
+{#		</form>#}
 	</div>
 </div>
 
@@ -158,13 +174,15 @@
 <script type="text/javascript" src="../static/js/songbarchart.js"></script>
 <script type="text/javascript" src="../static/js/heatmap.js"></script>
 <script type="text/javascript" src="../static/js/autocomplete.js"></script>
+<script type="text/javascript" src="../static/js/distributions.js"></script>
+<script src="https://unpkg.com/d3-simple-slider@1.10.4/dist/d3-simple-slider.min.js"></script>
 <script type="text/javascript">
 	var max_temp_art = {{ max_temp_art | safe }};
 	var min_temp_art = {{ min_temp_art | safe }};
 	var max_temp = {{ max_temp | safe }};
 	var min_temp = {{ min_temp | safe }};
-
 	var heatmap_data = {{ heatmap_data | safe }};
+	var distplot_data = {{ distplot_data | safe }}
 	var colors = {{ heatmap_colors | safe }};
 	var barchart_data = {{ song_data | safe }};
 	var popularity = {{ popularity | safe }};
@@ -227,7 +245,29 @@
 
 	createHeatMapPlot();
 	createBarChartPlot();
-	autocomplete(document.getElementById("artistInput"), all_artists);
+	{#autocomplete(document.getElementById("artistInput"), all_artists);#}
+		//Distributions plots
+	var margin = {top: 10, right: 50, bottom: 5, left: 30},
+	    width = 260 - margin.left - margin.right,
+	    height = 46 - margin.top - margin.bottom;
+	var slider_margin = {top: 0, right: 200, bottom: 0, left: 10},
+	    slider_height = 40 - margin.top - margin.bottom;
+
+	// append the svg object to the body of the page
+    var characteristics = ['valence', 'acousticness', 'danceability', 'energy', 'liveness', 'speechiness', 'instrumentalness', 'loudness', 'tempo' ];
+    for (var i = 0; i < 9; i++) {
+        var characteristic = characteristics[i]
+        svg = d3.select("#distplot_" + characteristic)
+	    .append("svg")
+	    .attr("width", width + margin.left + margin.right)
+	    .attr("height", height + margin.top + margin.bottom)
+	    .append("g")
+	    .attr("transform",
+	        "translate(" + margin.left + "," + margin.top + ")");
+        createDistributionPlots(characteristic, svg)};
+        console.log(distplot_data)
+
+
 </script>
 {% endblock %}
 </body>
