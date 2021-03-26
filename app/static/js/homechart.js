@@ -11,7 +11,6 @@ function createPlot() {
         .call(d3.axisLeft(y));
 
     var map = d3.map(song_data);
-    console.log(map.entries());
     chart_group.selectAll("#bar")
                .data(map.entries())
                .enter()

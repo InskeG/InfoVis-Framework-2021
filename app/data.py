@@ -54,8 +54,6 @@ filter_columns = ["valence", "acousticness", "danceability",
                   "energy", "liveness", "speechiness", "instrumentalness",
                   "loudness", "tempo", "popularity", "name"]
 
-# print(filtered_data)
-
 
 heatmap_data = data_by_artist.query("artists in @filtered_artists").sort_values("popularity", ascending=False)
 heatmap_head = heatmap_data.head(10)

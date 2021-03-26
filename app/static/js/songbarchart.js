@@ -30,7 +30,6 @@ function addArtist(formObject) {
         var new_artist_barchart = data["barchart"];
         var new_artist_heatmap = data["heatmap"];
         var new_artist_popularity = data["popularity"];
-        //console.log(new_artist_heatmap);
         if (manual_artists) {
             y_variables.push(artist);
         } else {
@@ -45,7 +44,6 @@ function addArtist(formObject) {
             popularity = {};
         }
         addToList(artist);
-        console.log(i)
         y_to_i[artist] = i;
         i += 1;
 
@@ -66,7 +64,6 @@ function filterArtists() {
 
     for (var key_index in x_variables) {
         var key = x_variables[key_index];
-        console.log(key);
         var min_string = "min_" + key;
         var max_string = "max_" + key;
         var min_key = characteristics_range[key].min;
@@ -77,7 +74,6 @@ function filterArtists() {
     }
 
     fetch_url = fetch_url.slice(0, -1);
-    console.log(fetch_url);
 
     fetch(fetch_url)
     .then(function(response) { return response.json(); })
@@ -111,7 +107,6 @@ function filterArtists() {
 function removeArtist(artist) {
     var artist_selector = artist.replace(/[\s\.$]/g, '');
     if (!y_variables.includes(artist)) {
-        console.log("cannot find artist");
         d3.select("#list" + artist_selector)
             .remove();
         return;
@@ -120,20 +115,16 @@ function removeArtist(artist) {
         manual_artists = true;
     }
     var j = y_to_i[artist];
-    console.log("loc of " + artist + ": " + j);
     delete y_to_i[artist];
     for (var object_artist in y_to_i) {
         if (y_to_i[object_artist] > j) {
             y_to_i[object_artist]--;
         }
-        console.log("loc of " + object_artist + ": " + y_to_i[object_artist]);
     }
     i -= 1;
-    console.log("current i: " + i);
     y_variables = y_variables.filter(function(value, index, arr) { return value != artist });
     delete barchart_data[artist];
     heatmap_data = heatmap_data.filter(function(value, index, arr) { return value.artists != artist });
-    console.log("#list" + artist_selector)
     d3.select("#list" + artist_selector)
       .remove();
 

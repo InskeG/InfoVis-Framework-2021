@@ -75,7 +75,6 @@ function createHeatMapPlot() {
     var pop_map = d3.map(popularity);
     var x_pop = d3.scaleLinear().range([0, 75]).domain([0, 100]);
 
-    // console.log(pop_map)
     for (var pop_artist in popularity) {
         d3.select(".heatmap_y_axis").selectAll(".tick")
           .filter(function(d) { return d === pop_artist})
