@@ -3,9 +3,12 @@
 }
 
 .artist-list-element {
+    display: block;
+    float: left;
     list-style-type: none;
     font-size: 12px;
     margin-right: 20%;
+    width: 80%
 }
 
 .artist-list-button {
