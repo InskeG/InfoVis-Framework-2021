@@ -55,6 +55,7 @@ body{
     width:100vw;
     font-color:white;
     font-weight:bold;
+    border-bottom: 3px solid #000;
 }
 
 .navbar-default .navbar-nav > li > a {

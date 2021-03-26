@@ -185,8 +185,8 @@ function createHeatMapPlot() {
               .attr("y", "7.5")
               .attr("dy", "0.1em")
               .attr("fill", "CurrentColor")
-              .style("font-size", "70%")
-              .html("0%");
+              .style("font-size", "60%")
+              .html("0");
 
     legend_pop = chart_group_pop_legend.append("g")
     legend_pop.append("rect")
@@ -201,7 +201,7 @@ function createHeatMapPlot() {
             .attr("y", "22.5")
             .attr("dy", "0.1em")
             .attr("fill", "CurrentColor")
-            .style("font-size", "70%")
-            .html("100%");
+            .style("font-size", "60%")
+            .html("100");
 
 }
