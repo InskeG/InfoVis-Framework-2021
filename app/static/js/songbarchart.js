@@ -1,15 +1,16 @@
 function addToList(artist) {
+    var artist_name = artist.replace(/[\s\.$]/g, '');
     var list_element = d3.select(".artist-list")
                          .append("li")
                          .attr("class", "artist-list-element")
-                         .attr("id", "list" + artist.replace(/\s/g, ''));
+                         .attr("id", "list" + artist_name);
 
     list_element.html(artist);
     var button = list_element.append("input")
                 .attr("onClick", "removeArtist('" + artist + "')")
                 .attr("class", "artist-list-button")
                 .attr("type", "button")
-                .attr("name", "delete" + artist.replace(/\s/g, ''))
+                .attr("name", "delete" + artist_name)
                 .attr("value", "x");
 
 }
@@ -89,10 +90,15 @@ function filterArtists() {
         i = 0;
         y_to_i = {};
 
+        d3.selectAll(".artist-list-element")
+        .remove();
+
         for (var key in y_variables) {
-    		y_to_i[y_variables[key]] = i++;
+            var artist = y_variables[key];
+    		y_to_i[artist] = i++;
+            addToList(artist);
     	}
-        
+
         if (manual_artists) {
             manual_artists = false;
         }
@@ -103,9 +109,10 @@ function filterArtists() {
 }
 
 function removeArtist(artist) {
+    var artist_selector = artist.replace(/[\s\.$]/g, '');
     if (!y_variables.includes(artist)) {
         console.log("cannot find artist");
-        d3.select("#list" + artist.replace(/\s/g, ''))
+        d3.select("#list" + artist_selector)
             .remove();
         return;
     }
@@ -113,17 +120,21 @@ function removeArtist(artist) {
         manual_artists = true;
     }
     var j = y_to_i[artist];
+    console.log("loc of " + artist + ": " + j);
     delete y_to_i[artist];
     for (var object_artist in y_to_i) {
         if (y_to_i[object_artist] > j) {
             y_to_i[object_artist]--;
         }
+        console.log("loc of " + object_artist + ": " + y_to_i[object_artist]);
     }
     i -= 1;
+    console.log("current i: " + i);
     y_variables = y_variables.filter(function(value, index, arr) { return value != artist });
     delete barchart_data[artist];
     heatmap_data = heatmap_data.filter(function(value, index, arr) { return value.artists != artist });
-    d3.select("#list" + artist.replace(/\s/g, ''))
+    console.log("#list" + artist_selector)
+    d3.select("#list" + artist_selector)
       .remove();
 
     remakePlot();

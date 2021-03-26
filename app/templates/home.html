@@ -297,8 +297,8 @@
 
 	// append the svg object to the body of the page
     var characteristics = ['valence', 'acousticness', 'danceability', 'energy', 'liveness', 'speechiness', 'instrumentalness', 'loudness', 'tempo' ];
-    for (var i = 0; i < 9; i++) {
-        var characteristic = characteristics[i]
+    for (var j = 0; j < 9; j++) {
+        var characteristic = characteristics[j]
         svg = d3.select("#distplot_" + characteristic)
 	    .append("svg")
 	    .attr("width", width + margin.left + margin.right)
