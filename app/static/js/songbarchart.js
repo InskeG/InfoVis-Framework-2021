@@ -33,7 +33,7 @@ function addArtist(formObject) {
         if (manual_artists) {
             y_variables.push(artist);
         } else {
-            i = 0;
+            artist_offset = 0;
             y_to_i = {};
             manual_artists = true;
             barchart_data = {};
@@ -44,8 +44,8 @@ function addArtist(formObject) {
             popularity = {};
         }
         addToList(artist);
-        y_to_i[artist] = i;
-        i += 1;
+        y_to_i[artist] = artist_offset;
+        artist_offset += 1;
 
         // if (mini_chart_height > 110) {
         //     mini_chart_height = 110;
@@ -83,7 +83,7 @@ function filterArtists() {
         popularity = data["popularity"];
         y_variables = data["artists"];
 
-        i = 0;
+        artist_offset = 0;
         y_to_i = {};
 
         d3.selectAll(".artist-list-element")
@@ -91,7 +91,7 @@ function filterArtists() {
 
         for (var key in y_variables) {
             var artist = y_variables[key];
-    		y_to_i[artist] = i++;
+    		y_to_i[artist] = artist_offset++;
             addToList(artist);
     	}
 
@@ -121,7 +121,7 @@ function removeArtist(artist) {
             y_to_i[object_artist]--;
         }
     }
-    i -= 1;
+    artist_offset -= 1;
     y_variables = y_variables.filter(function(value, index, arr) { return value != artist });
     delete barchart_data[artist];
     heatmap_data = heatmap_data.filter(function(value, index, arr) { return value.artists != artist });

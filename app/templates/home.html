@@ -19,16 +19,12 @@
 	<link rel="stylesheet" type="text/css" href="../static/css/barchart.css">
 	<link rel="stylesheet" type="text/css" href="../static/css/heatmap.css">
 	<link rel="stylesheet" type="text/css" href="../static/css/home.css">
-	<!--<link rel="stylesheet" type="text/css" href="../static/css/base.css">-->
     <link rel="stylesheet" type="text/css" href="../static/css/displot.css">
 
 	<!-- D3 package -->
 	<script src="https://d3js.org/d3.v5.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
-
-<!--sticky-top-->
-<!--spotify-color:	#1DB954-->
 
 <body>
 	<div id="top"></div>
@@ -198,7 +194,6 @@
 
 </div>
 
-{% block body %}
 <!-- End page content-->
 <script type="text/javascript" src="../static/js/songbarchart.js"></script>
 <script type="text/javascript" src="../static/js/switchfilters.js"></script>
@@ -220,9 +215,9 @@
 	var all_artists = {{ all_artists | safe }}
 	var manual_artists = false;
 	var y_to_i = {};
-	var i = 0;
+	var artist_offset = 0;
 	for (var key in y_variables) {
-		y_to_i[y_variables[key]] = i++;
+		y_to_i[y_variables[key]] = artist_offset++;
 	}
 	var x_variables = {{ keys | safe }};
 
@@ -308,38 +303,32 @@
 	        "translate(" + margin.left + "," + margin.top + ")");
         createDistributionPlots(characteristic, svg)};
 
-</script>
-{% endblock %}
-</body>
-<script type="text/javascript">
 	$(document).ready(function() {
 		$(".nav-link").click(function(event){
-            event.preventDefault();
-            $("html").animate({scrollTop:$(this.hash).offset().top - 70}, 800);
-        });
+			event.preventDefault();
+			$("html").animate({scrollTop:$(this.hash).offset().top - 70}, 800);
+		});
 
-    	$(document).on("scroll", onScroll);
+		$(document).on("scroll", onScroll);
 	});
-  function onScroll(event){
-    var scrollPos = $(document).scrollTop();
-    $('a.nav-link').each(function () {
-        var currLink = $(this);
-        var currParent = currLink.parent();
-        var refElement = $(currLink.attr("href"));
+	function onScroll(event){
+		var scrollPos = $(document).scrollTop();
+		$('a.nav-link').each(function () {
+			var currLink = $(this);
+			var currParent = currLink.parent();
+			var refElement = $(currLink.attr("href"));
 
-        if (refElement.position().top <= scrollPos && refElement.position().top + refElement.height() > scrollPos) {
-            $('a.nav-link').removeClass("active");
-            $('li.nav-item').removeClass("active");
-            currParent.addClass("active");
-            currLink.addClass("active");
-        }
-        else {
-            currLink.removeClass("active");
-        }
-    });
-  }
-
-
-
+			if (refElement.position().top <= scrollPos && refElement.position().top + refElement.height() > scrollPos) {
+				$('a.nav-link').removeClass("active");
+				$('li.nav-item').removeClass("active");
+				currParent.addClass("active");
+				currLink.addClass("active");
+			}
+			else {
+				currLink.removeClass("active");
+			}
+		});
+	}
 </script>
+</body>
 </html>
