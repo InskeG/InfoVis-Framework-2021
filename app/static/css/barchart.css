@@ -27,6 +27,11 @@
     display: none;
 }
 
+#barChartAxisTop text {
+    position:absolute;
+    transform: rotate(-10deg) translate3d(0px,0px,1px);
+}
+
 .rowChartAxis line {
     display: none;
 }

@@ -30,6 +30,11 @@
     text-anchor: middle;
 }
 
+.heatmap_x_axis text {
+    position:absolute;
+    transform: rotate(-10deg) translate3d(0px,0px,1px);
+}
+
 .heatmap_rect {
     stroke-width: 4px;
     stroke: none;

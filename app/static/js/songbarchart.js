@@ -164,7 +164,7 @@ function createBarChartPlot() {
 function createRowChart(translation, id, chart_group_bar_charts, artist, colors) {
     var mini_artist_group = chart_group_bar_charts.append("g")
         .attr("id", "mini_artist_group" + id)
-        .attr("transform", "translate(" + 35 + "," + (translation) + ")");
+        .attr("transform", "translate(" + 35 + "," + (translation + 8) + ")");
 
     // Top x axis
     if (id === 0) {
@@ -192,6 +192,7 @@ function createRowChart(translation, id, chart_group_bar_charts, artist, colors)
             var points = [[line_x, 0], [line_x, mini_chart_height * y_variables.length]];
             chart_group_bar_charts.append("path")
                        .attr("class", "vertline")
+                       .attr("transform", "translate(0,8)")
                        .attr("d", line(points))
        }
         var mini_chart_group = mini_artist_group.append("g")

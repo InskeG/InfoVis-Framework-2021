@@ -12,14 +12,14 @@ function createHeatMapPlot() {
         .padding(0.05);
     chart_group_heatmap.append("g")
         .attr("class", "heatmap_x_axis")
-        .attr("transform", "translate(0,0)")
+        .attr("transform", "translate(0,6)")
         .call(d3.axisBottom(x).tickSize(0))
         .select(".domain").remove();
 
 
     chart_group_heatmap.append("g")
         .attr("class", "heatmap_y_axis")
-        .attr("transform", "translate("+width_transform+",-8)")
+        .attr("transform", "translate("+width_transform+",0)")
         .call(d3.axisLeft(y).tickSize(0))
         .select(".domain").remove();
 
@@ -109,7 +109,7 @@ function createHeatMapPlot() {
         .append("rect")
             .attr("class", "heatmap_rect")
             .attr("x", function(d) { return x(d.characteristic) })
-            .attr("y", function(d) { return y(d.artists) })
+            .attr("y", function(d) { return y(d.artists) +8 })
             .attr("rx", 4)
             .attr("ry", 4)
             .attr("width", x.bandwidth() )
